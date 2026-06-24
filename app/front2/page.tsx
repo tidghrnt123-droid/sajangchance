@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Footer from "../components/Footer";
+import Footer from "../../components/Footer";
 
 export default function Front2Page() {
   const details = Array.from(
