@@ -238,6 +238,7 @@ export default function Home() {
       </section>
 
       <ContactForm />
+      <Footer />
     </main>
   );
 }
