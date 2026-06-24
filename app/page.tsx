@@ -22,29 +22,33 @@ export default function Home() {
             <a href="#contact">상담신청</a>
           </nav>
 
-          <div className="flex items-center gap-1 md:gap-3">
-            <a
-              href="tel:01079083099"
-className="bg-green-600 text-white px-2 md:px-4 py-2 rounded-xl text-xs md:text-base font-semibold"            >
-              📞 전화문의
-            </a>
+          <div className="flex items-center gap-1 md:gap-3 shrink-0">
+  <a
+    href="tel:01079083099"
+    className="bg-green-600 hover:bg-green-700 text-white px-2 md:px-4 py-2 rounded-xl text-xs md:text-base font-semibold transition"
+  >
+    <span className="md:hidden">📞</span>
+    <span className="hidden md:inline">📞 전화문의</span>
+  </a>
 
-            <a
-              href="http://pf.kakao.com/_xcxhFen/chat"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-yellow-400 text-black px-2 md:px-4 py-2 rounded-xl text-xs md:text-base font-semibold"
-            >
-              💬 카카오톡
-            </a>
+  <a
+    href="http://pf.kakao.com/_xcxhFen/chat"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="bg-yellow-400 hover:bg-yellow-500 text-black px-2 md:px-4 py-2 rounded-xl text-xs md:text-base font-semibold transition"
+  >
+    <span className="md:hidden">💬</span>
+    <span className="hidden md:inline">💬 카카오톡</span>
+  </a>
 
-            <a
-              href="#contact"
-             className="bg-blue-600 text-white px-2 md:px-4 py-2 rounded-xl text-xs md:text-base font-semibold"
-            >
-              무료 상담
-            </a>
-          </div>
+  <a
+    href="#contact"
+    className="bg-blue-600 hover:bg-blue-700 text-white px-2 md:px-4 py-2 rounded-xl text-xs md:text-base font-semibold transition"
+  >
+    <span className="md:hidden">상담</span>
+    <span className="hidden md:inline">무료 상담</span>
+  </a>
+</div>
         </div>
       </header>
 
