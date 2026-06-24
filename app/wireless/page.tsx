@@ -1,4 +1,6 @@
 import Image from "next/image";
+import Footer from "../../components/Footer";
+
 
 export default function WirelessPage() {
   const details = [
@@ -124,6 +126,7 @@ export default function WirelessPage() {
           />
         ))}
       </section>
+         <Footer />
     </main>
   );
 }

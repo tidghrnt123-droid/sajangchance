@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Footer from "../components/Footer";
 
 export default function Front2Page() {
   const details = Array.from(
@@ -124,6 +125,7 @@ export default function Front2Page() {
           />
         ))}
       </section>
+      <Footer />
     </main>
   );
 }

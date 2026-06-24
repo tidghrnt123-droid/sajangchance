@@ -1,4 +1,6 @@
 import Image from "next/image";
+import Footer from "../../components/Footer";
+
 export default function CardTerminalPage() {
   return (
     
@@ -238,6 +240,7 @@ className="w-full h-60 object-cover rounded-2xl mb-6"
           </div>
         </div>
       </section>
+      <Footer />
     </main>
   );
 }
