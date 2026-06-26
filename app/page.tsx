@@ -25,32 +25,62 @@ export default function Home() {
           <div className="flex items-center gap-1 md:gap-3 shrink-0">
   <a
     href="tel:01079083099"
-    className="bg-green-600 hover:bg-green-700 text-white px-2 md:px-4 py-2 rounded-xl text-xs md:text-base font-semibold transition"
+    aria-label="전화문의"
+    className="w-9 h-9 md:w-auto md:h-auto bg-green-600 hover:bg-green-700 text-white rounded-xl md:px-4 md:py-2 flex items-center justify-center text-sm md:text-base font-semibold transition"
   >
-    <span className="md:hidden">📞</span>
-    <span className="hidden md:inline">📞 전화문의</span>
+    <span className="md:hidden">☎</span>
+    <span className="hidden md:inline">☎ 전화문의</span>
   </a>
 
   <a
     href="http://pf.kakao.com/_xcxhFen/chat"
     target="_blank"
     rel="noopener noreferrer"
-    className="bg-yellow-400 hover:bg-yellow-500 text-black px-2 md:px-4 py-2 rounded-xl text-xs md:text-base font-semibold transition"
+    aria-label="카카오톡 문의"
+    className="w-9 h-9 md:w-auto md:h-auto bg-yellow-400 hover:bg-yellow-500 text-black rounded-xl md:px-4 md:py-2 flex items-center justify-center text-sm md:text-base font-semibold transition"
   >
-    <span className="md:hidden">💬</span>
-    <span className="hidden md:inline">💬 카카오톡</span>
+    <span className="md:hidden font-extrabold text-[11px]">TALK</span>
+    <span className="hidden md:inline">TALK 카카오톡</span>
   </a>
 
   <a
     href="#contact"
-    className="bg-blue-600 hover:bg-blue-700 text-white px-2 md:px-4 py-2 rounded-xl text-xs md:text-base font-semibold transition"
+    aria-label="상담신청"
+    className="w-9 h-9 md:w-auto md:h-auto bg-blue-600 hover:bg-blue-700 text-white rounded-xl md:px-4 md:py-2 flex items-center justify-center text-sm md:text-base font-semibold transition"
   >
-    <span className="md:hidden">상담</span>
-    <span className="hidden md:inline">무료 상담</span>
+    <span className="md:hidden">📄</span>
+    <span className="hidden md:inline">📄 무료 상담</span>
   </a>
 </div>
         </div>
       </header>
+      {/* 모바일 카테고리 */}
+<div className="md:hidden sticky top-20 z-40 bg-white border-b">
+  <div className="grid grid-cols-3 text-center">
+
+    <a
+      href="/card-terminal"
+      className="py-3 border-b-2 border-blue-600 font-semibold text-blue-600"
+    >
+      카드단말기
+    </a>
+
+    <a
+      href="/front2"
+      className="py-3 font-medium text-gray-700"
+    >
+      토스 프론트2
+    </a>
+
+    <a
+      href="/wireless"
+      className="py-3 font-medium text-gray-700"
+    >
+      무선단말기
+    </a>
+
+  </div>
+</div>
 
       <section className="max-w-7xl mx-auto px-6 py-24">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -59,11 +89,11 @@ export default function Home() {
               사장님을 위한 카드단말기 전문몰
             </p>
 
-            <h2 className="text-6xl font-bold leading-tight text-gray-900">
-              매장 결제,
-              <br />
-              쉽게 준비하세요.
-            </h2>
+<h2 className="text-[38px] md:text-6xl font-bold leading-tight text-gray-900 whitespace-nowrap">
+  매장 결제,
+  <br />
+  쉽게 준비하세요.
+</h2>
 
             <p className="mt-8 text-xl text-gray-600 leading-relaxed">
               토스 프론트2부터 무선 카드단말기까지
