@@ -97,37 +97,40 @@ export default function Home() {
                       <Image
                         src={product.image}
                         alt={product.title}
-                        width={180}
-                        height={140}
+                        width={220}
+                        height={160}
                         className="max-h-28 object-contain"
                       />
                     </div>
 
-                    <h4 className="font-bold text-lg text-gray-900">
+                    <h4 className="font-bold text-lg text-gray-900 min-h-[56px]">
                       {product.title}
                     </h4>
 
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-gray-500 mt-1 min-h-[40px]">
                       {product.desc}
                     </p>
 
-                    <div className="mt-4 flex items-center justify-between">
+                    <div className="mt-4 flex items-center justify-between gap-3">
                       <span className="text-blue-600 font-bold">
                         {product.price}
                       </span>
 
-                      <span className="text-sm text-blue-600 font-semibold">
-                        자세히 보기 →
+                      <span className="inline-flex items-center justify-center rounded-xl border border-blue-600 px-3 py-2 text-sm text-blue-600 font-semibold">
+                        자세히 보기
                       </span>
                     </div>
                   </a>
                 ))}
               </div>
 
-              <div className="mt-6 bg-blue-600 text-white rounded-2xl p-5">
-                <p className="text-sm opacity-80">전화 상담 가능</p>
-                <p className="text-xl font-bold mt-1">010-7908-3099</p>
-              </div>
+              <a
+                href="tel:01079083099"
+                className="mt-6 block bg-blue-600 hover:bg-blue-700 text-white rounded-2xl p-5 text-center transition"
+              >
+                <p className="text-sm opacity-90">📞 전화 상담 가능</p>
+                <p className="text-2xl font-bold mt-1">010-7908-3099</p>
+              </a>
             </div>
           </div>
         </div>
