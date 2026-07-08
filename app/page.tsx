@@ -1,8 +1,40 @@
 import Header from "@/components/Header";
 import ContactForm from "@/components/ContactForm";
 import Footer from "@/components/Footer";
+import Image from "next/image";
 
 export default function Home() {
+  const products = [
+    {
+      title: "토스 프론트2",
+      desc: "POS 연동형 · 월 사용료 없음",
+      price: "100원",
+      image: "/images/front2.png",
+      href: "/front2",
+    },
+    {
+      title: "프론트2 + 영수증 프린터",
+      desc: "카페 · 병원 · 뷰티샵 추천",
+      price: "79,000원",
+      image: "/images/front2-printer.png",
+      href: "/front2-printer",
+    },
+    {
+      title: "프론트2 + 토스 터미널2",
+      desc: "영수증 출력 · 금액 입력 가능",
+      price: "139,000원",
+      image: "/images/front2-terminal2.png",
+      href: "/front2-terminal2",
+    },
+    {
+      title: "무선 카드단말기",
+      desc: "KT · SK LTE 무선 단말기",
+      price: "100원",
+      image: "/images/wireless.png",
+      href: "/wireless",
+    },
+  ];
+
   return (
     <main className="min-h-screen bg-white">
       <Header />
@@ -41,79 +73,55 @@ export default function Home() {
                 상품 보기
               </a>
             </div>
-
-            <div className="mt-8 flex flex-wrap gap-3 text-sm text-gray-600">
-              <span className="px-4 py-2 bg-gray-100 rounded-full">
-                카드단말기
-              </span>
-              <span className="px-4 py-2 bg-gray-100 rounded-full">
-                토스 프론트2
-              </span>
-              <span className="px-4 py-2 bg-gray-100 rounded-full">
-                무선 카드단말기
-              </span>
-              <span className="px-4 py-2 bg-gray-100 rounded-full">
-                무료 상담
-              </span>
-            </div>
           </div>
 
           <div className="relative">
             <div className="absolute -top-10 -right-6 w-72 h-72 bg-blue-100 rounded-full blur-3xl"></div>
 
-            <div className="relative bg-white border border-gray-200 rounded-[32px] p-8 shadow-xl">
+            <div className="relative bg-white border border-gray-200 rounded-[32px] p-6 shadow-xl">
               <div className="mb-6">
-                <p className="text-sm text-gray-500">사장님찬스 추천</p>
-                <h3 className="text-2xl font-bold mt-1">
-                  매장 결제에 필요한 단말기를 한 번에
+                <p className="text-sm text-gray-500">사장님찬스 추천상품</p>
+                <h3 className="text-2xl font-bold mt-1 text-gray-900">
+                  판매 중인 카드단말기
                 </h3>
               </div>
 
-              <div className="space-y-4">
-                <div className="flex items-center justify-between border rounded-2xl p-5">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center text-2xl">
-                      💳
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {products.map((product) => (
+                  <a
+                    key={product.title}
+                    href={product.href}
+                    className="border rounded-2xl p-4 hover:shadow-lg transition bg-white"
+                  >
+                    <div className="h-32 bg-gray-50 rounded-xl flex items-center justify-center mb-4 overflow-hidden">
+                      <Image
+                        src={product.image}
+                        alt={product.title}
+                        width={180}
+                        height={140}
+                        className="max-h-28 object-contain"
+                      />
                     </div>
-                    <div>
-                      <h4 className="font-bold text-lg">카드단말기</h4>
-                      <p className="text-sm text-gray-500">
-                        토스 · 무선 · 영수증 프린터
-                      </p>
-                    </div>
-                  </div>
-                  <span className="text-blue-600 font-semibold">보기</span>
-                </div>
 
-                <div className="flex items-center justify-between border rounded-2xl p-5">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center text-2xl">
-                      🧾
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-lg">영수증 프린터 구성</h4>
-                      <p className="text-sm text-gray-500">
-                        영수증 출력이 필요한 매장 추천
-                      </p>
-                    </div>
-                  </div>
-                  <span className="text-blue-600 font-semibold">보기</span>
-                </div>
+                    <h4 className="font-bold text-lg text-gray-900">
+                      {product.title}
+                    </h4>
 
-                <div className="flex items-center justify-between border rounded-2xl p-5">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center text-2xl">
-                      📡
+                    <p className="text-sm text-gray-500 mt-1">
+                      {product.desc}
+                    </p>
+
+                    <div className="mt-4 flex items-center justify-between">
+                      <span className="text-blue-600 font-bold">
+                        {product.price}
+                      </span>
+
+                      <span className="text-sm text-blue-600 font-semibold">
+                        자세히 보기 →
+                      </span>
                     </div>
-                    <div>
-                      <h4 className="font-bold text-lg">무선 카드단말기</h4>
-                      <p className="text-sm text-gray-500">
-                        이동형 매장 · 행사장 · 배달 추천
-                      </p>
-                    </div>
-                  </div>
-                  <span className="text-blue-600 font-semibold">보기</span>
-                </div>
+                  </a>
+                ))}
               </div>
 
               <div className="mt-6 bg-blue-600 text-white rounded-2xl p-5">
@@ -165,7 +173,7 @@ export default function Home() {
       </section>
 
       <section className="max-w-7xl mx-auto px-6 pb-24">
-        <h2 className="text-4xl font-bold text-center mb-4">
+        <h2 className="text-4xl font-bold text-center mb-4 text-gray-900">
           카드단말기를 찾고 계신가요?
         </h2>
 
@@ -173,24 +181,12 @@ export default function Home() {
           매장 환경에 맞는 카드단말기 상품을 확인해보세요.
         </p>
 
-        <div className="grid md:grid-cols-1 gap-8 max-w-md mx-auto">
+        <div className="text-center">
           <a
             href="/card-terminal"
-            className="border border-gray-200 rounded-3xl p-8 hover:shadow-xl transition duration-300"
+            className="inline-block bg-blue-600 text-white px-8 py-4 rounded-2xl font-semibold"
           >
-            <div className="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center text-3xl mb-6">
-              💳
-            </div>
-
-            <h3 className="text-3xl font-bold mb-3">카드단말기</h3>
-
-            <p className="text-gray-600 leading-relaxed mb-6">
-              토스 프론트2 · 영수증 프린터 · 토스 터미널2 · 무선 카드단말기
-              <br />
-              매장에 맞는 단말기 상품을 확인해보세요.
-            </p>
-
-            <span className="text-blue-600 font-semibold">상품 보기 →</span>
+            전체 상품 보기 →
           </a>
         </div>
       </section>
