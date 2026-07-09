@@ -13,14 +13,37 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-   title: "사장님찬스 | 카드단말기 · POS · PG 전문",
+  title: "사장님찬스 | 카드단말기 · POS · PG 전문",
   description: "카드단말기, POS, PG 전문 상담",
+
   icons: {
-    icon: [
-      { url: "/icon.png", type: "image/png" },
-    ],
+    icon: [{ url: "/icon.png", type: "image/png" }],
     shortcut: "/icon.png",
     apple: "/icon.png",
+  },
+
+  openGraph: {
+    title: "사장님찬스 | 카드단말기 · POS · PG 전문",
+    description: "토스 프론트2, 무선 카드단말기, POS, PG 전문 상담",
+    url: "https://sajangchance.com",
+    siteName: "사장님찬스",
+    locale: "ko_KR",
+    type: "website",
+    images: [
+      {
+        url: "/images/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "사장님찬스",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "사장님찬스 | 카드단말기 · POS · PG 전문",
+    description: "토스 프론트2, 무선 카드단말기, POS, PG 전문 상담",
+    images: ["/images/og-image.png"],
   },
 };
 
@@ -31,7 +54,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="ko"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
