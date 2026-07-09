@@ -1,3 +1,5 @@
+import { Phone, FileText } from "lucide-react";
+
 export default function Header() {
   return (
     <>
@@ -26,31 +28,33 @@ export default function Header() {
           <div className="flex items-center gap-1 md:gap-3 shrink-0">
             <a
               href="tel:01079083099"
-              aria-label="전화문의"
-              className="w-9 h-9 md:w-auto md:h-auto bg-green-600 hover:bg-green-700 text-white rounded-xl md:px-4 md:py-2 flex items-center justify-center text-sm md:text-base font-semibold transition"
+              aria-label="전화하기"
+              className="w-9 h-9 md:w-auto md:h-auto bg-green-600 hover:bg-green-700 text-white rounded-xl md:px-4 md:py-2 flex items-center justify-center gap-2 text-sm md:text-base font-semibold transition"
             >
-              <span className="md:hidden">☎</span>
-              <span className="hidden md:inline">☎ 전화문의</span>
+              <Phone size={18} strokeWidth={2.5} />
+              <span className="hidden md:inline">전화하기</span>
             </a>
 
             <a
               href="http://pf.kakao.com/_xcxhFen/chat"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="카카오톡 문의"
-              className="w-9 h-9 md:w-auto md:h-auto bg-yellow-400 hover:bg-yellow-500 text-black rounded-xl md:px-4 md:py-2 flex items-center justify-center text-sm md:text-base font-semibold transition"
+              aria-label="카카오톡 상담"
+              className="w-9 h-9 md:w-auto md:h-auto bg-yellow-400 hover:bg-yellow-500 text-black rounded-xl md:px-4 md:py-2 flex items-center justify-center gap-2 text-sm md:text-base font-semibold transition"
             >
-              <span className="md:hidden font-extrabold text-[11px]">TALK</span>
-              <span className="hidden md:inline">TALK 카카오톡</span>
+              <span className="text-[10px] md:text-xs font-black leading-none">
+                TALK
+              </span>
+              <span className="hidden md:inline">카카오톡 상담</span>
             </a>
 
             <a
               href="/#contact"
-              aria-label="상담신청"
-              className="w-9 h-9 md:w-auto md:h-auto bg-blue-600 hover:bg-blue-700 text-white rounded-xl md:px-4 md:py-2 flex items-center justify-center text-sm md:text-base font-semibold transition"
+              aria-label="문의하기"
+              className="w-9 h-9 md:w-auto md:h-auto bg-blue-600 hover:bg-blue-700 text-white rounded-xl md:px-4 md:py-2 flex items-center justify-center gap-2 text-sm md:text-base font-semibold transition"
             >
-              <span className="md:hidden">📄</span>
-              <span className="hidden md:inline">📄 무료 상담</span>
+              <FileText size={18} strokeWidth={2.5} />
+              <span className="hidden md:inline">문의하기</span>
             </a>
           </div>
         </div>

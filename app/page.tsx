@@ -28,7 +28,7 @@ export default function Home() {
     },
     {
       title: "무선 카드단말기",
-      desc: "KT · SK LTE 무선 단말기",
+      desc: "KT LTE 무선 단말기",
       price: "100원",
       image: "/images/wireless.png",
       href: "/wireless",
