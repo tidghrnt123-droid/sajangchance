@@ -1,4 +1,5 @@
 import { Phone, FileText } from "lucide-react";
+import Image from "next/image";
 
 export default function Header() {
   return (
@@ -42,10 +43,16 @@ export default function Header() {
               aria-label="카카오톡 상담"
               className="w-9 h-9 md:w-auto md:h-auto bg-yellow-400 hover:bg-yellow-500 text-black rounded-xl md:px-4 md:py-2 flex items-center justify-center gap-2 text-sm md:text-base font-semibold transition"
             >
-              <span className="text-[10px] md:text-xs font-black leading-none">
-                TALK
-              </span>
-              <span className="hidden md:inline">카카오톡 상담</span>
+<Image
+  src="/images/kakao.png"
+  alt="카카오톡"
+  width={30}
+  height={30}
+/>
+
+<span className="hidden md:inline">
+  카카오톡 상담
+</span>
             </a>
 
             <a
