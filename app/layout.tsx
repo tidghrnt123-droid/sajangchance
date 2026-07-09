@@ -13,10 +13,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "사장님찬스 | 카드단말기 · POS · PG 전문",
-  description: "토스 프론트2, 무선 카드단말기, POS, PG 전문 상담",
-    icons: {
-    icon: "/icon.png",
+   title: "사장님찬스 | 카드단말기 · POS · PG 전문",
+  description: "카드단말기, POS, PG 전문 상담",
+  icons: {
+    icon: [
+      { url: "/icon.png", type: "image/png" },
+    ],
+    shortcut: "/icon.png",
+    apple: "/icon.png",
   },
 };
 
