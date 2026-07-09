@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/images/og-image.png",
+        url: "/images/og-image1.png",
         width: 1200,
         height: 630,
         alt: "사장님찬스",
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "사장님찬스 | 카드단말기 · POS · PG 전문",
     description: "토스 프론트2, 무선 카드단말기, POS, PG 전문 상담",
-    images: ["/images/og-image.png"],
+    images: ["/images/og-image1.png"],
   },
 };
 
