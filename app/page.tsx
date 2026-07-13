@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import ContactForm from "@/components/ContactForm";
 import Footer from "@/components/Footer";
 import Image from "next/image";
+import { BadgePercent, ClipboardCheck, Store } from "lucide-react";
 
 export default function Home() {
   const products = [
@@ -39,8 +40,9 @@ export default function Home() {
     <main className="min-h-screen bg-white">
       <Header />
 
-      <section className="max-w-7xl mx-auto px-6 py-24">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+      {/* 메인 영역 */}
+      <section className="max-w-7xl mx-auto px-6 py-16 md:py-24">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div>
             <p className="text-blue-600 font-semibold text-lg mb-4">
               사장님을 위한 카드단말기 전문몰
@@ -52,35 +54,37 @@ export default function Home() {
               쉽게 준비하세요.
             </h2>
 
-            <p className="mt-8 text-xl text-gray-600 leading-relaxed">
+            <p className="mt-8 text-lg md:text-xl text-gray-600 leading-relaxed">
               토스 프론트2부터 무선 카드단말기까지
-              <br />
+              <br className="hidden sm:block" />
               매장 환경에 맞는 카드단말기를 안내드립니다.
             </p>
 
-            <div className="mt-10 flex gap-4">
+            <div className="mt-10 flex flex-wrap gap-3 md:gap-4">
               <a
                 href="#contact"
-                className="bg-blue-600 text-white px-8 py-4 rounded-2xl font-semibold"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 md:px-8 py-4 rounded-2xl font-semibold transition"
               >
                 무료 상담 신청
               </a>
 
               <a
                 href="/card-terminal"
-                className="border border-gray-300 px-8 py-4 rounded-2xl font-semibold"
+                className="border border-gray-300 hover:border-blue-600 hover:text-blue-600 px-6 md:px-8 py-4 rounded-2xl font-semibold transition"
               >
                 상품 보기
               </a>
             </div>
           </div>
 
+          {/* 추천 상품 */}
           <div className="relative">
-            <div className="absolute -top-10 -right-6 w-72 h-72 bg-blue-100 rounded-full blur-3xl"></div>
+            <div className="absolute -top-10 -right-6 w-72 h-72 bg-blue-100 rounded-full blur-3xl" />
 
-            <div className="relative bg-white border border-gray-200 rounded-[32px] p-6 shadow-xl">
+            <div className="relative bg-white border border-gray-200 rounded-[32px] p-5 md:p-6 shadow-xl">
               <div className="mb-6">
                 <p className="text-sm text-gray-500">사장님찬스 추천상품</p>
+
                 <h3 className="text-2xl font-bold mt-1 text-gray-900">
                   판매 중인 카드단말기
                 </h3>
@@ -91,7 +95,7 @@ export default function Home() {
                   <a
                     key={product.title}
                     href={product.href}
-                    className="border rounded-2xl p-4 hover:shadow-lg transition bg-white"
+                    className="border border-gray-200 rounded-2xl p-4 hover:shadow-lg hover:border-blue-200 transition bg-white"
                   >
                     <div className="h-32 bg-gray-50 rounded-xl flex items-center justify-center mb-4 overflow-hidden">
                       <Image
@@ -128,7 +132,7 @@ export default function Home() {
                 href="tel:01079083099"
                 className="mt-6 block bg-blue-600 hover:bg-blue-700 text-white rounded-2xl p-5 text-center transition"
               >
-                <p className="text-sm opacity-90">📞 전화 상담 가능</p>
+                <p className="text-sm opacity-90">전화 상담 가능</p>
                 <p className="text-2xl font-bold mt-1">010-7908-3099</p>
               </a>
             </div>
@@ -136,58 +140,118 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-6 pb-20">
-        <div className="bg-gray-950 text-white rounded-[36px] p-10 md:p-12">
-          <div className="mb-10">
-            <p className="text-blue-400 font-semibold mb-3">
-              사장님찬스가 선택받는 이유
+      {/* 사장님찬스를 선택하는 이유 */}
+      <section className="bg-gray-50 border-y border-gray-100">
+        <div className="max-w-7xl mx-auto px-6 py-20 md:py-24">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <p className="text-blue-600 font-semibold mb-3">
+              사장님이 사장님찬스를 선택하는 이유
             </p>
-            <h2 className="text-3xl md:text-4xl font-bold">
-              상담부터 단말기 안내까지, 한 번에 진행합니다.
+
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
+              개통부터 설치와 사후관리까지
+              <br className="hidden md:block" />
+              하나의 창구에서 해결하세요.
             </h2>
+
+            <p className="mt-5 text-lg text-gray-600 leading-relaxed">
+              여러 업체를 따로 알아보는 번거로움 없이
+              <br className="hidden sm:block" />
+              전담 매니저가 매장 환경에 맞춰 안내해드립니다.
+            </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-white/10 rounded-3xl p-7">
-              <p className="text-5xl font-bold text-blue-400">2,000+</p>
-              <p className="mt-4 text-xl font-bold">누적 상담</p>
-              <p className="mt-3 text-gray-300">
-                업종과 매장 환경에 맞춰 무료로 비교 상담합니다.
+            {/* 카드 1 */}
+            <div className="bg-white border border-gray-200 rounded-3xl p-7 md:p-8 shadow-sm hover:shadow-lg transition">
+              <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-6">
+                <ClipboardCheck size={28} strokeWidth={2.2} />
+              </div>
+
+              <p className="text-sm font-bold text-blue-600 mb-2">
+                ONE-STOP 진행
+              </p>
+
+              <h3 className="text-2xl font-bold text-gray-900 leading-snug">
+                복잡한 개통 절차,
+                <br />
+                한 번에 해결
+              </h3>
+
+              <p className="mt-5 text-gray-600 leading-relaxed">
+                대리점 여러 곳을 방문할 필요 없이 통신·POS·PG 관련 절차를
+                전담 매니저 한 명이 처음부터 끝까지 안내합니다.
               </p>
             </div>
 
-            <div className="bg-white/10 rounded-3xl p-7">
-              <p className="text-5xl font-bold text-blue-400">800+</p>
-              <p className="mt-4 text-xl font-bold">설치 상담</p>
-              <p className="mt-3 text-gray-300">
-                카드단말기, 영수증 프린터, 무선단말기까지 안내합니다.
+            {/* 카드 2 */}
+            <div className="bg-white border border-gray-200 rounded-3xl p-7 md:p-8 shadow-sm hover:shadow-lg transition">
+              <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-6">
+                <Store size={28} strokeWidth={2.2} />
+              </div>
+
+              <p className="text-sm font-bold text-blue-600 mb-2">
+                업종별 맞춤 추천
+              </p>
+
+              <h3 className="text-2xl font-bold text-gray-900 leading-snug">
+                매장에 꼭 맞는
+                <br />
+                기기 구성 안내
+              </h3>
+
+              <p className="mt-5 text-gray-600 leading-relaxed">
+                카페·식당·미용실·병원 등 업종과 운영 방식에 맞는
+                POS, 카드단말기, 영수증 프린터 구성을 추천합니다.
               </p>
             </div>
 
-            <div className="bg-white/10 rounded-3xl p-7">
-              <p className="text-5xl font-bold text-blue-400">98%</p>
-              <p className="mt-4 text-xl font-bold">고객 만족도</p>
-              <p className="mt-3 text-gray-300">
-                상담부터 안내 이후 관리까지 만족도 중심으로 운영합니다.
+            {/* 카드 3 */}
+            <div className="bg-gray-950 border border-gray-950 rounded-3xl p-7 md:p-8 shadow-sm hover:shadow-lg transition text-white">
+              <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center mb-6">
+                <BadgePercent size={28} strokeWidth={2.2} />
+              </div>
+
+              <p className="text-sm font-bold text-blue-400 mb-2">
+                결합 혜택 점검
               </p>
+
+              <h3 className="text-2xl font-bold leading-snug">
+                통신과 결제 인프라
+                <br />
+                고정비 절감
+              </h3>
+
+              <p className="mt-5 text-gray-300 leading-relaxed">
+                통신과 결제 인프라를 함께 점검해 적용 가능한 결합 혜택과
+                매월 절감 가능한 비용을 상담을 통해 안내해드립니다.
+              </p>
+
+              <a
+                href="#contact"
+                className="mt-7 inline-flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white px-5 py-3 rounded-xl font-semibold transition"
+              >
+                절감 가능 금액 확인하기
+              </a>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-6 pb-24">
-        <h2 className="text-4xl font-bold text-center mb-4 text-gray-900">
+      {/* 전체 상품 이동 */}
+      <section className="max-w-7xl mx-auto px-6 py-20 md:py-24">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
           카드단말기를 찾고 계신가요?
         </h2>
 
-        <p className="text-center text-gray-500 mb-12">
+        <p className="text-center text-gray-500 mb-10 md:mb-12">
           매장 환경에 맞는 카드단말기 상품을 확인해보세요.
         </p>
 
         <div className="text-center">
           <a
             href="/card-terminal"
-            className="inline-block bg-blue-600 text-white px-8 py-4 rounded-2xl font-semibold"
+            className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-semibold transition"
           >
             전체 상품 보기 →
           </a>
