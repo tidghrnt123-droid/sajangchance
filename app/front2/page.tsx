@@ -1,6 +1,17 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Image from "next/image";
+import Image from "next/image";
+
+export const metadata: Metadata = {
+  title: "토스 프론트2 카드단말기 | 사장님찬스",
+  description:
+    "토스 프론트2 카드단말기 가격, 특징, POS 연동 및 월 사용료 정보를 확인하세요.",
+  alternates: {
+    canonical: "https://sajangchance.com/front2",
+  },
+};
+
 
 export default function Front2Page() {
   const details = Array.from(

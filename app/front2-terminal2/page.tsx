@@ -1,6 +1,17 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Image from "next/image";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "토스 프론트2 + 토스 터미널2 | 사장님찬스",
+  description:
+    "금액 입력 결제와 영수증 출력이 가능한 토스 프론트2와 토스 터미널2 세트 상품입니다.",
+  alternates: {
+    canonical: "https://sajangchance.com/front2-terminal2",
+  },
+};
+
 
 export default function Front2Terminal2Page() {
   const details = Array.from(

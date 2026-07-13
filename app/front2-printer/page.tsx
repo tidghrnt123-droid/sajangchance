@@ -1,6 +1,16 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Image from "next/image";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "토스 프론트2 + 영수증 프린터 | 사장님찬스",
+  description:
+    "카페, 병원, 미용실 등 영수증 출력이 필요한 매장을 위한 프론트2와 영수증 프린터 세트 상품입니다.",
+  alternates: {
+    canonical: "https://sajangchance.com/front2-printer",
+  },
+};
 
 export default function Front2PrinterPage() {
   const details = Array.from(

@@ -1,6 +1,16 @@
 import Header from "@/components/Header";
 import Image from "next/image";
 import Footer from "@/components/Footer";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "카드단말기 비교 | 사장님찬스",
+  description:
+    "토스 프론트2, 영수증 프린터, 토스 터미널2, 무선 카드단말기를 한눈에 비교하세요.",
+  alternates: {
+    canonical: "https://sajangchance.com/card-terminal",
+  },
+};
 
 export default function CardTerminalPage() {
   return (

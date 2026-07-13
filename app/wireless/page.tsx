@@ -1,6 +1,16 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Image from "next/image";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "무선 카드단말기 | 사장님찬스",
+  description:
+    "KT LTE 기반 무선 카드단말기입니다. 배달, 행사장, 푸드트럭 등 이동형 결제가 필요한 업종에 적합합니다.",
+  alternates: {
+    canonical: "https://sajangchance.com/wireless",
+  },
+};
 
 export default function WirelessPage() {
   const details = ["/images/lte1.png", "/images/lte2.png"];
