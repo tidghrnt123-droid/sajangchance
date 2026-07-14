@@ -49,7 +49,7 @@ export default function Front2PrinterPage() {
 
           <div className="flex gap-4">
             <a
-              href="/buy/front2-printer"
+              href="/checkout/front2-printer"
               className="bg-blue-600 text-white px-8 py-4 rounded-2xl font-semibold"
             >
               구매하기

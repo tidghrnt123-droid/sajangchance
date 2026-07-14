@@ -50,7 +50,7 @@ export default function Front2Terminal2Page() {
 
           <div className="flex gap-4">
             <a
-              href="/buy/front2-terminal2"
+              href="/checkout/front2-terminal2"
               className="bg-blue-600 text-white px-8 py-4 rounded-2xl font-semibold"
             >
               구매하기

@@ -46,7 +46,7 @@ export default function WirelessPage() {
 
           <div className="flex gap-4">
             <a
-              href="/buy/wireless"
+              href="/checkout/wireless"
               className="bg-blue-600 text-white px-8 py-4 rounded-2xl font-semibold"
             >
               구매하기

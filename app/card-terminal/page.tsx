@@ -69,7 +69,7 @@ export default function CardTerminalPage() {
                 </a>
 
                 <a
-                  href="/buy/front2"
+                  href="/checkout/front2"
                   className="block text-center bg-blue-600 text-white py-3 rounded-xl font-semibold"
                 >
                   구매하기
@@ -110,7 +110,7 @@ export default function CardTerminalPage() {
                 </a>
 
                 <a
-                  href="/buy/front2-printer"
+                  href="/checkout/front2-printer"
                   className="block text-center bg-blue-600 text-white py-3 rounded-xl font-semibold"
                 >
                   구매하기
@@ -151,7 +151,7 @@ export default function CardTerminalPage() {
                 </a>
 
                 <a
-                  href="/buy/front2-terminal2"
+                  href="/checkout/front2-terminal2"
                   className="block text-center bg-blue-600 text-white py-3 rounded-xl font-semibold"
                 >
                   구매하기
@@ -193,7 +193,7 @@ export default function CardTerminalPage() {
                 </a>
 
                 <a
-                  href="/buy/wireless"
+                  href="/checkout/wireless"
                   className="block text-center bg-blue-600 text-white py-3 rounded-xl font-semibold"
                 >
                   구매하기

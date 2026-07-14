@@ -1,7 +1,9 @@
+import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Image from "next/image";
-import Image from "next/image";
+
+
 
 export const metadata: Metadata = {
   title: "토스 프론트2 카드단말기 | 사장님찬스",
@@ -50,7 +52,7 @@ export default function Front2Page() {
 
           <div className="flex gap-4">
             <a
-              href="/buy/front2"
+              href="/checkout/front2"
               className="bg-blue-600 text-white px-8 py-4 rounded-2xl font-semibold"
             >
               구매하기
