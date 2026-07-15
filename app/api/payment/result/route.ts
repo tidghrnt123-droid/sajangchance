@@ -52,8 +52,8 @@ export async function POST(request: NextRequest) {
     }
 
     const success =
+      resultCode === "EC0000" ||
       resultCode === "0000" ||
-      resultCode === "000000" ||
       resultCode === "00";
 
     if (!success) {
