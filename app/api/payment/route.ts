@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
       paymentUrl: `${baseUrl}/paypage/common/mainFrame.pay`,
       fields: {
         mid,
-        rUrl: `${siteUrl}/payment/success`,
+        rUrl: `${siteUrl}/api/payment/result`,
         rMethod: "POST",
         payGroup: "GEP",
         payType: "CC",
