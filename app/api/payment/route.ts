@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export const runtime = "nodejs";
 
@@ -77,10 +78,30 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     const productCode = body.productCode as ProductCode;
+
     const buyerName =
       typeof body.buyerName === "string" ? body.buyerName.trim() : "";
+
+    const buyerPhone =
+      typeof body.buyerPhone === "string" ? body.buyerPhone.trim() : "";
+
     const buyerEmail =
       typeof body.buyerEmail === "string" ? body.buyerEmail.trim() : "";
+
+    const businessName =
+      typeof body.businessName === "string"
+        ? body.businessName.trim()
+        : "";
+
+    const deliveryAddress =
+      typeof body.deliveryAddress === "string"
+        ? body.deliveryAddress.trim()
+        : "";
+
+    const requestNote =
+      typeof body.requestNote === "string"
+        ? body.requestNote.trim()
+        : "";
 
     const product = products[productCode];
 
@@ -104,9 +125,47 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!buyerPhone) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "연락처를 입력해주세요.",
+        },
+        { status: 400 }
+      );
+    }
+
     const orderno = createOrderNumber();
     const { orderdt, ordertm } = getKoreaDateTime();
     const buyReqamt = String(product.amount);
+
+    const { error: orderInsertError } = await supabaseAdmin
+      .from("orders")
+      .insert({
+        order_no: orderno,
+        buyer_name: buyerName,
+        buyer_phone: buyerPhone,
+        buyer_email: buyerEmail || null,
+        business_name: businessName || null,
+        delivery_address: deliveryAddress || null,
+        request_note: requestNote || null,
+        product_code: productCode,
+        product_name: product.name,
+        amount: product.amount,
+        payment_status: "PENDING",
+      });
+
+    if (orderInsertError) {
+      console.error("Supabase order insert error:", orderInsertError);
+
+      return NextResponse.json(
+        {
+          success: false,
+          message: "주문 저장 중 오류가 발생했습니다.",
+        },
+        { status: 500 }
+      );
+    }
 
     const hashMessage = `${orderno}${orderdt}${ordertm}${buyReqamt}`;
 

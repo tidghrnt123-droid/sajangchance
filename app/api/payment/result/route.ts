@@ -1,13 +1,15 @@
 import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || "https://sajangchance.com";
+
   try {
     const apiKey = process.env.KOVAN_API_KEY;
-    const siteUrl =
-      process.env.NEXT_PUBLIC_SITE_URL || "https://sajangchance.com";
 
     if (!apiKey) {
       return NextResponse.redirect(
@@ -26,8 +28,15 @@ export async function POST(request: NextRequest) {
     const orderno = String(formData.get("ORDERNO") ?? "");
     const receivedHash = String(formData.get("CHECK_HASH") ?? "");
 
-    // KOVAN 응답 해시 검증 규칙:
-    // RESULT_CODE + TID + ORDERNO
+    if (!orderno) {
+      return NextResponse.redirect(
+        `${siteUrl}/payment/fail?message=${encodeURIComponent(
+          "주문번호가 전달되지 않았습니다."
+        )}`,
+        303
+      );
+    }
+
     const hashMessage = `${resultCode}${tid}${orderno}`;
 
     const expectedHash = crypto
@@ -35,18 +44,33 @@ export async function POST(request: NextRequest) {
       .update(hashMessage, "utf8")
       .digest("base64");
 
+    const receivedBuffer = Buffer.from(receivedHash, "utf8");
+    const expectedBuffer = Buffer.from(expectedHash, "utf8");
+
     const hashValid =
       receivedHash.length > 0 &&
-      crypto.timingSafeEqual(
-        Buffer.from(receivedHash),
-        Buffer.from(expectedHash)
-      );
+      receivedBuffer.length === expectedBuffer.length &&
+      crypto.timingSafeEqual(receivedBuffer, expectedBuffer);
 
     if (!hashValid) {
+      const { error: updateError } = await supabaseAdmin
+        .from("orders")
+        .update({
+          payment_status: "FAILED",
+          result_code: "HASH_ERROR",
+          result_message: "결제 결과 검증 실패",
+          updated_at: new Date().toISOString(),
+        })
+        .eq("order_no", orderno);
+
+      if (updateError) {
+        console.error("Supabase hash error update failed:", updateError);
+      }
+
       return NextResponse.redirect(
-        `${siteUrl}/payment/fail?message=${encodeURIComponent(
-          "결제 결과 검증에 실패했습니다."
-        )}`,
+        `${siteUrl}/payment/fail?order=${encodeURIComponent(
+          orderno
+        )}&message=${encodeURIComponent("결제 결과 검증에 실패했습니다.")}`,
         303
       );
     }
@@ -57,12 +81,54 @@ export async function POST(request: NextRequest) {
       resultCode === "00";
 
     if (!success) {
+      const { error: updateError } = await supabaseAdmin
+        .from("orders")
+        .update({
+          tid: tid || null,
+          payment_status: "FAILED",
+          result_code: resultCode || null,
+          result_message: resultMessage || null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("order_no", orderno);
+
+      if (updateError) {
+        console.error("Supabase failed payment update error:", updateError);
+      }
+
       return NextResponse.redirect(
         `${siteUrl}/payment/fail?order=${encodeURIComponent(
           orderno
         )}&code=${encodeURIComponent(
           resultCode
         )}&message=${encodeURIComponent(resultMessage)}`,
+        303
+      );
+    }
+
+    const now = new Date().toISOString();
+
+    const { error: updateError } = await supabaseAdmin
+      .from("orders")
+      .update({
+        tid: tid || null,
+        payment_status: "PAID",
+        result_code: resultCode,
+        result_message: resultMessage || null,
+        approved_at: now,
+        updated_at: now,
+      })
+      .eq("order_no", orderno);
+
+    if (updateError) {
+      console.error("Supabase paid payment update error:", updateError);
+
+      return NextResponse.redirect(
+        `${siteUrl}/payment/fail?order=${encodeURIComponent(
+          orderno
+        )}&message=${encodeURIComponent(
+          "결제는 승인됐지만 주문정보 저장에 실패했습니다."
+        )}`,
         303
       );
     }
@@ -75,9 +141,6 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error("KOVAN payment result error:", error);
-
-    const siteUrl =
-      process.env.NEXT_PUBLIC_SITE_URL || "https://sajangchance.com";
 
     return NextResponse.redirect(
       `${siteUrl}/payment/fail?message=${encodeURIComponent(
