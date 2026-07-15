@@ -1,15 +1,22 @@
-"use client";
-
-import { useSearchParams } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-export default function PaymentFailPage() {
-  const searchParams = useSearchParams();
+type PaymentFailPageProps = {
+  searchParams: Promise<{
+    order?: string;
+    code?: string;
+    message?: string;
+  }>;
+};
 
-  const order = searchParams.get("order");
-  const code = searchParams.get("code");
-  const message = searchParams.get("message");
+export default async function PaymentFailPage({
+  searchParams,
+}: PaymentFailPageProps) {
+  const params = await searchParams;
+
+  const order = params.order ?? "";
+  const code = params.code ?? "";
+  const message = params.message ?? "";
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -31,31 +38,33 @@ export default function PaymentFailPage() {
             잠시 후 다시 시도하거나 상담으로 문의해주세요.
           </p>
 
-          <div className="mt-8 rounded-2xl bg-gray-50 p-5 text-left space-y-3">
-            {order && (
-              <p>
-                <span className="text-gray-500">주문번호</span>
-                <br />
-                <strong className="text-gray-900">{order}</strong>
-              </p>
-            )}
+          {(order || code || message) && (
+            <div className="mt-8 rounded-2xl bg-gray-50 p-5 text-left space-y-3">
+              {order && (
+                <p>
+                  <span className="text-gray-500">주문번호</span>
+                  <br />
+                  <strong className="text-gray-900">{order}</strong>
+                </p>
+              )}
 
-            {code && (
-              <p>
-                <span className="text-gray-500">오류코드</span>
-                <br />
-                <strong className="text-red-600">{code}</strong>
-              </p>
-            )}
+              {code && (
+                <p>
+                  <span className="text-gray-500">오류코드</span>
+                  <br />
+                  <strong className="text-red-600">{code}</strong>
+                </p>
+              )}
 
-            {message && (
-              <p>
-                <span className="text-gray-500">오류내용</span>
-                <br />
-                <strong className="text-gray-900">{message}</strong>
-              </p>
-            )}
-          </div>
+              {message && (
+                <p>
+                  <span className="text-gray-500">오류내용</span>
+                  <br />
+                  <strong className="text-gray-900">{message}</strong>
+                </p>
+              )}
+            </div>
+          )}
 
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
             <a
