@@ -4,9 +4,17 @@ import { supabaseServer } from "@/lib/supabaseServer";
 
 export const dynamic = "force-dynamic";
 
+const SHIPPING_STEPS = [
+  "결제완료",
+  "가맹 접수대기",
+  "가맹 심사중",
+  "배송준비",
+  "배송중",
+  "배송완료",
+] as const;
+
 type OrderCheckPageProps = {
   searchParams: Promise<{
-    orderNo?: string;
     phone?: string;
   }>;
 };
@@ -27,6 +35,32 @@ type Order = {
 
 function normalizePhone(phone: string) {
   return phone.replace(/[^0-9]/g, "");
+}
+
+function maskName(name: string) {
+  if (!name) {
+    return "-";
+  }
+
+  if (name.length === 1) {
+    return name;
+  }
+
+  if (name.length === 2) {
+    return `${name[0]}*`;
+  }
+
+  return `${name[0]}${"*".repeat(name.length - 2)}${name[name.length - 1]}`;
+}
+
+function maskPhone(phone: string) {
+  const normalized = normalizePhone(phone);
+
+  if (normalized.length < 8) {
+    return phone;
+  }
+
+  return `${normalized.slice(0, 3)}-****-${normalized.slice(-4)}`;
 }
 
 function formatDate(date: string | null) {
@@ -61,18 +95,99 @@ function getPaymentStatus(status: string) {
   }
 }
 
+function getCurrentStepIndex(status: string) {
+  const index = SHIPPING_STEPS.indexOf(
+    status as (typeof SHIPPING_STEPS)[number]
+  );
+
+  return index >= 0 ? index : 0;
+}
+
+function ProgressSteps({
+  currentStatus,
+}: {
+  currentStatus: string;
+}) {
+  const currentIndex = getCurrentStepIndex(currentStatus);
+
+  return (
+    <div className="mt-6">
+      <p className="mb-4 text-sm font-semibold text-gray-900">
+        진행상태
+      </p>
+
+      <div className="space-y-0">
+        {SHIPPING_STEPS.map((step, index) => {
+          const completed = index < currentIndex;
+          const current = index === currentIndex;
+
+          return (
+            <div key={step} className="flex gap-4">
+              <div className="flex flex-col items-center">
+                <div
+                  className={[
+                    "flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold",
+                    completed
+                      ? "bg-green-600 text-white"
+                      : current
+                      ? "bg-blue-600 text-white ring-4 ring-blue-100"
+                      : "bg-gray-200 text-gray-500",
+                  ].join(" ")}
+                >
+                  {completed ? "✓" : index + 1}
+                </div>
+
+                {index < SHIPPING_STEPS.length - 1 && (
+                  <div
+                    className={[
+                      "h-10 w-0.5",
+                      index < currentIndex
+                        ? "bg-green-500"
+                        : "bg-gray-200",
+                    ].join(" ")}
+                  />
+                )}
+              </div>
+
+              <div className="pt-2">
+                <p
+                  className={[
+                    "font-semibold",
+                    completed
+                      ? "text-green-700"
+                      : current
+                      ? "text-blue-700"
+                      : "text-gray-400",
+                  ].join(" ")}
+                >
+                  {step}
+                </p>
+
+                {current && (
+                  <p className="mt-1 text-sm text-gray-500">
+                    현재 진행 중인 단계입니다.
+                  </p>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default async function OrderCheckPage({
   searchParams,
 }: OrderCheckPageProps) {
   const params = await searchParams;
+  const phoneInput = params.phone ?? "";
+  const phone = normalizePhone(phoneInput);
 
-  const orderNo = (params.orderNo ?? "").trim();
-  const phone = normalizePhone(params.phone ?? "");
-
-  let order: Order | null = null;
+  let orders: Order[] = [];
   let searched = false;
 
-  if (orderNo && phone) {
+  if (phone) {
     searched = true;
 
     const { data } = await supabaseServer
@@ -92,34 +207,31 @@ export default async function OrderCheckPage({
           approved_at
         `
       )
-      .eq("order_no", orderNo)
-      .single();
+      .order("created_at", { ascending: false })
+      .limit(10);
 
-    if (
-      data &&
-      normalizePhone(String(data.buyer_phone ?? "")) === phone
-    ) {
-      order = data as Order;
-    }
+    orders = ((data ?? []) as Order[]).filter(
+      (order) => normalizePhone(order.buyer_phone) === phone
+    );
   }
 
   return (
     <main className="min-h-screen bg-gray-50">
       <Header />
 
-      <section className="mx-auto max-w-3xl px-6 py-14 md:py-20">
+      <section className="mx-auto max-w-4xl px-6 py-14 md:py-20">
         <div className="mb-10 text-center">
           <p className="font-semibold text-blue-600">
             사장님찬스 주문조회
           </p>
 
           <h1 className="mt-3 text-3xl font-bold text-gray-900 md:text-4xl">
-            주문·배송 상태를 확인하세요.
+            주문·진행 상태를 확인하세요.
           </h1>
 
           <p className="mt-4 text-gray-600">
-            결제 완료 화면에 표시된 주문번호와 주문 시 입력한 연락처를
-            입력해주세요.
+            주문 시 입력한 휴대폰 번호를 입력하면 최근 주문내역을
+            확인할 수 있습니다.
           </p>
         </div>
 
@@ -128,25 +240,6 @@ export default async function OrderCheckPage({
           className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm md:p-10"
         >
           <div className="space-y-6">
-            <div>
-              <label
-                htmlFor="orderNo"
-                className="mb-2 block font-semibold text-gray-900"
-              >
-                주문번호
-              </label>
-
-              <input
-                id="orderNo"
-                name="orderNo"
-                type="text"
-                required
-                defaultValue={orderNo}
-                placeholder="예: SC1234567890ABCD"
-                className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-blue-600"
-              />
-            </div>
-
             <div>
               <label
                 htmlFor="phone"
@@ -160,7 +253,7 @@ export default async function OrderCheckPage({
                 name="phone"
                 type="tel"
                 required
-                defaultValue={params.phone ?? ""}
+                defaultValue={phoneInput}
                 placeholder="010-0000-0000"
                 className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-blue-600"
               />
@@ -175,83 +268,107 @@ export default async function OrderCheckPage({
           </div>
         </form>
 
-        {searched && !order && (
+        {searched && orders.length === 0 && (
           <div className="mt-6 rounded-2xl border border-red-100 bg-red-50 p-5 text-center text-red-600">
-            주문번호 또는 연락처가 일치하지 않습니다.
+            입력한 연락처와 일치하는 주문내역이 없습니다.
           </div>
         )}
 
-        {order && (
-          <section className="mt-8 overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
-            <div className="border-b border-gray-200 px-6 py-5">
-              <p className="text-sm text-gray-500">주문번호</p>
-              <h2 className="mt-1 text-xl font-bold text-gray-900">
-                {order.order_no}
-              </h2>
+        {orders.length > 0 && (
+          <div className="mt-8 space-y-6">
+            <div className="rounded-2xl border border-blue-100 bg-blue-50 px-5 py-4 text-sm text-blue-700">
+              최근 주문 {orders.length}건을 표시합니다.
             </div>
 
-            <div className="grid gap-6 p-6 md:grid-cols-2 md:p-8">
-              <div>
-                <p className="text-sm text-gray-500">주문자</p>
-                <p className="mt-1 font-semibold text-gray-900">
-                  {order.buyer_name}
-                </p>
-              </div>
+            {orders.map((order) => (
+              <section
+                key={order.order_no}
+                className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm"
+              >
+                <div className="border-b border-gray-200 px-6 py-5">
+                  <p className="text-sm text-gray-500">상품명</p>
 
-              <div>
-                <p className="text-sm text-gray-500">상품명</p>
-                <p className="mt-1 font-semibold text-gray-900">
-                  {order.product_name}
-                </p>
-              </div>
+                  <h2 className="mt-1 text-xl font-bold text-gray-900">
+                    {order.product_name}
+                  </h2>
 
-              <div>
-                <p className="text-sm text-gray-500">결제금액</p>
-                <p className="mt-1 font-semibold text-gray-900">
-                  {order.amount.toLocaleString()}원
-                </p>
-              </div>
-
-              <div>
-                <p className="text-sm text-gray-500">결제상태</p>
-                <p className="mt-1 font-semibold text-green-700">
-                  {getPaymentStatus(order.payment_status)}
-                </p>
-              </div>
-
-              <div>
-                <p className="text-sm text-gray-500">배송상태</p>
-                <p className="mt-1 font-semibold text-blue-700">
-                  {order.shipping_status}
-                </p>
-              </div>
-
-              <div>
-                <p className="text-sm text-gray-500">주문일시</p>
-                <p className="mt-1 font-semibold text-gray-900">
-                  {formatDate(order.created_at)}
-                </p>
-              </div>
-
-              {order.courier && (
-                <div>
-                  <p className="text-sm text-gray-500">택배사</p>
-                  <p className="mt-1 font-semibold text-gray-900">
-                    {order.courier}
+                  <p className="mt-2 text-sm text-gray-500">
+                    주문일시 {formatDate(order.created_at)}
                   </p>
                 </div>
-              )}
 
-              {order.tracking_number && (
-                <div>
-                  <p className="text-sm text-gray-500">송장번호</p>
-                  <p className="mt-1 font-semibold text-gray-900">
-                    {order.tracking_number}
-                  </p>
+                <div className="p-6 md:p-8">
+                  <div className="grid gap-6 md:grid-cols-2">
+                    <div>
+                      <p className="text-sm text-gray-500">주문자</p>
+                      <p className="mt-1 font-semibold text-gray-900">
+                        {maskName(order.buyer_name)}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-gray-500">연락처</p>
+                      <p className="mt-1 font-semibold text-gray-900">
+                        {maskPhone(order.buyer_phone)}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-gray-500">결제금액</p>
+                      <p className="mt-1 font-semibold text-gray-900">
+                        {order.amount.toLocaleString()}원
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-gray-500">결제상태</p>
+                      <p className="mt-1 font-semibold text-green-700">
+                        {getPaymentStatus(order.payment_status)}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-gray-500">현재 진행상태</p>
+                      <p className="mt-1 font-semibold text-blue-700">
+                        {order.shipping_status}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-gray-500">주문번호</p>
+                      <p className="mt-1 break-all font-semibold text-gray-900">
+                        {order.order_no}
+                      </p>
+                    </div>
+
+                    {order.courier && (
+                      <div>
+                        <p className="text-sm text-gray-500">택배사</p>
+                        <p className="mt-1 font-semibold text-gray-900">
+                          {order.courier}
+                        </p>
+                      </div>
+                    )}
+
+                    {order.tracking_number && (
+                      <div>
+                        <p className="text-sm text-gray-500">송장번호</p>
+                        <p className="mt-1 font-semibold text-gray-900">
+                          {order.tracking_number}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mt-8 border-t border-gray-200 pt-8">
+                    <ProgressSteps
+                      currentStatus={order.shipping_status}
+                    />
+                  </div>
                 </div>
-              )}
-            </div>
-          </section>
+              </section>
+            ))}
+          </div>
         )}
       </section>
 

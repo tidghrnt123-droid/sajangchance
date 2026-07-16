@@ -14,6 +14,8 @@ export const dynamic = "force-dynamic";
 
 const SHIPPING_STATUSES = [
   "결제완료",
+  "가맹 접수대기",
+  "가맹 심사중",
   "배송준비",
   "배송중",
   "배송완료",
@@ -125,12 +127,22 @@ function getShippingStatusClass(status: string) {
   switch (status) {
     case "결제완료":
       return "bg-gray-100 text-gray-700";
+
+    case "가맹 접수대기":
+      return "bg-orange-50 text-orange-700";
+
+    case "가맹 심사중":
+      return "bg-purple-50 text-purple-700";
+
     case "배송준비":
       return "bg-yellow-50 text-yellow-700";
+
     case "배송중":
       return "bg-blue-50 text-blue-700";
+
     case "배송완료":
       return "bg-green-50 text-green-700";
+
     default:
       return "bg-gray-100 text-gray-700";
   }
