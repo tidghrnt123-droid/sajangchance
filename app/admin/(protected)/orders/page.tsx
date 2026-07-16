@@ -21,6 +21,18 @@ const SHIPPING_STATUSES = [
   "배송완료",
 ] as const;
 
+const COURIERS = [
+  "",
+  "CJ대한통운",
+  "한진택배",
+  "롯데택배",
+  "우체국택배",
+  "로젠택배",
+  "경동택배",
+  "대신택배",
+  "기타",
+] as const;
+
 type ShippingStatus = (typeof SHIPPING_STATUSES)[number];
 
 type Order = {
@@ -41,7 +53,7 @@ type Order = {
   approved_at: string | null;
 };
 
-async function updateShippingStatus(formData: FormData) {
+async function updateDeliveryInfo(formData: FormData) {
   "use server";
 
   const cookieStore = await cookies();
@@ -60,26 +72,48 @@ async function updateShippingStatus(formData: FormData) {
     formData.get("shippingStatus") ?? ""
   ) as ShippingStatus;
 
+  const courier = String(
+    formData.get("courier") ?? ""
+  ).trim();
+
+  const trackingNumber = String(
+    formData.get("trackingNumber") ?? ""
+  )
+    .trim()
+    .replace(/\s/g, "");
+
   if (
     !Number.isInteger(orderId) ||
     !SHIPPING_STATUSES.includes(shippingStatus)
   ) {
-    throw new Error("잘못된 배송상태 변경 요청입니다.");
+    throw new Error("잘못된 배송정보 변경 요청입니다.");
   }
 
   const { data, error } = await supabaseAdmin
     .from("orders")
     .update({
       shipping_status: shippingStatus,
+      courier: courier || null,
+      tracking_number: trackingNumber || null,
       updated_at: new Date().toISOString(),
     })
     .eq("id", orderId)
-    .select("id, shipping_status")
+    .select(
+      `
+        id,
+        shipping_status,
+        courier,
+        tracking_number
+      `
+    )
     .single();
 
   if (error) {
-    console.error("배송상태 변경 오류:", error);
-    throw new Error(`배송상태 변경 실패: ${error.message}`);
+    console.error("배송정보 저장 오류:", error);
+
+    throw new Error(
+      `배송정보 저장에 실패했습니다: ${error.message}`
+    );
   }
 
   if (!data) {
@@ -87,6 +121,8 @@ async function updateShippingStatus(formData: FormData) {
   }
 
   revalidatePath("/admin/orders");
+  revalidatePath("/order-check");
+
   redirect("/admin/orders");
 }
 
@@ -94,14 +130,19 @@ function getPaymentStatusLabel(status: string) {
   switch (status) {
     case "PAID":
       return "결제완료";
+
     case "PENDING":
       return "결제대기";
+
     case "FAILED":
       return "결제실패";
+
     case "CANCELLED":
       return "주문취소";
+
     case "REFUNDED":
       return "환불완료";
+
     default:
       return status;
   }
@@ -111,13 +152,17 @@ function getPaymentStatusClass(status: string) {
   switch (status) {
     case "PAID":
       return "bg-green-50 text-green-700";
+
     case "PENDING":
       return "bg-yellow-50 text-yellow-700";
+
     case "FAILED":
       return "bg-red-50 text-red-700";
+
     case "CANCELLED":
     case "REFUNDED":
       return "bg-gray-100 text-gray-700";
+
     default:
       return "bg-gray-100 text-gray-700";
   }
@@ -193,8 +238,13 @@ export default async function OrdersPage() {
     (order) => order.payment_status === "PAID"
   );
 
-  const preparingOrders = orders.filter(
-    (order) => order.shipping_status === "배송준비"
+  const waitingOrders = orders.filter(
+    (order) =>
+      order.shipping_status === "가맹 접수대기"
+  );
+
+  const reviewingOrders = orders.filter(
+    (order) => order.shipping_status === "가맹 심사중"
   );
 
   const shippingOrders = orders.filter(
@@ -208,7 +258,7 @@ export default async function OrdersPage() {
 
   return (
     <main className="min-h-screen bg-gray-100 px-5 py-8 md:px-10">
-      <div className="mx-auto max-w-[1500px]">
+      <div className="mx-auto max-w-[1700px]">
         <header className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="font-semibold text-blue-600">
@@ -237,9 +287,11 @@ export default async function OrdersPage() {
           </div>
         </header>
 
-        <section className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+        <section className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-6">
           <div className="rounded-2xl border border-gray-200 bg-white p-6">
-            <p className="text-sm text-gray-500">전체 주문</p>
+            <p className="text-sm text-gray-500">
+              전체 주문
+            </p>
 
             <p className="mt-2 text-3xl font-bold text-gray-900">
               {orders.length}건
@@ -247,7 +299,9 @@ export default async function OrdersPage() {
           </div>
 
           <div className="rounded-2xl border border-gray-200 bg-white p-6">
-            <p className="text-sm text-gray-500">결제완료</p>
+            <p className="text-sm text-gray-500">
+              결제완료
+            </p>
 
             <p className="mt-2 text-3xl font-bold text-green-600">
               {paidOrders.length}건
@@ -255,15 +309,29 @@ export default async function OrdersPage() {
           </div>
 
           <div className="rounded-2xl border border-gray-200 bg-white p-6">
-            <p className="text-sm text-gray-500">배송준비</p>
+            <p className="text-sm text-gray-500">
+              가맹 접수대기
+            </p>
 
-            <p className="mt-2 text-3xl font-bold text-yellow-600">
-              {preparingOrders.length}건
+            <p className="mt-2 text-3xl font-bold text-orange-600">
+              {waitingOrders.length}건
             </p>
           </div>
 
           <div className="rounded-2xl border border-gray-200 bg-white p-6">
-            <p className="text-sm text-gray-500">배송중</p>
+            <p className="text-sm text-gray-500">
+              가맹 심사중
+            </p>
+
+            <p className="mt-2 text-3xl font-bold text-purple-600">
+              {reviewingOrders.length}건
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-gray-200 bg-white p-6">
+            <p className="text-sm text-gray-500">
+              배송중
+            </p>
 
             <p className="mt-2 text-3xl font-bold text-blue-600">
               {shippingOrders.length}건
@@ -271,7 +339,9 @@ export default async function OrdersPage() {
           </div>
 
           <div className="rounded-2xl border border-gray-200 bg-white p-6">
-            <p className="text-sm text-gray-500">결제완료 금액</p>
+            <p className="text-sm text-gray-500">
+              결제완료 금액
+            </p>
 
             <p className="mt-2 text-3xl font-bold text-blue-600">
               {totalSales.toLocaleString()}원
@@ -284,6 +354,11 @@ export default async function OrdersPage() {
             <h2 className="text-xl font-bold text-gray-900">
               주문 목록
             </h2>
+
+            <p className="mt-2 text-sm text-gray-500">
+              배송상태, 택배사와 송장번호를 입력한 뒤 저장을
+              눌러주세요.
+            </p>
           </div>
 
           {error ? (
@@ -296,7 +371,7 @@ export default async function OrdersPage() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[1450px] text-left text-sm">
+              <table className="w-full min-w-[1800px] text-left text-sm">
                 <thead className="bg-gray-50 text-gray-600">
                   <tr>
                     <th className="px-5 py-4 font-semibold">
@@ -324,11 +399,11 @@ export default async function OrdersPage() {
                     </th>
 
                     <th className="px-5 py-4 font-semibold">
-                      배송상태
+                      진행상태
                     </th>
 
                     <th className="px-5 py-4 font-semibold">
-                      배송상태 변경
+                      배송정보 관리
                     </th>
 
                     <th className="px-5 py-4 font-semibold">
@@ -397,10 +472,10 @@ export default async function OrdersPage() {
                         </span>
                       </td>
 
-                      <td className="whitespace-nowrap px-5 py-4">
+                      <td className="px-5 py-4">
                         <form
-                          action={updateShippingStatus}
-                          className="flex items-center gap-2"
+                          action={updateDeliveryInfo}
+                          className="flex min-w-[650px] items-center gap-2"
                         >
                           <input
                             type="hidden"
@@ -414,19 +489,62 @@ export default async function OrdersPage() {
                             className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-blue-600"
                           >
                             {SHIPPING_STATUSES.map((status) => (
-                              <option key={status} value={status}>
+                              <option
+                                key={status}
+                                value={status}
+                              >
                                 {status}
                               </option>
                             ))}
                           </select>
 
+                          <select
+                            name="courier"
+                            defaultValue={order.courier ?? ""}
+                            className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-blue-600"
+                          >
+                            {COURIERS.map((courier) => (
+                              <option
+                                key={courier || "none"}
+                                value={courier}
+                              >
+                                {courier || "택배사 선택"}
+                              </option>
+                            ))}
+                          </select>
+
+                          <input
+                            type="text"
+                            name="trackingNumber"
+                            defaultValue={
+                              order.tracking_number ?? ""
+                            }
+                            placeholder="송장번호 입력"
+                            className="w-44 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-600"
+                          />
+
                           <button
                             type="submit"
-                            className="rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+                            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
                           >
-                            변경
+                            저장
                           </button>
                         </form>
+
+                        {(order.courier ||
+                          order.tracking_number) && (
+                          <div className="mt-2 flex gap-3 text-xs text-gray-500">
+                            {order.courier && (
+                              <span>{order.courier}</span>
+                            )}
+
+                            {order.tracking_number && (
+                              <span>
+                                송장 {order.tracking_number}
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </td>
 
                       <td className="whitespace-nowrap px-5 py-4 text-gray-600">
