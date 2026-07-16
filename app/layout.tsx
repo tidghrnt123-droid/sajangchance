@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
+import FloatingButtons from "@/components/FloatingButtons";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -71,8 +72,10 @@ export default function RootLayout({
       lang="ko"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col pb-[76px] md:pb-0">
         {children}
+
+        <FloatingButtons />
 
         <Script id="acecounter" strategy="afterInteractive">
           {`

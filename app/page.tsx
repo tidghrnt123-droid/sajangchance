@@ -74,6 +74,8 @@ export default function Home() {
               >
                 상품 보기
               </a>
+
+
             </div>
           </div>
 
@@ -162,7 +164,6 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {/* 카드 1 */}
             <div className="bg-white border border-gray-200 rounded-3xl p-7 md:p-8 shadow-sm hover:shadow-lg transition">
               <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-6">
                 <ClipboardCheck size={28} strokeWidth={2.2} />
@@ -184,7 +185,6 @@ export default function Home() {
               </p>
             </div>
 
-            {/* 카드 2 */}
             <div className="bg-white border border-gray-200 rounded-3xl p-7 md:p-8 shadow-sm hover:shadow-lg transition">
               <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-6">
                 <Store size={28} strokeWidth={2.2} />
@@ -206,7 +206,6 @@ export default function Home() {
               </p>
             </div>
 
-            {/* 카드 3 */}
             <div className="bg-gray-950 border border-gray-950 rounded-3xl p-7 md:p-8 shadow-sm hover:shadow-lg transition text-white">
               <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center mb-6">
                 <BadgePercent size={28} strokeWidth={2.2} />
