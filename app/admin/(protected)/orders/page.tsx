@@ -209,6 +209,16 @@ function formatDate(date: string | null) {
 }
 
 export default async function OrdersPage() {
+  const cookieStore = await cookies();
+
+  const sessionToken = cookieStore.get(
+    getAdminSessionCookieName()
+  )?.value;
+
+  if (!verifyAdminSessionToken(sessionToken)) {
+    redirect("/admin");
+  }
+
   const { data, error } = await supabaseServer
     .from("orders")
     .select(
@@ -239,8 +249,7 @@ export default async function OrdersPage() {
   );
 
   const waitingOrders = orders.filter(
-    (order) =>
-      order.shipping_status === "가맹 접수대기"
+    (order) => order.shipping_status === "가맹 접수대기"
   );
 
   const reviewingOrders = orders.filter(
@@ -268,19 +277,32 @@ export default async function OrdersPage() {
             <h1 className="mt-1 text-3xl font-bold text-gray-900">
               주문관리
             </h1>
+
+            <p className="mt-2 text-sm text-gray-500">
+              주문정보와 가맹 진행상태, 배송정보를 관리합니다.
+            </p>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <a
               href="/"
-              className="rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700"
+              className="rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:border-blue-600 hover:text-blue-600"
             >
               홈페이지
             </a>
 
             <a
+              href="/order-check"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm font-semibold text-blue-700 transition hover:bg-blue-100"
+            >
+              고객 주문조회
+            </a>
+
+            <a
               href="/api/admin/logout"
-              className="rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white"
+              className="rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-700"
             >
               로그아웃
             </a>
@@ -288,8 +310,8 @@ export default async function OrdersPage() {
         </header>
 
         <section className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-6">
-          <div className="rounded-2xl border border-gray-200 bg-white p-6">
-            <p className="text-sm text-gray-500">
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+            <p className="text-sm font-medium text-gray-500">
               전체 주문
             </p>
 
@@ -298,8 +320,8 @@ export default async function OrdersPage() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-gray-200 bg-white p-6">
-            <p className="text-sm text-gray-500">
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+            <p className="text-sm font-medium text-gray-500">
               결제완료
             </p>
 
@@ -308,8 +330,8 @@ export default async function OrdersPage() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-gray-200 bg-white p-6">
-            <p className="text-sm text-gray-500">
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+            <p className="text-sm font-medium text-gray-500">
               가맹 접수대기
             </p>
 
@@ -318,8 +340,8 @@ export default async function OrdersPage() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-gray-200 bg-white p-6">
-            <p className="text-sm text-gray-500">
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+            <p className="text-sm font-medium text-gray-500">
               가맹 심사중
             </p>
 
@@ -328,8 +350,8 @@ export default async function OrdersPage() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-gray-200 bg-white p-6">
-            <p className="text-sm text-gray-500">
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+            <p className="text-sm font-medium text-gray-500">
               배송중
             </p>
 
@@ -338,8 +360,8 @@ export default async function OrdersPage() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-gray-200 bg-white p-6">
-            <p className="text-sm text-gray-500">
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+            <p className="text-sm font-medium text-gray-500">
               결제완료 금액
             </p>
 
@@ -355,15 +377,21 @@ export default async function OrdersPage() {
               주문 목록
             </h2>
 
-            <p className="mt-2 text-sm text-gray-500">
-              배송상태, 택배사와 송장번호를 입력한 뒤 저장을
-              눌러주세요.
+            <p className="mt-2 text-sm leading-relaxed text-gray-500">
+              고객정보를 확인하고 배송상태, 택배사와 송장번호를
+              입력한 뒤 저장을 눌러주세요.
             </p>
           </div>
 
           {error ? (
-            <div className="p-8 text-red-600">
-              주문을 불러오지 못했습니다.
+            <div className="p-8">
+              <p className="font-semibold text-red-600">
+                주문을 불러오지 못했습니다.
+              </p>
+
+              <p className="mt-2 text-sm text-gray-500">
+                {error.message}
+              </p>
             </div>
           ) : orders.length === 0 ? (
             <div className="p-12 text-center text-gray-500">
@@ -371,7 +399,7 @@ export default async function OrdersPage() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[1800px] text-left text-sm">
+              <table className="w-full min-w-[1700px] text-left text-sm">
                 <thead className="bg-gray-50 text-gray-600">
                   <tr>
                     <th className="px-5 py-4 font-semibold">
@@ -379,11 +407,7 @@ export default async function OrdersPage() {
                     </th>
 
                     <th className="px-5 py-4 font-semibold">
-                      구매자
-                    </th>
-
-                    <th className="px-5 py-4 font-semibold">
-                      연락처
+                      고객정보
                     </th>
 
                     <th className="px-5 py-4 font-semibold">
@@ -420,37 +444,63 @@ export default async function OrdersPage() {
                   {orders.map((order) => (
                     <tr
                       key={order.id}
-                      className="transition hover:bg-gray-50"
+                      className="align-top transition hover:bg-gray-50"
                     >
-                      <td className="whitespace-nowrap px-5 py-4 font-medium text-gray-900">
-                        {order.order_no}
-                      </td>
-
-                      <td className="whitespace-nowrap px-5 py-4">
-                        <p className="font-medium text-gray-900">
-                          {order.buyer_name}
+                      <td className="whitespace-nowrap px-5 py-5">
+                        <p className="font-semibold text-gray-900">
+                          {order.order_no}
                         </p>
 
-                        {order.business_name && (
-                          <p className="mt-1 text-xs text-gray-500">
-                            {order.business_name}
+                        {order.tid && (
+                          <p className="mt-2 max-w-[180px] truncate text-xs text-gray-400">
+                            TID: {order.tid}
                           </p>
                         )}
                       </td>
 
-                      <td className="whitespace-nowrap px-5 py-4 text-gray-700">
-                        {order.buyer_phone}
+                      <td className="min-w-[260px] px-5 py-5">
+                        <p className="text-base font-bold text-gray-900">
+                          {order.buyer_name}
+                        </p>
+
+                        {order.business_name && (
+                          <p className="mt-1 text-sm font-medium text-gray-600">
+                            {order.business_name}
+                          </p>
+                        )}
+
+                        <div className="mt-3 space-y-1.5">
+                          <a
+                            href={`tel:${order.buyer_phone}`}
+                            className="block text-sm text-gray-700 transition hover:text-blue-600 hover:underline"
+                          >
+                            전화: {order.buyer_phone}
+                          </a>
+
+                          {order.buyer_email ? (
+                            <a
+                              href={`mailto:${order.buyer_email}`}
+                              className="block max-w-[280px] break-all text-sm font-medium text-blue-600 transition hover:text-blue-800 hover:underline"
+                            >
+                              이메일: {order.buyer_email}
+                            </a>
+                          ) : (
+                            <p className="text-sm text-gray-400">
+                              이메일 미입력
+                            </p>
+                          )}
+                        </div>
                       </td>
 
-                      <td className="whitespace-nowrap px-5 py-4 text-gray-700">
+                      <td className="min-w-[180px] px-5 py-5 text-gray-700">
                         {order.product_name}
                       </td>
 
-                      <td className="whitespace-nowrap px-5 py-4 font-semibold text-gray-900">
+                      <td className="whitespace-nowrap px-5 py-5 font-semibold text-gray-900">
                         {order.amount.toLocaleString()}원
                       </td>
 
-                      <td className="whitespace-nowrap px-5 py-4">
+                      <td className="whitespace-nowrap px-5 py-5">
                         <span
                           className={`inline-flex rounded-full px-3 py-1 text-xs font-bold ${getPaymentStatusClass(
                             order.payment_status
@@ -462,7 +512,7 @@ export default async function OrdersPage() {
                         </span>
                       </td>
 
-                      <td className="whitespace-nowrap px-5 py-4">
+                      <td className="whitespace-nowrap px-5 py-5">
                         <span
                           className={`inline-flex rounded-full px-3 py-1 text-xs font-bold ${getShippingStatusClass(
                             order.shipping_status
@@ -472,10 +522,10 @@ export default async function OrdersPage() {
                         </span>
                       </td>
 
-                      <td className="px-5 py-4">
+                      <td className="px-5 py-5">
                         <form
                           action={updateDeliveryInfo}
-                          className="flex min-w-[650px] items-center gap-2"
+                          className="flex min-w-[620px] items-center gap-2"
                         >
                           <input
                             type="hidden"
@@ -486,13 +536,10 @@ export default async function OrdersPage() {
                           <select
                             name="shippingStatus"
                             defaultValue={order.shipping_status}
-                            className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-blue-600"
+                            className="rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
                           >
                             {SHIPPING_STATUSES.map((status) => (
-                              <option
-                                key={status}
-                                value={status}
-                              >
+                              <option key={status} value={status}>
                                 {status}
                               </option>
                             ))}
@@ -501,7 +548,7 @@ export default async function OrdersPage() {
                           <select
                             name="courier"
                             defaultValue={order.courier ?? ""}
-                            className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-blue-600"
+                            className="rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
                           >
                             {COURIERS.map((courier) => (
                               <option
@@ -520,12 +567,13 @@ export default async function OrdersPage() {
                               order.tracking_number ?? ""
                             }
                             placeholder="송장번호 입력"
-                            className="w-44 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-600"
+                            inputMode="numeric"
+                            className="w-44 rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
                           />
 
                           <button
                             type="submit"
-                            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+                            className="whitespace-nowrap rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
                           >
                             저장
                           </button>
@@ -533,13 +581,15 @@ export default async function OrdersPage() {
 
                         {(order.courier ||
                           order.tracking_number) && (
-                          <div className="mt-2 flex gap-3 text-xs text-gray-500">
+                          <div className="mt-3 flex flex-wrap gap-2 text-xs">
                             {order.courier && (
-                              <span>{order.courier}</span>
+                              <span className="rounded-md bg-gray-100 px-2 py-1 font-medium text-gray-600">
+                                {order.courier}
+                              </span>
                             )}
 
                             {order.tracking_number && (
-                              <span>
+                              <span className="rounded-md bg-blue-50 px-2 py-1 font-medium text-blue-700">
                                 송장 {order.tracking_number}
                               </span>
                             )}
@@ -547,11 +597,11 @@ export default async function OrdersPage() {
                         )}
                       </td>
 
-                      <td className="whitespace-nowrap px-5 py-4 text-gray-600">
+                      <td className="whitespace-nowrap px-5 py-5 text-gray-600">
                         {formatDate(order.created_at)}
                       </td>
 
-                      <td className="whitespace-nowrap px-5 py-4 text-gray-600">
+                      <td className="whitespace-nowrap px-5 py-5 text-gray-600">
                         {formatDate(order.approved_at)}
                       </td>
                     </tr>
