@@ -88,8 +88,7 @@ export default async function AdminPage({
           </h1>
 
           <p className="mt-3 leading-relaxed text-gray-500">
-            관리자 페이지에 접속하려면 비밀번호를
-            입력해주세요.
+            관리자 페이지에 접속하려면 비밀번호를 입력해주세요.
           </p>
 
           <form action={loginAction} className="mt-8 space-y-5">
@@ -161,8 +160,7 @@ export default async function AdminPage({
   );
 
   const waitingOrders = orders.filter(
-    (order) =>
-      order.shipping_status === "가맹 접수대기"
+    (order) => order.shipping_status === "가맹 접수대기"
   );
 
   const reviewingOrders = orders.filter(
@@ -184,9 +182,9 @@ export default async function AdminPage({
 
   const today = formatDate(new Date());
 
-  const todayOrders = orders.filter((order) => {
-    return formatDate(new Date(order.created_at)) === today;
-  });
+  const todayOrders = orders.filter(
+    (order) => formatDate(new Date(order.created_at)) === today
+  );
 
   return (
     <main className="min-h-screen bg-gray-100 px-5 py-8 md:px-10">
@@ -202,8 +200,7 @@ export default async function AdminPage({
             </h1>
 
             <p className="mt-3 text-sm leading-relaxed text-gray-500">
-              주문, 결제, 가맹 진행상태와 배송정보를
-              확인할 수 있습니다.
+              주문, 결제, 가맹 진행상태와 배송정보를 한눈에 확인할 수 있습니다.
             </p>
           </div>
 
@@ -238,7 +235,6 @@ export default async function AdminPage({
             <p className="font-semibold text-red-700">
               주문 통계를 불러오지 못했습니다.
             </p>
-
             <p className="mt-1 text-sm text-red-600">
               {error.message}
             </p>
@@ -247,56 +243,40 @@ export default async function AdminPage({
 
         <section className="mb-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-            <p className="text-sm font-medium text-gray-500">
-              전체 주문
-            </p>
-
+            <p className="text-sm font-medium text-gray-500">전체 주문</p>
             <p className="mt-2 text-3xl font-bold text-gray-900">
               {orders.length}건
             </p>
-
             <p className="mt-2 text-xs text-gray-400">
               오늘 신규 주문 {todayOrders.length}건
             </p>
           </div>
 
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-            <p className="text-sm font-medium text-gray-500">
-              결제완료
-            </p>
-
+            <p className="text-sm font-medium text-gray-500">결제완료</p>
             <p className="mt-2 text-3xl font-bold text-green-600">
               {paidOrders.length}건
             </p>
-
             <p className="mt-2 text-xs text-gray-400">
               결제대기 {pendingPaymentOrders.length}건
             </p>
           </div>
 
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-            <p className="text-sm font-medium text-gray-500">
-              배송중
-            </p>
-
+            <p className="text-sm font-medium text-gray-500">배송중</p>
             <p className="mt-2 text-3xl font-bold text-blue-600">
               {shippingOrders.length}건
             </p>
-
             <p className="mt-2 text-xs text-gray-400">
               배송완료 {completedOrders.length}건
             </p>
           </div>
 
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-            <p className="text-sm font-medium text-gray-500">
-              결제완료 금액
-            </p>
-
+            <p className="text-sm font-medium text-gray-500">결제완료 금액</p>
             <p className="mt-2 text-3xl font-bold text-blue-600">
               {totalSales.toLocaleString()}원
             </p>
-
             <p className="mt-2 text-xs text-gray-400">
               결제완료 주문 기준
             </p>
@@ -308,11 +288,9 @@ export default async function AdminPage({
             <p className="text-sm font-semibold text-orange-700">
               가맹 접수대기
             </p>
-
             <p className="mt-2 text-3xl font-bold text-orange-700">
               {waitingOrders.length}건
             </p>
-
             <p className="mt-2 text-sm text-orange-600">
               가맹 접수가 필요한 주문입니다.
             </p>
@@ -322,11 +300,9 @@ export default async function AdminPage({
             <p className="text-sm font-semibold text-purple-700">
               가맹 심사중
             </p>
-
             <p className="mt-2 text-3xl font-bold text-purple-700">
               {reviewingOrders.length}건
             </p>
-
             <p className="mt-2 text-sm text-purple-600">
               카드사 심사가 진행 중입니다.
             </p>
@@ -336,11 +312,9 @@ export default async function AdminPage({
             <p className="text-sm font-semibold text-blue-700">
               배송중
             </p>
-
             <p className="mt-2 text-3xl font-bold text-blue-700">
               {shippingOrders.length}건
             </p>
-
             <p className="mt-2 text-sm text-blue-600">
               운송장 등록 후 배송 중인 주문입니다.
             </p>
@@ -352,7 +326,6 @@ export default async function AdminPage({
             <h2 className="text-2xl font-bold text-gray-900">
               관리자 메뉴
             </h2>
-
             <p className="mt-2 text-sm text-gray-500">
               관리할 메뉴를 선택해주세요.
             </p>
@@ -368,17 +341,13 @@ export default async function AdminPage({
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-2xl">
                     📦
                   </div>
-
                   <h3 className="mt-5 text-xl font-bold text-gray-900">
                     주문관리
                   </h3>
-
                   <p className="mt-2 text-sm leading-relaxed text-gray-500">
-                    주문정보, 고객 연락처, 결제상태,
-                    가맹 진행과 배송정보를 관리합니다.
+                    주문정보, 고객 연락처, 결제상태, 가맹 진행과 배송정보를 관리합니다.
                   </p>
                 </div>
-
                 <span className="text-xl text-gray-300 transition group-hover:translate-x-1 group-hover:text-blue-600">
                   →
                 </span>
@@ -388,7 +357,6 @@ export default async function AdminPage({
                 <span className="rounded-full bg-gray-100 px-3 py-1.5 text-gray-600">
                   전체 {orders.length}건
                 </span>
-
                 <span className="rounded-full bg-blue-50 px-3 py-1.5 text-blue-700">
                   배송중 {shippingOrders.length}건
                 </span>
@@ -406,17 +374,13 @@ export default async function AdminPage({
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-100 text-2xl">
                     🔎
                   </div>
-
                   <h3 className="mt-5 text-xl font-bold text-gray-900">
                     고객 주문조회
                   </h3>
-
                   <p className="mt-2 text-sm leading-relaxed text-gray-500">
-                    고객에게 노출되는 주문·배송조회
-                    화면을 직접 확인합니다.
+                    고객에게 노출되는 주문·배송조회 화면을 직접 확인합니다.
                   </p>
                 </div>
-
                 <span className="text-xl text-gray-300 transition group-hover:translate-x-1 group-hover:text-blue-600">
                   →
                 </span>
@@ -433,16 +397,12 @@ export default async function AdminPage({
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-100 text-2xl">
                 📝
               </div>
-
               <h3 className="mt-5 text-xl font-bold text-gray-900">
                 상담관리
               </h3>
-
               <p className="mt-2 text-sm leading-relaxed text-gray-500">
-                상담 신청 내역과 고객 처리상태를
-                관리하는 메뉴입니다.
+                상담 신청 내역과 고객 처리상태를 관리하는 메뉴입니다.
               </p>
-
               <div className="mt-6">
                 <span className="rounded-full bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-500">
                   준비중
@@ -454,16 +414,12 @@ export default async function AdminPage({
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-100 text-2xl">
                 💳
               </div>
-
               <h3 className="mt-5 text-xl font-bold text-gray-900">
                 상품관리
               </h3>
-
               <p className="mt-2 text-sm leading-relaxed text-gray-500">
-                상품명, 결제금액과 상품 노출상태를
-                관리하는 메뉴입니다.
+                상품명, 결제금액과 상품 노출상태를 관리하는 메뉴입니다.
               </p>
-
               <div className="mt-6">
                 <span className="rounded-full bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-500">
                   준비중
@@ -475,16 +431,12 @@ export default async function AdminPage({
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-yellow-100 text-2xl">
                 📊
               </div>
-
               <h3 className="mt-5 text-xl font-bold text-gray-900">
                 매출통계
               </h3>
-
               <p className="mt-2 text-sm leading-relaxed text-gray-500">
-                기간별 주문과 결제완료 금액을
-                조회하는 메뉴입니다.
+                기간별 주문과 결제완료 금액을 조회하는 메뉴입니다.
               </p>
-
               <div className="mt-6">
                 <span className="rounded-full bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-500">
                   준비중
@@ -496,16 +448,12 @@ export default async function AdminPage({
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-2xl">
                 ⚙️
               </div>
-
               <h3 className="mt-5 text-xl font-bold text-gray-900">
                 환경설정
               </h3>
-
               <p className="mt-2 text-sm leading-relaxed text-gray-500">
-                관리자 비밀번호와 사이트 운영정보를
-                관리하는 메뉴입니다.
+                관리자 비밀번호와 사이트 운영정보를 관리하는 메뉴입니다.
               </p>
-
               <div className="mt-6">
                 <span className="rounded-full bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-500">
                   준비중
