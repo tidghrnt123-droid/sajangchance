@@ -16,7 +16,7 @@ export default function Home() {
     {
       title: "프론트2 + 영수증 프린터",
       desc: "카페 · 병원 · 뷰티샵 추천",
-      price: "79,000원",
+      price: "39,000원",
       image: "/images/front2-printer.png",
       href: "/front2-printer",
     },
