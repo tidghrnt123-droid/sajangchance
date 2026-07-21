@@ -99,7 +99,7 @@ export default function CardTerminalPage() {
             </p>
 
             <div className="mt-auto space-y-3">
-              <p className="text-2xl font-bold text-blue-600">79,000원</p>
+              <p className="text-2xl font-bold text-blue-600">39,000원</p>
 
               <div className="grid grid-cols-2 gap-3">
                 <a
