@@ -43,7 +43,7 @@ export default function Front2PrinterPage() {
               <li>✓ 토스 프론트2 + 영수증 프린터 구성</li>
               <li>✓ POS 연동 필수</li>
               <li>✓ 카페 · 음식점 · 뷰티샵 · 병원 추천</li>
-              <li>✓ 상품가 79,000원</li>
+              <li>✓ 상품가 39,000원</li>
             </ul>
           </div>
 
