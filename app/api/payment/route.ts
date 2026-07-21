@@ -12,7 +12,7 @@ const products = {
   },
   "front2-printer": {
     name: "프론트2 영수증 프린터",
-    amount: 79000,
+    amount: 39000,
     itemCode: "f2printer",
   },
   "front2-terminal2": {

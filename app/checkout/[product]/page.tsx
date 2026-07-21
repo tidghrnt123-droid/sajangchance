@@ -12,7 +12,7 @@ const products = {
   },
   "front2-printer": {
     name: "프론트2 + 영수증 프린터",
-    price: 79000,
+    price: 39000
   },
   "front2-terminal2": {
     name: "프론트2 + 토스 터미널2",
