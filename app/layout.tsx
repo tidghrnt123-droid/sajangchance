@@ -1,3 +1,9 @@
+import type { Metadata } from "next";
+import Script from "next/script";
+import { Geist, Geist_Mono } from "next/font/google";
+import FloatingButtons from "@/components/FloatingButtons";
+import "./globals.css";
+
 export const metadata: Metadata = {
   title: "사장님찬스 | 카드단말기 · POS · PG 전문",
   description: "카드단말기, POS, PG 전문 상담",
