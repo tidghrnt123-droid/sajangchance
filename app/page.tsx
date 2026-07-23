@@ -151,13 +151,11 @@ export default function Home() {
             </p>
 
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
-              상담부터 설치,
+              상담부터 설치
   <br />
   사후관리까지
   <br />
-  단 한번에
-  <br />
-  해결하세요.
+  단 한번에 해결하세요.
 </h2>
 
             <p className="mt-5 text-lg text-gray-600 leading-relaxed">
