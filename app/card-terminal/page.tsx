@@ -27,7 +27,7 @@ export default function CardTerminalPage() {
             </p>
 
             <h1 className="text-4xl font-bold leading-tight text-gray-900 md:text-5xl">
-              매장에 맞는 카드단말기를
+              매장에 맞는 카드단말기
               <br />
               한 번에 비교하세요.
             </h1>
