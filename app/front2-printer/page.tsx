@@ -3,6 +3,9 @@ import Footer from "@/components/Footer";
 import ProductHero from "@/components/ProductHero";
 import Image from "next/image";
 import type { Metadata } from "next";
+import ContactBanner from "@/components/ContactBanner";
+
+
 
 export const metadata: Metadata = {
   title: "토스 프론트2 + 영수증 프린터 | 사장님찬스",
@@ -39,7 +42,7 @@ export default function Front2PrinterPage() {
           "월 사용료 없음",
         ]}
       />
-
+<ContactBanner />
       {/* 공통 인터넷 혜택 이미지 */}
       <section className="max-w-5xl mx-auto">
         <Image

@@ -3,6 +3,9 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ProductHero from "@/components/ProductHero";
 import Image from "next/image";
+import ContactBanner from "@/components/ContactBanner";
+
+
 
 export const metadata: Metadata = {
   title: "토스 프론트2 카드단말기 | 사장님찬스",
@@ -39,6 +42,7 @@ export default function Front2Page() {
           "카페·음식점·매장 추천",
         ]}
       />
+<ContactBanner />
 
       {/* 공통 혜택 이미지 */}
       <section className="mx-auto max-w-5xl">

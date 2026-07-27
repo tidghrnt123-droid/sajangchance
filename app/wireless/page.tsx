@@ -3,6 +3,9 @@ import Footer from "@/components/Footer";
 import ProductHero from "@/components/ProductHero";
 import Image from "next/image";
 import type { Metadata } from "next";
+import ContactBanner from "@/components/ContactBanner";
+
+
 
 export const metadata: Metadata = {
   title: "무선 카드단말기 | 사장님찬스",
@@ -36,7 +39,7 @@ export default function WirelessPage() {
           "푸드트럭 · 배달 · 행사장 추천",
         ]}
       />
-
+<ContactBanner />
       {/* 공통 혜택 이미지 */}
       <section className="mx-auto max-w-5xl">
         <Image
