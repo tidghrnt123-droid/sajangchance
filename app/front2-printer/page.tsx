@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ProductHero from "@/components/ProductHero";
 import Image from "next/image";
 import type { Metadata } from "next";
 
@@ -15,74 +16,59 @@ export const metadata: Metadata = {
 export default function Front2PrinterPage() {
   const details = Array.from(
     { length: 27 },
-    (_, i) => `/images/front2-detail-${String(i + 1).padStart(2, "0")}.png`
+    (_, i) =>
+      `/images/front2-detail-${String(i + 1).padStart(2, "0")}.png`
   );
 
   return (
     <main className="bg-white">
       <Header />
 
-      <section className="max-w-6xl mx-auto px-6 pt-32 md:pt-20 pb-20">
-        <a href="/card-terminal" className="text-blue-600 font-semibold">
-          ← 카드단말기 목록으로
-        </a>
+      {/* 상품 이미지 + 가격 + 구매 영역 */}
+      <ProductHero
+        title="토스 프론트2 + 영수증 프린터"
+        description="프론트2와 영수증 프린터가 함께 구성된 매장용 세트 상품입니다."
+        image="/images/front2-printer.png"
+        imageAlt="토스 프론트2와 영수증 프린터 세트"
+        price="39,000원"
+        checkoutUrl="/checkout/front2-printer"
+        features={[
+          "토스 프론트2와 영수증 프린터 세트 구성",
+          "POS 연동 필수",
+          "카페·음식점·뷰티샵·병원 추천",
+          "월 사용료 없음",
+        ]}
+      />
 
-        <div className="mt-8">
-          <p className="text-blue-600 font-semibold mb-3">카드단말기</p>
-
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            토스 프론트2 + 영수증 프린터
-          </h1>
-
-          <p className="text-lg md:text-xl text-gray-600 mb-8">
-            프론트2와 영수증 프린터가 함께 구성된 세트 상품
-          </p>
-
-          <div className="bg-gray-50 rounded-3xl p-8 mb-10">
-            <ul className="space-y-3 text-lg">
-              <li>✓ 토스 프론트2 + 영수증 프린터 구성</li>
-              <li>✓ POS 연동 필수</li>
-              <li>✓ 카페 · 음식점 · 뷰티샵 · 병원 추천</li>
-              <li>✓ 상품가 39,000원</li>
-            </ul>
-          </div>
-
-          <div className="flex gap-4">
-            <a
-              href="/checkout/front2-printer"
-              className="bg-blue-600 text-white px-8 py-4 rounded-2xl font-semibold"
-            >
-              구매하기
-            </a>
-
-            <a
-              href="/#contact"
-              className="border border-blue-600 text-blue-600 px-8 py-4 rounded-2xl font-semibold"
-            >
-              상담 신청
-            </a>
-          </div>
-        </div>
+      {/* 공통 인터넷 혜택 이미지 */}
+      <section className="max-w-5xl mx-auto">
+        <Image
+          src="/images/common-top-benefit.png"
+          alt="인터넷 가입 혜택"
+          width={1200}
+          height={1500}
+          className="w-full h-auto"
+        />
       </section>
 
-      <section className="max-w-5xl mx-auto pb-20">
+      {/* 기존 상세페이지 이미지 */}
+      <section className="max-w-5xl mx-auto pb-24">
         <Image
           src="/images/SCTOP.png"
-          alt="토스 프론트2 + 영수증 프린터 상단 이미지"
+          alt="토스 프론트2 영수증 프린터 상품 안내"
           width={1200}
           height={1200}
-          className="w-full"
-          priority
+          className="w-full h-auto"
         />
 
         {details.map((src, index) => (
           <Image
-            key={index}
+            key={src}
             src={src}
-            alt={`토스 프론트2 + 영수증 프린터 상세 ${index + 1}`}
+            alt={`토스 프론트2 영수증 프린터 상세 ${index + 1}`}
             width={1200}
             height={2000}
-            className="w-full"
+            className="w-full h-auto"
             priority={index === 0}
           />
         ))}

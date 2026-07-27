@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ProductHero from "@/components/ProductHero";
 import Image from "next/image";
-
-
 
 export const metadata: Metadata = {
   title: "토스 프론트2 카드단말기 | 사장님찬스",
@@ -14,78 +13,62 @@ export const metadata: Metadata = {
   },
 };
 
-
 export default function Front2Page() {
   const details = Array.from(
     { length: 27 },
-    (_, i) => `/images/front2-detail-${String(i + 1).padStart(2, "0")}.png`
+    (_, i) =>
+      `/images/front2-detail-${String(i + 1).padStart(2, "0")}.png`
   );
 
   return (
     <main className="bg-white">
       <Header />
 
-      <section className="max-w-6xl mx-auto px-6 pt-32 md:pt-20 pb-20">
-        <a href="/card-terminal" className="text-blue-600 font-semibold">
-          ← 카드단말기 목록으로
-        </a>
+      {/* 상품 이미지 + 상품 정보 */}
+      <ProductHero
+        title="토스 프론트2"
+        description="POS와 연동하여 사용하는 매장용 카드결제 단말기입니다."
+        image="/images/front2.png"
+        imageAlt="토스 프론트2 카드단말기"
+        price="100원"
+        checkoutUrl="/checkout/front2"
+        features={[
+          "토스 프론트2 무료 제공",
+          "POS 연동 가능",
+          "월 사용료 없음",
+          "카페·음식점·매장 추천",
+        ]}
+      />
 
-        <div className="mt-8">
-          <p className="text-blue-600 font-semibold mb-3">카드단말기</p>
-
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            토스 프론트2
-          </h1>
-
-          <p className="text-lg md:text-xl text-gray-600 mb-8">
-            POS 연동형 카드단말기
-          </p>
-
-          <div className="bg-gray-50 rounded-3xl p-8 mb-10">
-            <ul className="space-y-3 text-lg">
-              <li>✓ 무료 제공</li>
-              <li>✓ POS 연동 가능</li>
-              <li>✓ 월 사용료 없음</li>
-              <li>✓ 카페 · 음식점 · 매장 추천</li>
-            </ul>
-          </div>
-
-          <div className="flex gap-4">
-            <a
-              href="/checkout/front2"
-              className="bg-blue-600 text-white px-8 py-4 rounded-2xl font-semibold"
-            >
-              구매하기
-            </a>
-
-            <a
-              href="/#contact"
-              className="border border-blue-600 text-blue-600 px-8 py-4 rounded-2xl font-semibold"
-            >
-              상담 신청
-            </a>
-          </div>
-        </div>
+      {/* 공통 혜택 이미지 */}
+      <section className="mx-auto max-w-5xl">
+        <Image
+          src="/images/common-top-benefit.png"
+          alt="인터넷 가입 혜택"
+          width={1200}
+          height={1500}
+          className="h-auto w-full"
+        />
       </section>
 
-      <section className="max-w-5xl mx-auto pb-20">
+      {/* 기존 상품 상세 이미지 */}
+      <section className="mx-auto max-w-5xl pb-24">
         <Image
           src="/images/SCTOP.png"
-          alt="토스 프론트2 상단 이미지"
+          alt="토스 프론트2 상품 안내"
           width={1200}
           height={1200}
-          className="w-full"
-          priority
+          className="h-auto w-full"
         />
 
         {details.map((src, index) => (
           <Image
-            key={index}
+            key={src}
             src={src}
             alt={`토스 프론트2 상세 ${index + 1}`}
             width={1200}
             height={2000}
-            className="w-full"
+            className="h-auto w-full"
             priority={index === 0}
           />
         ))}
