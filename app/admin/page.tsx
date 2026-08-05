@@ -10,6 +10,8 @@ import {
   verifyAdminSessionToken,
 } from "@/lib/adminAuth";
 
+import DeleteOrderButton from "@/components/DeleteOrderButton";
+
 export const dynamic = "force-dynamic";
 
 type AdminLoginPageProps = {
