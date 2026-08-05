@@ -447,9 +447,12 @@ export default async function OrdersPage() {
                       className="align-top transition hover:bg-gray-50"
                     >
                       <td className="whitespace-nowrap px-5 py-5">
-                        <p className="font-semibold text-gray-900">
-                          {order.order_no}
-                        </p>
+                   <a
+  href={`/admin/orders/${encodeURIComponent(order.order_no)}`}
+  className="font-semibold text-gray-900 transition hover:text-blue-600 hover:underline"
+>
+  {order.order_no}
+</a>
 
                         {order.tid && (
                           <p className="mt-2 max-w-[180px] truncate text-xs text-gray-400">
