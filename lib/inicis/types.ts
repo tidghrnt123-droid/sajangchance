@@ -1,5 +1,10 @@
 export type InicisDeviceType = "WEB" | "MOBILE";
 
+export type InicisPaymentType =
+  | "CARD"
+  | "BANK"
+  | "VBANK";
+
 export interface InicisPaymentRequest {
   orderId: string;
   amount: number;
@@ -8,6 +13,7 @@ export interface InicisPaymentRequest {
   buyerEmail?: string;
   buyerTel: string;
   deviceType: InicisDeviceType;
+  paymentType: InicisPaymentType;
 }
 
 export interface InicisPaymentResponse {
@@ -25,6 +31,7 @@ export interface InicisAuthenticationResult {
   P_IDCNAME?: string;
   P_NOTI?: string;
   P_CHARSET?: string;
+  P_TYPE?: string;
 }
 
 export interface InicisApproveRequest {

@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { createInicisOrderId } from "@/lib/inicis/hash";
 import { createInicisPayment } from "@/lib/inicis/payment";
+
+import type {
+  InicisDeviceType,
+  InicisPaymentType,
+} from "@/lib/inicis/types";
 
 export const runtime = "nodejs";
 
@@ -11,16 +17,19 @@ const products = {
     amount: 100,
     itemCode: "front2",
   },
+
   "front2-printer": {
     name: "프론트2 + 영수증 프린터",
     amount: 39000,
     itemCode: "f2printer",
   },
+
   "front2-terminal2": {
     name: "프론트2 + 토스 터미널2",
     amount: 139000,
     itemCode: "f2terminal",
   },
+
   wireless: {
     name: "무선 카드단말기",
     amount: 100,
@@ -29,18 +38,26 @@ const products = {
 } as const;
 
 type ProductCode = keyof typeof products;
-type PaymentType = "CARD" | "BANK" | "VBANK";
-type DeviceType = "WEB" | "MOBILE";
 
 function getString(value: unknown): string {
-  return typeof value === "string" ? value.trim() : "";
+  return typeof value === "string"
+    ? value.trim()
+    : "";
 }
 
-function isPaymentType(value: string): value is PaymentType {
-  return ["CARD", "BANK", "VBANK"].includes(value);
+function isPaymentType(
+  value: string
+): value is InicisPaymentType {
+  return (
+    value === "CARD" ||
+    value === "BANK" ||
+    value === "VBANK"
+  );
 }
 
-function isDeviceType(value: string): value is DeviceType {
+function isDeviceType(
+  value: string
+): value is InicisDeviceType {
   return value === "WEB" || value === "MOBILE";
 }
 
@@ -48,23 +65,38 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const productCode = getString(body.productCode) as ProductCode;
+    const productCode = getString(
+      body.productCode
+    ) as ProductCode;
+
     const buyerName = getString(body.buyerName);
     const buyerPhone = getString(body.buyerPhone);
     const buyerEmail = getString(body.buyerEmail);
-    const businessName = getString(body.businessName);
-    const requestNote = getString(body.requestNote);
+    const businessName = getString(
+      body.businessName
+    );
 
-    const requestedPaymentType = getString(body.paymentType);
-    const requestedDeviceType = getString(body.deviceType);
+    const requestNote = getString(
+      body.requestNote
+    );
 
-    const paymentType: PaymentType = isPaymentType(requestedPaymentType)
-      ? requestedPaymentType
-      : "CARD";
+    const requestedPaymentType = getString(
+      body.paymentType
+    );
 
-    const deviceType: DeviceType = isDeviceType(requestedDeviceType)
-      ? requestedDeviceType
-      : "WEB";
+    const requestedDeviceType = getString(
+      body.deviceType
+    );
+
+    const paymentType: InicisPaymentType =
+      isPaymentType(requestedPaymentType)
+        ? requestedPaymentType
+        : "CARD";
+
+    const deviceType: InicisDeviceType =
+      isDeviceType(requestedDeviceType)
+        ? requestedDeviceType
+        : "WEB";
 
     const product = products[productCode];
 
@@ -100,29 +132,45 @@ export async function POST(request: NextRequest) {
 
     const orderId = createInicisOrderId();
 
-    const { error: orderInsertError } = await supabaseAdmin
-      .from("orders")
-      .insert({
-        order_no: orderId,
-        buyer_name: buyerName,
-        buyer_phone: buyerPhone,
-        buyer_email: buyerEmail || null,
-        business_name: businessName || null,
-        delivery_address: null,
-        request_note: requestNote || null,
-        product_code: productCode,
-        product_name: product.name,
-        amount: product.amount,
-        payment_status: "PENDING",
-      });
+    const isEscrow =
+      paymentType === "BANK" ||
+      paymentType === "VBANK";
+
+    const { error: orderInsertError } =
+      await supabaseAdmin
+        .from("orders")
+        .insert({
+          order_no: orderId,
+
+          buyer_name: buyerName,
+          buyer_phone: buyerPhone,
+          buyer_email: buyerEmail || null,
+          business_name: businessName || null,
+
+          delivery_address: null,
+          request_note: requestNote || null,
+
+          product_code: productCode,
+          product_name: product.name,
+          amount: product.amount,
+
+          payment_status: "PENDING",
+
+          payment_method: paymentType,
+          is_escrow: isEscrow,
+        });
 
     if (orderInsertError) {
-      console.error("Supabase order insert error:", orderInsertError);
+      console.error(
+        "Supabase order insert error:",
+        orderInsertError
+      );
 
       return NextResponse.json(
         {
           success: false,
-          message: "주문정보 저장 중 오류가 발생했습니다.",
+          message:
+            "주문정보 저장 중 오류가 발생했습니다.",
         },
         { status: 500 }
       );
@@ -132,19 +180,25 @@ export async function POST(request: NextRequest) {
       orderId,
       amount: product.amount,
       goodsName: product.name,
+
       buyerName,
       buyerEmail,
       buyerTel: buyerPhone,
+
       deviceType,
+      paymentType,
     });
 
     /*
-     * 사용자가 주문서에서 선택한 결제수단만 결제창에 표시합니다.
-     * CARD: 신용카드
-     * BANK: 실시간 계좌이체
-     * VBANK: 가상계좌
+     * 에스크로 요청값 임시 확인용 로그
+     * 정상 확인 후 삭제해도 됩니다.
      */
-    payment.fields.P_PAY_TYPE = paymentType;
+    console.log("INICIS PAYMENT CHECK:", {
+      paymentType,
+      isEscrow,
+      P_PAY_TYPE: payment.fields.P_PAY_TYPE,
+      P_RESERVED: payment.fields.P_RESERVED,
+    });
 
     return NextResponse.json({
       success: true,
@@ -152,7 +206,10 @@ export async function POST(request: NextRequest) {
       fields: payment.fields,
     });
   } catch (error) {
-    console.error("INICIS payment ready error:", error);
+    console.error(
+      "INICIS payment ready error:",
+      error
+    );
 
     const message =
       error instanceof Error
