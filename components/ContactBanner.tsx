@@ -13,7 +13,7 @@ export default function ContactBanner() {
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-sm font-bold text-blue-100">
-              카드단말기 · 인터넷 결합 무료 상담
+              카드단말기
             </p>
 
             <h2 className="mt-2 text-2xl font-bold leading-tight md:text-3xl">

@@ -68,7 +68,7 @@ export default function ContactForm() {
           <p className="text-blue-600 font-semibold mb-3">사장님 맞춤 상담</p>
           <h2 className="text-4xl font-bold">무료 상담 신청</h2>
           <p className="text-gray-500 mt-4">
-            카드단말기 · 인터넷 · 휴대폰 비교
+            카드단말기 
             <br />
             전문 상담사가 직접 안내드립니다.
           </p>
@@ -117,25 +117,27 @@ export default function ContactForm() {
               카드단말기
             </label>
 
-            <label>
-              <input
-                type="checkbox"
-                checked={products.includes("인터넷")}
-                onChange={() => toggleProduct("인터넷")}
-              />{" "}
-              인터넷
-            </label>
+           {/*
+    <label>
+      <input
+        type="checkbox"
+        checked={products.includes("인터넷")}
+        onChange={() => toggleProduct("인터넷")}
+      />{" "}
+      인터넷
+    </label>
 
-            <label>
-              <input
-                type="checkbox"
-                checked={products.includes("휴대폰 비교")}
-                onChange={() => toggleProduct("휴대폰 비교")}
-              />{" "}
-              휴대폰 비교
-            </label>
+    <label>
+      <input
+        type="checkbox"
+        checked={products.includes("휴대폰 비교")}
+        onChange={() => toggleProduct("휴대폰 비교")}
+      />{" "}
+      휴대폰 비교
+    </label>
+    */}
           </div>
-        </div>
+        </div> 
 
         <div className="mt-6">
           <label className="block mb-2 font-medium">문의내용 (선택)</label>

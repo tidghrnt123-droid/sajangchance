@@ -43,16 +43,19 @@ export default function Front2PrinterPage() {
         ]}
       />
 <ContactBanner />
+
       {/* 공통 인터넷 혜택 이미지 */}
-      <section className="max-w-5xl mx-auto">
+      {/* <section className="max-w-5xl mx-auto">
         <Image
           src="/images/common-top-benefit.png"
-          alt="인터넷 가입 혜택"
+          alt="사장님찬스 혜택"
           width={1200}
           height={1500}
           className="w-full h-auto"
         />
-      </section>
+      </section> */}
+      
+
 
       {/* 기존 상세페이지 이미지 */}
       <section className="max-w-5xl mx-auto pb-24">

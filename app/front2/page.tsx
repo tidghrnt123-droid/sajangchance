@@ -45,15 +45,15 @@ export default function Front2Page() {
 <ContactBanner />
 
       {/* 공통 혜택 이미지 */}
-      <section className="mx-auto max-w-5xl">
+      {/*<section className="mx-auto max-w-5xl">
         <Image
           src="/images/common-top-benefit.png"
-          alt="인터넷 가입 혜택"
+          alt="사장님찬스 혜택"
           width={1200}
           height={1500}
           className="h-auto w-full"
         />
-      </section>
+      </section> */}
 
       {/* 기존 상품 상세 이미지 */}
       <section className="mx-auto max-w-5xl pb-24">
