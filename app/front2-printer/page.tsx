@@ -33,7 +33,7 @@ export default function Front2PrinterPage() {
         description="프론트2와 영수증 프린터가 함께 구성된 매장용 세트 상품입니다."
         image="/images/front2-printer.png"
         imageAlt="토스 프론트2와 영수증 프린터 세트"
-        price="39,000원"
+        price="1,000원"
         checkoutUrl="/checkout/front2-printer"
         features={[
           "토스 프론트2와 영수증 프린터 세트 구성",

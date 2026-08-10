@@ -16,46 +16,43 @@ type EpProduct = {
 const products: EpProduct[] = [
   {
     id: "front2",
-    title: "토스 프론트2",
+    title: "약정 위약금 없는 최신 토스 단말기 세트 무료 제공",
     price: 100,
     link: `${SITE_URL}/front2`,
-
-    // 실제 대표 이미지 주소로 확인 필요
-    imageLink: `${SITE_URL}/images/SCTOP.png`,
-
+    imageLink: `${SITE_URL}/images/front2SJ.png`,
     categoryName1: "카드단말기",
     shipping: 0,
   },
+
   {
     id: "front2-printer",
-    title: "프론트2 영수증 프린터 세트",
-    price: 39000,
+    title:
+      "토스 프론트2 영수증프린터 세트 할인 특가 1000원! 토스 단말기세트",
+    price: 1000,
     link: `${SITE_URL}/front2-printer`,
-
-    // 아래 경로를 실제 대표 이미지 파일명으로 변경
-    imageLink: `${SITE_URL}/images/SCTOP.png`,
-
+    imageLink: `${SITE_URL}/images/front2-printerSJ.png`,
     categoryName1: "카드단말기",
     shipping: 0,
   },
+
   {
     id: "front2-terminal2",
-    title: "프론트2 토스 터미널2 세트",
+    title:
+      "토스프론트2 토스터미널2 토스 단말기 세트",
     price: 139000,
     link: `${SITE_URL}/front2-terminal2`,
-
-    // 아래 경로를 실제 대표 이미지 파일명으로 변경
-    imageLink: `${SITE_URL}/images/SCTOP.png`,
-
+    imageLink: `${SITE_URL}/images/front2-terminal2SJ.png`,
     categoryName1: "카드단말기",
     shipping: 0,
   },
+
   {
     id: "wireless",
-    title: "무선 카드단말기",
+    title:
+      "LTE 배달 플리마켓 오픈마켓 무선 카드단말기 휴대용 결제단말기",
     price: 100,
     link: `${SITE_URL}/wireless`,
-    imageLink: `${SITE_URL}/images/lte1.png`,
+    imageLink: `${SITE_URL}/images/wirelessSJ.png`,
     categoryName1: "카드단말기",
     shipping: 0,
   },
@@ -93,7 +90,10 @@ export async function GET() {
       .join("\t")
   );
 
-  const epContent = [headers.join("\t"), ...rows].join("\n");
+  const epContent = [
+    headers.join("\t"),
+    ...rows,
+  ].join("\n");
 
   return new Response(epContent, {
     status: 200,

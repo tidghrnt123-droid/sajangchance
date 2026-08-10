@@ -23,7 +23,7 @@ const productPages: Record<
   },
   "/front2-printer": {
     checkoutUrl: "/checkout/front2-printer",
-    price: "39,000원",
+    price: "1,000원",
   },
   "/front2-terminal2": {
     checkoutUrl: "/checkout/front2-terminal2",
