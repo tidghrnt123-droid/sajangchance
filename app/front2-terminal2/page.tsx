@@ -5,7 +5,6 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import ContactBanner from "@/components/ContactBanner";
 
-
 export const metadata: Metadata = {
   title: "토스 프론트2 + 토스 터미널2 | 사장님찬스",
   description:
@@ -16,11 +15,14 @@ export const metadata: Metadata = {
 };
 
 export default function Front2Terminal2Page() {
-  const details = Array.from(
-    { length: 27 },
-    (_, i) =>
-      `/images/front2-detail-${String(i + 1).padStart(2, "0")}.png`
-  );
+  const details = [
+    "/images/01.gif",
+    "/images/02.gif",
+    ...Array.from(
+      { length: 26 },
+      (_, i) => `/images/${String(i + 3).padStart(2, "0")}.png`
+    ),
+  ];
 
   return (
     <main className="bg-white">
@@ -41,20 +43,11 @@ export default function Front2Terminal2Page() {
           "월 사용료 없음",
         ]}
       />
-<ContactBanner />
-      {/* 공통 혜택 이미지 */}
-      <section className="mx-auto max-w-5xl">
-        <Image
-          src="/images/common-top-benefit.png"
-          alt="사장님찬스 혜택"
-          width={1200}
-          height={1500}
-          className="h-auto w-full"
-        />
-      </section>
 
-      {/* 기존 상세페이지 */}
-      <section className="mx-auto max-w-5xl pb-24">
+      <ContactBanner />
+
+      {/* 상세페이지 상단 이미지 */}
+      <section className="mx-auto max-w-5xl">
         <Image
           src="/images/SCTOP.png"
           alt="토스 프론트2 + 토스 터미널2 상품 안내"
@@ -63,7 +56,10 @@ export default function Front2Terminal2Page() {
           className="h-auto w-full"
           priority
         />
+      </section>
 
+      {/* 상품 상세 이미지 01 ~ 28 */}
+      <section className="mx-auto max-w-5xl pb-24">
         {details.map((src, index) => (
           <Image
             key={src}
@@ -72,7 +68,7 @@ export default function Front2Terminal2Page() {
             width={1200}
             height={2000}
             className="h-auto w-full"
-            priority={index === 0}
+            unoptimized={src.endsWith(".gif")}
           />
         ))}
       </section>

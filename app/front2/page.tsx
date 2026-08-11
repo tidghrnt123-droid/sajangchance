@@ -5,8 +5,6 @@ import ProductHero from "@/components/ProductHero";
 import Image from "next/image";
 import ContactBanner from "@/components/ContactBanner";
 
-
-
 export const metadata: Metadata = {
   title: "토스 프론트2 카드단말기 | 사장님찬스",
   description:
@@ -17,11 +15,14 @@ export const metadata: Metadata = {
 };
 
 export default function Front2Page() {
-  const details = Array.from(
-    { length: 27 },
-    (_, i) =>
-      `/images/front2-detail-${String(i + 1).padStart(2, "0")}.png`
-  );
+  const details = [
+    "/images/01.gif",
+    "/images/02.gif",
+    ...Array.from(
+      { length: 26 },
+      (_, i) => `/images/${String(i + 3).padStart(2, "0")}.png`
+    ),
+  ];
 
   return (
     <main className="bg-white">
@@ -42,29 +43,23 @@ export default function Front2Page() {
           "카페·음식점·매장 추천",
         ]}
       />
-<ContactBanner />
 
-      {/* 공통 혜택 이미지 */}
-      {/*<section className="mx-auto max-w-5xl">
-        <Image
-          src="/images/common-top-benefit.png"
-          alt="사장님찬스 혜택"
-          width={1200}
-          height={1500}
-          className="h-auto w-full"
-        />
-      </section> */}
+      <ContactBanner />
 
-      {/* 기존 상품 상세 이미지 */}
-      <section className="mx-auto max-w-5xl pb-24">
+      {/* 상세페이지 상단 이미지 */}
+      <section className="mx-auto max-w-5xl">
         <Image
           src="/images/SCTOP.png"
           alt="토스 프론트2 상품 안내"
           width={1200}
           height={1200}
           className="h-auto w-full"
+          priority
         />
+      </section>
 
+      {/* 상품 상세 이미지 01 ~ 28 */}
+      <section className="mx-auto max-w-5xl pb-24">
         {details.map((src, index) => (
           <Image
             key={src}
@@ -73,7 +68,7 @@ export default function Front2Page() {
             width={1200}
             height={2000}
             className="h-auto w-full"
-            priority={index === 0}
+            unoptimized={src.endsWith(".gif")}
           />
         ))}
       </section>

@@ -5,8 +5,6 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import ContactBanner from "@/components/ContactBanner";
 
-
-
 export const metadata: Metadata = {
   title: "토스 프론트2 + 영수증 프린터 | 사장님찬스",
   description:
@@ -17,11 +15,14 @@ export const metadata: Metadata = {
 };
 
 export default function Front2PrinterPage() {
-  const details = Array.from(
-    { length: 27 },
-    (_, i) =>
-      `/images/front2-detail-${String(i + 1).padStart(2, "0")}.png`
-  );
+  const details = [
+    "/images/01.gif",
+    "/images/02.gif",
+    ...Array.from(
+      { length: 26 },
+      (_, i) => `/images/${String(i + 3).padStart(2, "0")}.png`
+    ),
+  ];
 
   return (
     <main className="bg-white">
@@ -42,31 +43,23 @@ export default function Front2PrinterPage() {
           "월 사용료 없음",
         ]}
       />
-<ContactBanner />
 
-      {/* 공통 인터넷 혜택 이미지 */}
-      {/* <section className="max-w-5xl mx-auto">
-        <Image
-          src="/images/common-top-benefit.png"
-          alt="사장님찬스 혜택"
-          width={1200}
-          height={1500}
-          className="w-full h-auto"
-        />
-      </section> */}
-      
+      <ContactBanner />
 
-
-      {/* 기존 상세페이지 이미지 */}
-      <section className="max-w-5xl mx-auto pb-24">
+      {/* 상세페이지 상단 이미지 */}
+      <section className="mx-auto max-w-5xl">
         <Image
           src="/images/SCTOP.png"
           alt="토스 프론트2 영수증 프린터 상품 안내"
           width={1200}
           height={1200}
-          className="w-full h-auto"
+          className="h-auto w-full"
+          priority
         />
+      </section>
 
+      {/* 상품 상세 이미지 01 ~ 28 */}
+      <section className="mx-auto max-w-5xl pb-24">
         {details.map((src, index) => (
           <Image
             key={src}
@@ -74,8 +67,8 @@ export default function Front2PrinterPage() {
             alt={`토스 프론트2 영수증 프린터 상세 ${index + 1}`}
             width={1200}
             height={2000}
-            className="w-full h-auto"
-            priority={index === 0}
+            className="h-auto w-full"
+            unoptimized={src.endsWith(".gif")}
           />
         ))}
       </section>
