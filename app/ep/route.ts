@@ -16,7 +16,7 @@ type EpProduct = {
 const products: EpProduct[] = [
   {
     id: "front2",
-    title: "토스 프론트2 카드단말기",
+    title: "약정,월 사용료 없는 토스 프론트2 카드단말기 토스단말기 영수증프린터 무료증정",
     price: 100,
     link: `${SITE_URL}/front2`,
     imageLink: `${SITE_URL}/images/front2SJ.png`,
@@ -26,7 +26,7 @@ const products: EpProduct[] = [
 
   {
     id: "front2-printer",
-    title: "토스 프론트2 영수증프린터 세트",
+    title: "토스 프론트2 영수증 프린터 세트 토스 단말기 월 사용료 X",
     price: 1000,
     link: `${SITE_URL}/front2-printer`,
     imageLink: `${SITE_URL}/images/front2-printerSJ.png`,
@@ -46,7 +46,7 @@ const products: EpProduct[] = [
 
   {
     id: "wireless",
-    title: "LTE 무선 카드단말기 휴대용 결제단말기",
+    title: "LTE 무선 카드단말기 휴대용 결제단말기 배달,행사장,푸드트럭,플리마켓,오픈마켓",
     price: 100,
     link: `${SITE_URL}/wireless`,
     imageLink: `${SITE_URL}/images/wirelessSJ.png`,
