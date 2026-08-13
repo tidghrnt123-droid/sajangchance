@@ -26,7 +26,7 @@ const products: EpProduct[] = [
 
   {
     id: "front2-printer",
-    title: "토스 프론트2 영수증 프린터 세트 토스 단말기 월 사용료 X",
+    title: "토스 프론트2 영수증프린터 세트 할인 특가 1000원! 토스 단말기세트",
     price: 1000,
     link: `${SITE_URL}/front2-printer`,
     imageLink: `${SITE_URL}/images/front2-printerSJ.png`,
@@ -36,7 +36,7 @@ const products: EpProduct[] = [
 
   {
     id: "front2-terminal2",
-    title: "토스 프론트2 토스 터미널2 세트",
+    title: "토스프론트2 토스터미널2 토스 단말기 세트 영수증출력가능",
     price: 139000,
     link: `${SITE_URL}/front2-terminal2`,
     imageLink: `${SITE_URL}/images/front2-terminal2SJ.png`,
