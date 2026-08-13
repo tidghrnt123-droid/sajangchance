@@ -31,10 +31,10 @@ export default function Header() {
             </a>
 
             <a
-              href="/#contact"
+              href="/phone"
               className="transition hover:text-blue-600"
             >
-              상담신청
+              휴대폰
             </a>
 
             <a
@@ -71,7 +71,10 @@ export default function Header() {
                 height={24}
                 className="shrink-0"
               />
-              <span className="hidden md:inline">카카오톡</span>
+
+              <span className="hidden md:inline">
+                카카오톡
+              </span>
             </a>
 
             <a
@@ -91,16 +94,16 @@ export default function Header() {
         <div className="grid grid-cols-3 text-center text-sm">
           <a
             href="/card-terminal"
-            className="border-b-2 border-blue-600 py-3 font-semibold text-blue-600"
+            className="py-3 font-medium text-gray-700 transition hover:text-blue-600"
           >
             카드단말기
           </a>
 
           <a
-            href="/#contact"
-            className="py-3 font-medium text-gray-700"
+            href="/phone"
+            className="py-3 font-semibold text-blue-600"
           >
-            상담신청
+            휴대폰
           </a>
 
           <a

@@ -4,6 +4,11 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { createInicisOrderId } from "@/lib/inicis/hash";
 import { createInicisPayment } from "@/lib/inicis/payment";
 
+import {
+  products,
+  type ProductCode,
+} from "@/lib/products";
+
 import type {
   InicisDeviceType,
   InicisPaymentType,
@@ -11,35 +16,18 @@ import type {
 
 export const runtime = "nodejs";
 
-const products = {
-  front2: {
-    name: "토스 프론트2",
-    amount: 100,
-    itemCode: "front2",
-  },
+type ActivationType =
+  | "NEW"
+  | "MNP";
 
-  "front2-printer": {
-    name: "프론트2 + 영수증 프린터",
-    amount: 1000,
-    itemCode: "f2printer",
-  },
+type PreviousCarrier =
+  | "KT"
+  | "LGU"
+  | "MVNO";
 
-  "front2-terminal2": {
-    name: "프론트2 + 토스 터미널2",
-    amount: 139000,
-    itemCode: "f2terminal",
-  },
-
-  wireless: {
-    name: "무선 카드단말기",
-    amount: 100,
-    itemCode: "wireless",
-  },
-} as const;
-
-type ProductCode = keyof typeof products;
-
-function getString(value: unknown): string {
+function getString(
+  value: unknown
+): string {
   return typeof value === "string"
     ? value.trim()
     : "";
@@ -58,65 +46,201 @@ function isPaymentType(
 function isDeviceType(
   value: string
 ): value is InicisDeviceType {
-  return value === "WEB" || value === "MOBILE";
+  return (
+    value === "WEB" ||
+    value === "MOBILE"
+  );
 }
 
-export async function POST(request: NextRequest) {
+function isActivationType(
+  value: string
+): value is ActivationType {
+  return (
+    value === "NEW" ||
+    value === "MNP"
+  );
+}
+
+function isPreviousCarrier(
+  value: string
+): value is PreviousCarrier {
+  return (
+    value === "KT" ||
+    value === "LGU" ||
+    value === "MVNO"
+  );
+}
+
+export async function POST(
+  request: NextRequest
+) {
   try {
-    const body = await request.json();
+    const body =
+      await request.json();
 
-    const productCode = getString(
-      body.productCode
-    ) as ProductCode;
+    const productCode =
+      getString(
+        body.productCode
+      ) as ProductCode;
 
-    const buyerName = getString(body.buyerName);
-    const buyerPhone = getString(body.buyerPhone);
-    const buyerEmail = getString(body.buyerEmail);
-    const businessName = getString(
-      body.businessName
-    );
+    const buyerName =
+      getString(
+        body.buyerName
+      );
 
-    const requestNote = getString(
-      body.requestNote
-    );
+    const buyerPhone =
+      getString(
+        body.buyerPhone
+      );
 
-    const requestedPaymentType = getString(
-      body.paymentType
-    );
+    const buyerEmail =
+      getString(
+        body.buyerEmail
+      );
 
-    const requestedDeviceType = getString(
-      body.deviceType
-    );
+    const businessName =
+      getString(
+        body.businessName
+      );
 
-    const paymentType: InicisPaymentType =
-      isPaymentType(requestedPaymentType)
-        ? requestedPaymentType
-        : "CARD";
+    const requestNote =
+      getString(
+        body.requestNote
+      );
 
-    const deviceType: InicisDeviceType =
-      isDeviceType(requestedDeviceType)
-        ? requestedDeviceType
-        : "WEB";
+    const requestedPaymentType =
+      getString(
+        body.paymentType
+      );
 
-    const product = products[productCode];
+    const requestedDeviceType =
+      getString(
+        body.deviceType
+      );
 
+    const requestedActivationType =
+      getString(
+        body.activationType
+      );
+
+    const requestedPreviousCarrier =
+      getString(
+        body.previousCarrier
+      );
+
+    const paymentType:
+      InicisPaymentType =
+        isPaymentType(
+          requestedPaymentType
+        )
+          ? requestedPaymentType
+          : "CARD";
+
+    const deviceType:
+      InicisDeviceType =
+        isDeviceType(
+          requestedDeviceType
+        )
+          ? requestedDeviceType
+          : "WEB";
+
+    const product =
+      products[productCode];
+
+    /*
+     * 상품 검증
+     */
     if (!product) {
       return NextResponse.json(
         {
           success: false,
-          message: "유효하지 않은 상품입니다.",
+          message:
+            "유효하지 않은 상품입니다.",
         },
-        { status: 400 }
+        {
+          status: 400,
+        }
       );
     }
 
+    const isPhone =
+      product.productType ===
+      "PHONE";
+
+    /*
+     * 휴대폰 가입정보
+     */
+    let activationType:
+      | ActivationType
+      | null = null;
+
+    let previousCarrier:
+      | PreviousCarrier
+      | null = null;
+
+    if (isPhone) {
+      if (
+        !isActivationType(
+          requestedActivationType
+        )
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+            message:
+              "가입 유형을 다시 선택해주세요.",
+          },
+          {
+            status: 400,
+          }
+        );
+      }
+
+      activationType =
+        requestedActivationType;
+
+      /*
+       * 번호이동은
+       * 기존 통신사 필수
+       */
+      if (
+        activationType === "MNP"
+      ) {
+        if (
+          !isPreviousCarrier(
+            requestedPreviousCarrier
+          )
+        ) {
+          return NextResponse.json(
+            {
+              success: false,
+              message:
+                "기존 통신사를 선택해주세요.",
+            },
+            {
+              status: 400,
+            }
+          );
+        }
+
+        previousCarrier =
+          requestedPreviousCarrier;
+      }
+    }
+
+    /*
+     * 구매자 검증
+     */
     if (!buyerName) {
       return NextResponse.json(
         {
           success: false,
-          message: "구매자명을 입력해주세요.",
+          message:
+            "구매자명을 입력해주세요.",
         },
-        { status: 400 }
+        {
+          status: 400,
+        }
       );
     }
 
@@ -124,43 +248,87 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          message: "연락처를 입력해주세요.",
+          message:
+            "연락처를 입력해주세요.",
         },
-        { status: 400 }
+        {
+          status: 400,
+        }
       );
     }
 
-    const orderId = createInicisOrderId();
+    const orderId =
+      createInicisOrderId();
 
     const isEscrow =
       paymentType === "BANK" ||
       paymentType === "VBANK";
 
-    const { error: orderInsertError } =
+    /*
+     * Supabase 주문 저장
+     */
+    const {
+      error:
+        orderInsertError,
+    } =
       await supabaseAdmin
         .from("orders")
         .insert({
-          order_no: orderId,
+          order_no:
+            orderId,
 
-          buyer_name: buyerName,
-          buyer_phone: buyerPhone,
-          buyer_email: buyerEmail || null,
-          business_name: businessName || null,
+          buyer_name:
+            buyerName,
 
-          delivery_address: null,
-          request_note: requestNote || null,
+          buyer_phone:
+            buyerPhone,
 
-          product_code: productCode,
-          product_name: product.name,
-          amount: product.amount,
+          buyer_email:
+            buyerEmail ||
+            null,
 
-          payment_status: "PENDING",
+          business_name:
+            businessName ||
+            null,
 
-          payment_method: paymentType,
-          is_escrow: isEscrow,
+          delivery_address:
+            null,
+
+          request_note:
+            requestNote ||
+            null,
+
+          product_code:
+            productCode,
+
+          product_name:
+            product.name,
+
+          amount:
+            product.price,
+
+          product_type:
+            product.productType,
+
+          activation_type:
+            activationType,
+
+          previous_carrier:
+            previousCarrier,
+
+          payment_status:
+            "PENDING",
+
+          payment_method:
+            paymentType,
+
+          is_escrow:
+            isEscrow,
         });
 
-    if (orderInsertError) {
+    if (
+      orderInsertError
+    ) {
       console.error(
         "Supabase order insert error:",
         orderInsertError
@@ -172,38 +340,76 @@ export async function POST(request: NextRequest) {
           message:
             "주문정보 저장 중 오류가 발생했습니다.",
         },
-        { status: 500 }
+        {
+          status: 500,
+        }
       );
     }
 
-    const payment = createInicisPayment({
-      orderId,
-      amount: product.amount,
-      goodsName: product.name,
+    /*
+     * KG이니시스 결제 준비
+     */
+    const payment =
+      createInicisPayment({
+        orderId,
 
-      buyerName,
-      buyerEmail,
-      buyerTel: buyerPhone,
+        amount:
+          product.price,
 
-      deviceType,
-      paymentType,
-    });
+        goodsName:
+          product.name,
+
+        buyerName,
+
+        buyerEmail,
+
+        buyerTel:
+          buyerPhone,
+
+        deviceType,
+
+        paymentType,
+      });
 
     /*
-     * 에스크로 요청값 임시 확인용 로그
-     * 정상 확인 후 삭제해도 됩니다.
+     * 확인용 로그
      */
-    console.log("INICIS PAYMENT CHECK:", {
-      paymentType,
-      isEscrow,
-      P_PAY_TYPE: payment.fields.P_PAY_TYPE,
-      P_RESERVED: payment.fields.P_RESERVED,
-    });
+    console.log(
+      "INICIS PAYMENT CHECK:",
+      {
+        orderId,
+
+        productCode,
+
+        productType:
+          product.productType,
+
+        activationType,
+
+        previousCarrier,
+
+        paymentType,
+
+        isEscrow,
+
+        P_PAY_TYPE:
+          payment.fields
+            .P_PAY_TYPE,
+
+        P_RESERVED:
+          payment.fields
+            .P_RESERVED,
+      }
+    );
 
     return NextResponse.json({
       success: true,
-      scriptUrl: payment.scriptUrl,
-      fields: payment.fields,
+
+      scriptUrl:
+        payment.scriptUrl,
+
+      fields:
+        payment.fields,
     });
   } catch (error) {
     console.error(
@@ -221,7 +427,9 @@ export async function POST(request: NextRequest) {
         success: false,
         message,
       },
-      { status: 500 }
+      {
+        status: 500,
+      }
     );
   }
 }
