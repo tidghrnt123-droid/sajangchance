@@ -4,8 +4,8 @@ import ProductHero from "@/components/ProductHero";
 import Image from "next/image";
 import type { Metadata } from "next";
 import ContactBanner from "@/components/ContactBanner";
-
-
+import ReviewSummary from "@/components/ReviewSummary";
+import ReviewSection from "@/components/ReviewSection";
 
 export const metadata: Metadata = {
   title: "무선 카드단말기 | 사장님찬스",
@@ -17,7 +17,10 @@ export const metadata: Metadata = {
 };
 
 export default function WirelessPage() {
-  const details = ["/images/lte1.png", "/images/lte2.png"];
+  const details = [
+    "/images/lte1.png",
+    "/images/lte2.png",
+  ];
 
   return (
     <main className="bg-white">
@@ -39,19 +42,17 @@ export default function WirelessPage() {
           "푸드트럭 · 배달 · 행사장 추천",
         ]}
       />
-<ContactBanner />
-      {/* 공통 혜택 이미지 */}
-      <section className="mx-auto max-w-5xl">
-        <Image
-          src="/images/common-top-benefit.png"
-          alt="사장님찬스 혜택"
-          width={1200}
-          height={1500}
-          className="h-auto w-full"
-        />
+
+      {/* 상단 리뷰 요약 */}
+      <section className="border-b bg-white">
+        <div className="mx-auto max-w-7xl px-5 pb-5">
+          <ReviewSummary productCode="wireless" />
+        </div>
       </section>
 
-      {/* 기존 상세페이지 */}
+      <ContactBanner />
+
+      {/* 상세페이지 */}
       <section className="mx-auto max-w-5xl pb-24">
         <Image
           src="/images/SCTOP.png"
@@ -74,6 +75,9 @@ export default function WirelessPage() {
           />
         ))}
       </section>
+
+      {/* 구매 고객 리뷰 */}
+      <ReviewSection productCode="wireless" />
 
       <Footer />
     </main>

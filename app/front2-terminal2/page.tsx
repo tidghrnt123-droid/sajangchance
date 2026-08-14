@@ -4,6 +4,8 @@ import ProductHero from "@/components/ProductHero";
 import Image from "next/image";
 import type { Metadata } from "next";
 import ContactBanner from "@/components/ContactBanner";
+import ReviewSummary from "@/components/ReviewSummary";
+import ReviewSection from "@/components/ReviewSection";
 
 export const metadata: Metadata = {
   title: "토스 프론트2 + 토스 터미널2 | 사장님찬스",
@@ -28,7 +30,6 @@ export default function Front2Terminal2Page() {
     <main className="bg-white">
       <Header />
 
-      {/* 상품 이미지 + 상품 정보 */}
       <ProductHero
         title="토스 프론트2 + 토스 터미널2"
         description="영수증 출력과 금액 입력 결제가 가능한 토스 프론트2와 터미널2 세트 상품입니다."
@@ -44,9 +45,15 @@ export default function Front2Terminal2Page() {
         ]}
       />
 
+      {/* 상단 리뷰 요약 */}
+      <section className="border-b bg-white">
+        <div className="mx-auto max-w-7xl px-5 pb-5">
+          <ReviewSummary productCode="front2-terminal2" />
+        </div>
+      </section>
+
       <ContactBanner />
 
-      {/* 상세페이지 상단 이미지 */}
       <section className="mx-auto max-w-5xl">
         <Image
           src="/images/SCTOP.png"
@@ -58,7 +65,6 @@ export default function Front2Terminal2Page() {
         />
       </section>
 
-      {/* 상품 상세 이미지 01 ~ 28 */}
       <section className="mx-auto max-w-5xl pb-24">
         {details.map((src, index) => (
           <Image
@@ -72,6 +78,9 @@ export default function Front2Terminal2Page() {
           />
         ))}
       </section>
+
+      {/* 구매 고객 리뷰 */}
+      <ReviewSection productCode="front2-terminal2" />
 
       <Footer />
     </main>

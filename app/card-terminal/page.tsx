@@ -1,6 +1,8 @@
 import Header from "@/components/Header";
 import Image from "next/image";
 import Footer from "@/components/Footer";
+import ReviewSummary from "@/components/ReviewSummary";
+
 import type { Metadata } from "next";
 import { Check, Phone } from "lucide-react";
 
@@ -50,7 +52,10 @@ export default function CardTerminalPage() {
               </span>
 
               <div>
-                <p className="text-sm font-bold text-blue-600">무료 상담</p>
+                <p className="text-sm font-bold text-blue-600">
+                  무료 상담
+                </p>
+
                 <p className="text-2xl font-black text-gray-950">
                   010-7908-3099
                 </p>
@@ -58,17 +63,20 @@ export default function CardTerminalPage() {
             </div>
 
             <ul className="mt-6 space-y-3">
-              {["무료 상담", "무료 카드가맹", "빠른 출고"].map((item) => (
-                <li
-                  key={item}
-                  className="flex items-center gap-3 font-semibold text-gray-800"
-                >
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-50 text-blue-600">
-                    <Check size={15} strokeWidth={3} />
-                  </span>
-                  {item}
-                </li>
-              ))}
+              {["무료 상담", "무료 카드가맹", "빠른 출고"].map(
+                (item) => (
+                  <li
+                    key={item}
+                    className="flex items-center gap-3 font-semibold text-gray-800"
+                  >
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+                      <Check size={15} strokeWidth={3} />
+                    </span>
+
+                    {item}
+                  </li>
+                )
+              )}
             </ul>
 
             <p className="mt-6 text-sm leading-relaxed text-gray-500">
@@ -85,6 +93,7 @@ export default function CardTerminalPage() {
 
       <section className="mx-auto max-w-7xl px-6 pb-24">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+          {/* 프론트2 */}
           <div className="flex flex-col rounded-3xl border border-gray-200 p-7 transition hover:shadow-xl">
             <Image
               src="/images/front2.png"
@@ -99,7 +108,7 @@ export default function CardTerminalPage() {
               토스 프론트2
             </h2>
 
-            <p className="mb-6 min-h-[120px] leading-relaxed text-gray-600">
+            <p className="mb-3 min-h-[120px] leading-relaxed text-gray-600">
               무료 제공
               <br />
               POS 연동형
@@ -107,8 +116,17 @@ export default function CardTerminalPage() {
               월 사용료 없음
             </p>
 
-            <div className="mt-auto space-y-3">
-              <p className="text-2xl font-bold text-blue-600">100원</p>
+            <ReviewSummary
+              productCode="front2"
+              href="/front2#reviews"
+              naverReviewCount={98}
+              naverReviewUrl="https://smartstore.naver.com/ho__/products/12539725990#REVIEW"
+            />
+
+            <div className="mt-auto space-y-3 border-t border-gray-100 pt-4">
+              <p className="text-2xl font-bold text-blue-600">
+                100원
+              </p>
 
               <div className="grid grid-cols-2 gap-3">
                 <a
@@ -128,6 +146,7 @@ export default function CardTerminalPage() {
             </div>
           </div>
 
+          {/* 프론트2 + 프린터 */}
           <div className="flex flex-col rounded-3xl border border-gray-200 p-7 transition hover:shadow-xl">
             <Image
               src="/images/front2-printer.png"
@@ -143,14 +162,23 @@ export default function CardTerminalPage() {
               영수증 프린터
             </h2>
 
-            <p className="mb-6 min-h-[120px] leading-relaxed text-gray-600">
+            <p className="mb-3 min-h-[120px] leading-relaxed text-gray-600">
               카페 · 병원 · 뷰티샵 추천
               <br />
               영수증이 필요한 업종
             </p>
 
-            <div className="mt-auto space-y-3">
-              <p className="text-2xl font-bold text-blue-600">39,000원</p>
+            <ReviewSummary
+              productCode="front2-printer"
+              href="/front2-printer#reviews"
+              naverReviewCount={9}
+              naverReviewUrl="https://smartstore.naver.com/ho__/products/12617688944#REVIEW"
+            />
+
+            <div className="mt-auto space-y-3 border-t border-gray-100 pt-4">
+              <p className="text-2xl font-bold text-blue-600">
+                1,000원
+              </p>
 
               <div className="grid grid-cols-2 gap-3">
                 <a
@@ -170,6 +198,7 @@ export default function CardTerminalPage() {
             </div>
           </div>
 
+          {/* 프론트2 + 터미널2 */}
           <div className="flex flex-col rounded-3xl border border-gray-200 p-7 transition hover:shadow-xl">
             <Image
               src="/images/front2-terminal2.png"
@@ -185,14 +214,23 @@ export default function CardTerminalPage() {
               토스 터미널2
             </h2>
 
-            <p className="mb-6 min-h-[120px] leading-relaxed text-gray-600">
+            <p className="mb-3 min-h-[120px] leading-relaxed text-gray-600">
               영수증 출력과 금액 입력 결제가 가능한 토스 세트
               <br />
               프리미엄 구성
             </p>
 
-            <div className="mt-auto space-y-3">
-              <p className="text-2xl font-bold text-blue-600">139,000원</p>
+            <ReviewSummary
+              productCode="front2-terminal2"
+              href="/front2-terminal2#reviews"
+              naverReviewCount={9}
+              naverReviewUrl="https://smartstore.naver.com/ho__/products/12553296407#REVIEW"
+            />
+
+            <div className="mt-auto space-y-3 border-t border-gray-100 pt-4">
+              <p className="text-2xl font-bold text-blue-600">
+                139,000원
+              </p>
 
               <div className="grid grid-cols-2 gap-3">
                 <a
@@ -212,6 +250,7 @@ export default function CardTerminalPage() {
             </div>
           </div>
 
+          {/* 무선 단말기 */}
           <div className="flex flex-col rounded-3xl border border-gray-200 p-7 transition hover:shadow-xl">
             <Image
               src="/images/wireless.png"
@@ -225,7 +264,7 @@ export default function CardTerminalPage() {
               무선 카드단말기
             </h2>
 
-            <p className="mb-6 min-h-[120px] leading-relaxed text-gray-600">
+            <p className="mb-3 min-h-[120px] leading-relaxed text-gray-600">
               KT · SK LTE
               <br />
               월 통신료 11,000원
@@ -233,8 +272,17 @@ export default function CardTerminalPage() {
               전국 어디서나 사용
             </p>
 
-            <div className="mt-auto space-y-3">
-              <p className="text-2xl font-bold text-blue-600">100원</p>
+            <ReviewSummary
+              productCode="wireless"
+              href="/wireless#reviews"
+              naverReviewCount={77}
+              naverReviewUrl="https://smartstore.naver.com/ho__/products/12940013683#REVIEW"
+            />
+
+            <div className="mt-auto space-y-3 border-t border-gray-100 pt-4">
+              <p className="text-2xl font-bold text-blue-600">
+                100원
+              </p>
 
               <div className="grid grid-cols-2 gap-3">
                 <a

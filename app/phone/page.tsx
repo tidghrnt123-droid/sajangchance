@@ -4,6 +4,7 @@ import { Check, Phone } from "lucide-react";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ReviewSummary from "@/components/ReviewSummary";
 
 export const metadata: Metadata = {
   title: "휴대폰 | 사장님찬스",
@@ -16,6 +17,7 @@ export const metadata: Metadata = {
 
 const phones = [
   {
+    productCode: "a175-study",
     name: "갤럭시 A175 공부폰",
     description:
       "공부에 필요한 기능은 남기고 불필요한 기능은 줄인 학생용 휴대폰",
@@ -23,8 +25,12 @@ const phones = [
     href: "/phone/a175-study",
     badge: "공부폰",
     price: 100,
+    naverReviewCount: 67,
+    naverReviewUrl:
+      "https://smartstore.naver.com/ho__/products/13331682072#REVIEW",
   },
   {
+    productCode: "a175",
     name: "갤럭시 A175",
     description:
       "법인폰·키즈폰·효도폰 등 다양한 용도로 활용하기 좋은 실용적인 스마트폰",
@@ -32,8 +38,12 @@ const phones = [
     href: "/phone/a175",
     badge: "스마트폰",
     price: 100,
+    naverReviewCount: 11,
+    naverReviewUrl:
+      "https://smartstore.naver.com/ho__/products/12798775914#REVIEW",
   },
   {
+    productCode: "m140",
     name: "AT-M140",
     description:
       "큰 버튼과 간편한 조작으로 누구나 편리하게 사용할 수 있는 실용적인 폴더폰",
@@ -41,8 +51,11 @@ const phones = [
     href: "/phone/m140",
     badge: "효도폰",
     price: 100,
+    naverReviewCount: undefined,
+    naverReviewUrl: undefined,
   },
   {
+    productCode: "aroot-a1",
     name: "에이루트 A1",
     description:
       "전화와 문자 등 기본 기능을 간편하게 사용할 수 있는 실용적인 폴더형 휴대폰",
@@ -50,6 +63,8 @@ const phones = [
     href: "/phone/aroot-a1",
     badge: "효도폰",
     price: 100,
+    naverReviewCount: undefined,
+    naverReviewUrl: undefined,
   },
 ];
 
@@ -100,7 +115,6 @@ export default function PhonePage() {
               </div>
             </div>
 
-            {/* 상담 장점 */}
             <div className="mt-6 space-y-3">
               <div className="flex items-center gap-3">
                 <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600">
@@ -163,21 +177,22 @@ export default function PhonePage() {
 
         <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
           {phones.map((phone) => (
-            <a
+            <article
               key={phone.href}
-              href={phone.href}
               className="group overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg"
             >
               {/* 상품 이미지 */}
-              <div className="relative aspect-square overflow-hidden bg-gray-100">
-                <Image
-                  src={phone.image}
-                  alt={phone.name}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
-                  className="object-cover transition duration-300 group-hover:scale-[1.03]"
-                />
-              </div>
+              <a href={phone.href} className="block">
+                <div className="relative aspect-square overflow-hidden bg-gray-100">
+                  <Image
+                    src={phone.image}
+                    alt={phone.name}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
+                    className="object-cover transition duration-300 group-hover:scale-[1.03]"
+                  />
+                </div>
+              </a>
 
               {/* 상품 정보 */}
               <div className="p-5">
@@ -185,16 +200,26 @@ export default function PhonePage() {
                   {phone.badge}
                 </span>
 
-                <h2 className="mt-3 text-xl font-bold text-gray-900">
-                  {phone.name}
-                </h2>
+                <a href={phone.href} className="block">
+                  <h2 className="mt-3 text-xl font-bold text-gray-900 transition hover:text-blue-600">
+                    {phone.name}
+                  </h2>
+                </a>
 
                 <p className="mt-2 min-h-[48px] text-sm leading-6 text-gray-500">
                   {phone.description}
                 </p>
 
+                {/* 자사몰 + 네이버 리뷰 */}
+                <ReviewSummary
+                  productCode={phone.productCode}
+                  href={`${phone.href}#reviews`}
+                  naverReviewCount={phone.naverReviewCount}
+                  naverReviewUrl={phone.naverReviewUrl}
+                />
+
                 {/* 판매가 */}
-                <div className="mt-5 border-t border-gray-100 pt-4">
+                <div className="mt-4 border-t border-gray-100 pt-4">
                   <p className="text-xs font-medium text-gray-400">
                     판매가
                   </p>
@@ -204,13 +229,16 @@ export default function PhonePage() {
                       {phone.price.toLocaleString()}원
                     </p>
 
-                    <span className="shrink-0 text-sm font-bold text-blue-600 transition group-hover:translate-x-1">
+                    <a
+                      href={phone.href}
+                      className="shrink-0 text-sm font-bold text-blue-600 transition hover:translate-x-1"
+                    >
                       자세히 보기 →
-                    </span>
+                    </a>
                   </div>
                 </div>
               </div>
-            </a>
+            </article>
           ))}
         </div>
       </section>

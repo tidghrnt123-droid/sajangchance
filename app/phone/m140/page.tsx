@@ -4,6 +4,8 @@ import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PhoneActivationOptions from "@/components/PhoneActivationOptions";
+import ReviewSummary from "@/components/ReviewSummary";
+import ReviewSection from "@/components/ReviewSection";
 
 export const metadata: Metadata = {
   title: "AT-M140 스타일 폴더폰2 | 사장님찬스",
@@ -57,6 +59,9 @@ export default function M140Page() {
               큰 버튼과 편리한 조작, 외부 디스플레이를 갖춰
               누구나 간편하게 사용할 수 있는 실용적인 폴더폰입니다.
             </p>
+
+            {/* 상단 리뷰 요약 */}
+            <ReviewSummary productCode="m140" />
 
             {/* 판매가 */}
             <div className="mt-8 border-y border-gray-200 py-6">
@@ -124,7 +129,6 @@ export default function M140Page() {
               method="get"
               className="mt-8"
             >
-              {/* 구매 / 상담 버튼 */}
               <div className="grid gap-3 sm:grid-cols-2">
                 <button
                   type="submit"
@@ -143,7 +147,6 @@ export default function M140Page() {
                 </a>
               </div>
 
-              {/* 가입 유형 */}
               <PhoneActivationOptions />
             </form>
 
@@ -171,6 +174,9 @@ export default function M140Page() {
           ))}
         </div>
       </section>
+
+      {/* 구매 고객 리뷰 */}
+      <ReviewSection productCode="m140" />
 
       {/* 하단 상담 영역 */}
       <section className="border-t bg-gray-50">

@@ -4,6 +4,8 @@ import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PhoneActivationOptions from "@/components/PhoneActivationOptions";
+import ReviewSummary from "@/components/ReviewSummary";
+import ReviewSection from "@/components/ReviewSection";
 
 export const metadata: Metadata = {
   title: "에이루트 에이원 AM-F2000N 폴더폰 | 사장님찬스",
@@ -59,6 +61,9 @@ export default function ArootA1Page() {
               전화와 문자 중심으로 간편하게 사용할 수 있어
               어르신용·효도폰으로 활용하기 좋은 실용적인 폴더폰입니다.
             </p>
+
+            {/* 상단 리뷰 요약 */}
+            <ReviewSummary productCode="aroot-a1" />
 
             {/* 판매가 */}
             <div className="mt-8 border-y border-gray-200 py-6">
@@ -126,7 +131,6 @@ export default function ArootA1Page() {
               method="get"
               className="mt-8"
             >
-              {/* 구매 / 상담 버튼 */}
               <div className="grid gap-3 sm:grid-cols-2">
                 <button
                   type="submit"
@@ -145,7 +149,6 @@ export default function ArootA1Page() {
                 </a>
               </div>
 
-              {/* 가입 유형 */}
               <PhoneActivationOptions />
             </form>
 
@@ -173,6 +176,9 @@ export default function ArootA1Page() {
           ))}
         </div>
       </section>
+
+      {/* 구매 고객 리뷰 */}
+      <ReviewSection productCode="aroot-a1" />
 
       {/* 하단 상담 영역 */}
       <section className="border-t bg-gray-50">

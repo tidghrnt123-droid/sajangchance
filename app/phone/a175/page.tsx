@@ -4,6 +4,8 @@ import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PhoneActivationOptions from "@/components/PhoneActivationOptions";
+import ReviewSummary from "@/components/ReviewSummary";
+import ReviewSection from "@/components/ReviewSection";
 
 export const metadata: Metadata = {
   title: "갤럭시 A175 | 사장님찬스",
@@ -55,6 +57,14 @@ export default function A175Page() {
               법인폰·키즈폰·효도폰 등 다양한 용도로 활용하기 좋은
               실용적인 스마트폰입니다.
             </p>
+
+            {/* 상단 리뷰 요약 */}
+<ReviewSummary
+  productCode="a175"
+  href="#reviews"
+  naverReviewCount={11}
+  naverReviewUrl="https://smartstore.naver.com/ho__/products/12798775914#REVIEW"
+/>
 
             {/* 판매가 */}
             <div className="mt-8 border-y border-gray-200 py-6">
@@ -122,7 +132,6 @@ export default function A175Page() {
               method="get"
               className="mt-8"
             >
-              {/* 구매 / 상담 버튼 */}
               <div className="grid gap-3 sm:grid-cols-2">
                 <button
                   type="submit"
@@ -141,7 +150,6 @@ export default function A175Page() {
                 </a>
               </div>
 
-              {/* 가입 유형 선택 */}
               <PhoneActivationOptions />
             </form>
 
@@ -169,6 +177,9 @@ export default function A175Page() {
           ))}
         </div>
       </section>
+
+      {/* 구매 고객 리뷰 */}
+      <ReviewSection productCode="a175" />
 
       {/* 하단 상담 영역 */}
       <section className="border-t bg-gray-50">

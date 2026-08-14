@@ -4,6 +4,8 @@ import ProductHero from "@/components/ProductHero";
 import Image from "next/image";
 import type { Metadata } from "next";
 import ContactBanner from "@/components/ContactBanner";
+import ReviewSummary from "@/components/ReviewSummary";
+import ReviewSection from "@/components/ReviewSection";
 
 export const metadata: Metadata = {
   title: "토스 프론트2 + 영수증 프린터 | 사장님찬스",
@@ -44,6 +46,13 @@ export default function Front2PrinterPage() {
         ]}
       />
 
+      {/* 상단 리뷰 요약 */}
+      <section className="border-b bg-white">
+        <div className="mx-auto max-w-7xl px-5 pb-5">
+          <ReviewSummary productCode="front2-printer" />
+        </div>
+      </section>
+
       <ContactBanner />
 
       {/* 상세페이지 상단 이미지 */}
@@ -72,6 +81,9 @@ export default function Front2PrinterPage() {
           />
         ))}
       </section>
+
+      {/* 구매 고객 리뷰 */}
+      <ReviewSection productCode="front2-printer" />
 
       <Footer />
     </main>

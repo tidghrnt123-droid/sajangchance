@@ -3,6 +3,9 @@ import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PhoneActivationOptions from "@/components/PhoneActivationOptions";
+import ReviewSection from "@/components/ReviewSection";
+import ReviewSummary from "@/components/ReviewSummary";
+
 
 export const metadata: Metadata = {
   title: "갤럭시 A175 공부폰 | 사장님찬스",
@@ -12,6 +15,7 @@ export const metadata: Metadata = {
     canonical: "https://sajangchance.com/phone/a175-study",
   },
 };
+
 
 export default function A175StudyPage() {
   const detailImages = Array.from(
@@ -53,6 +57,12 @@ export default function A175StudyPage() {
               공부에 필요한 기능은 남기고 불필요한 기능은 줄인
               학생용 스마트폰입니다.
             </p>
+<ReviewSummary
+  productCode="a175-study"
+  href="#reviews"
+  naverReviewCount={67}
+  naverReviewUrl="https://smartstore.naver.com/ho__/products/13331682072#REVIEW"
+/>
 
             {/* 판매가 */}
             <div className="mt-8 border-y border-gray-200 py-6">
@@ -167,6 +177,12 @@ export default function A175StudyPage() {
           ))}
         </div>
       </section>
+
+      {/* 구매 고객 리뷰 */}
+<ReviewSection
+  productCode="a175-study"
+  naverReviewUrl="https://smartstore.naver.com/ho__/products/13331682072#REVIEW"
+/>
 
       {/* 하단 구매 영역 */}
       <section className="border-t bg-gray-50">
