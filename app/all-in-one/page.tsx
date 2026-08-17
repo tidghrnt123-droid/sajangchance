@@ -130,7 +130,7 @@ export default function AllInOneLandingPage() {
 
   return (
     <main className="min-h-screen bg-white pb-[76px] md:pb-0">
-     {/* =====================================================
+ {/* =====================================================
     HERO
 ====================================================== */}
 
@@ -139,8 +139,24 @@ export default function AllInOneLandingPage() {
 
   <div className="pointer-events-none absolute bottom-[-250px] right-[-150px] h-[500px] w-[500px] rounded-full bg-cyan-400/10 blur-[140px]" />
 
-  <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 pb-20 pt-16 md:grid-cols-[1.1fr_0.9fr] md:pb-28 md:pt-24">
+  {/* 상단 사장님찬스 홈 이동 */}
+  <div className="relative z-20 mx-auto flex max-w-7xl items-center justify-between px-5 pt-5 md:pt-7">
+    <a
+      href="/"
+      className="text-xl font-black tracking-tight text-white transition hover:text-cyan-300 md:text-2xl"
+    >
+      사장님찬스
+    </a>
 
+    <a
+      href="/"
+      className="inline-flex items-center rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-sm font-bold text-white backdrop-blur transition hover:bg-white/20"
+    >
+      사장님찬스 홈 →
+    </a>
+  </div>
+
+  <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 pb-20 pt-12 md:grid-cols-[1.1fr_0.9fr] md:pb-28 md:pt-16">
     {/* 왼쪽 문구 */}
 
     <div className="text-center md:text-left">
