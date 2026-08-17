@@ -761,13 +761,13 @@ function SelectButton({
     <button
       type="button"
       onClick={onClick}
-      className={`min-h-14 rounded-xl border px-2 text-sm font-bold transition md:text-base ${
+      className={`min-h-14 rounded-xl border px-1 text-[13px] font-bold transition sm:px-2 sm:text-sm md:text-base ${
         active
           ? "border-blue-600 bg-blue-50 text-blue-700"
           : "border-slate-200 bg-white text-slate-500"
       }`}
     >
-      <span className="flex items-center justify-center gap-1">
+    <span className="flex items-center justify-center gap-1 whitespace-nowrap">
         {active && (
           <Check size={17} strokeWidth={3} />
         )}
