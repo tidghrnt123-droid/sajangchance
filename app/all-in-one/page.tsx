@@ -152,15 +152,15 @@ export default function AllInOneLandingPage() {
         신규 사업장 원스톱 준비
       </div>
 
-      <h1 className="text-[35px] font-black leading-[1.18] tracking-tight md:text-[52px]">
-        인터넷 · CCTV · 카드단말기
+     <h1 className="font-black leading-[1.18] tracking-tight">
+  <span className="block whitespace-nowrap text-[25px] sm:text-[32px] md:text-[48px] lg:text-[52px]">
+    인터넷 · CCTV · 카드단말기
+  </span>
 
-        <br />
-
-        <span className="mt-2 inline-block text-cyan-400">
-          올인원 원클릭 신청
-        </span>
-      </h1>
+  <span className="mt-3 block whitespace-nowrap text-[34px] text-cyan-400 sm:text-[40px] md:mt-2 md:text-[48px] lg:text-[52px]">
+    올인원 원클릭 신청
+  </span>
+</h1>
 
       <p className="mt-6 text-[16px] leading-7 text-slate-300 md:text-xl md:leading-9">
         매장 오픈에 필요한 상품을
