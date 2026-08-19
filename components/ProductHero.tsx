@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Check, Phone, ShoppingCart } from "lucide-react";
 
 import MetaViewContent from "@/components/MetaViewContent";
+import MetaLeadLink from "@/components/MetaLeadLink";
 
 declare global {
   interface Window {
@@ -22,6 +23,7 @@ type ProductHeroProps = {
   checkoutUrl: string;
   features: string[];
 
+  // Meta 추적
   metaProductId?: string;
   metaProductName?: string;
   metaValue?: number;
@@ -42,6 +44,11 @@ export default function ProductHero({
   metaProductName,
   metaValue,
 }: ProductHeroProps) {
+  const hasMetaProduct =
+    !!metaProductId &&
+    !!metaProductName &&
+    metaValue !== undefined;
+
   const handleCheckoutClick = () => {
     if (
       typeof window.fbq !== "function" ||
@@ -76,16 +83,14 @@ export default function ProductHero({
 
   return (
     <>
-      {/* Meta 상품 상세 조회 */}
-      {metaProductId &&
-        metaProductName &&
-        metaValue !== undefined && (
-          <MetaViewContent
-            productId={metaProductId}
-            productName={metaProductName}
-            value={metaValue}
-          />
-        )}
+      {/* Meta - 상품 상세 조회 */}
+      {hasMetaProduct && (
+        <MetaViewContent
+          productId={metaProductId}
+          productName={metaProductName}
+          value={metaValue}
+        />
+      )}
 
       <section className="mx-auto max-w-6xl px-6 pb-16 pt-32 md:pb-20 md:pt-24">
         <a
@@ -159,6 +164,7 @@ export default function ProductHero({
 
             {/* 버튼 */}
             <div className="mt-8 grid gap-3 sm:grid-cols-2">
+              {/* 구매하기 */}
               <a
                 href={checkoutUrl}
                 onClick={handleCheckoutClick}
@@ -168,13 +174,28 @@ export default function ProductHero({
                 {price} 구매하기
               </a>
 
-              <a
-                href="/#contact"
-                className="flex items-center justify-center gap-2 rounded-2xl border-2 border-blue-600 bg-white px-6 py-4 text-lg font-bold text-blue-600 transition hover:bg-blue-50 hover:shadow-md"
-              >
-                <Phone size={21} />
-                상담 신청
-              </a>
+              {/* 상담 신청 + Meta Lead */}
+              {hasMetaProduct ? (
+                <MetaLeadLink
+                  href="/#contact"
+                  productId={metaProductId}
+                  productName={metaProductName}
+                  leadType="contact_form"
+                  target="_self"
+                  className="flex items-center justify-center gap-2 rounded-2xl border-2 border-blue-600 bg-white px-6 py-4 text-lg font-bold text-blue-600 transition hover:bg-blue-50 hover:shadow-md"
+                >
+                  <Phone size={21} />
+                  상담 신청
+                </MetaLeadLink>
+              ) : (
+                <a
+                  href="/#contact"
+                  className="flex items-center justify-center gap-2 rounded-2xl border-2 border-blue-600 bg-white px-6 py-4 text-lg font-bold text-blue-600 transition hover:bg-blue-50 hover:shadow-md"
+                >
+                  <Phone size={21} />
+                  상담 신청
+                </a>
+              )}
             </div>
 
             <p className="mt-4 text-center text-sm text-gray-500">

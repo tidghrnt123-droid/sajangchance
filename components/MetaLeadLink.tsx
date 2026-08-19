@@ -14,6 +14,8 @@ type MetaLeadLinkProps = {
   productName: string;
   children: ReactNode;
   className?: string;
+  leadType?: string;
+  target?: "_blank" | "_self";
 };
 
 export default function MetaLeadLink({
@@ -22,6 +24,8 @@ export default function MetaLeadLink({
   productName,
   children,
   className = "",
+  leadType = "contact",
+  target = "_blank",
 }: MetaLeadLinkProps) {
   const handleClick = () => {
     if (typeof window.fbq === "function") {
@@ -29,13 +33,14 @@ export default function MetaLeadLink({
         content_ids: [productId],
         content_name: productName,
         content_type: "product",
-        lead_type: "kakao_chat",
+        lead_type: leadType,
       });
 
       console.log(
         "[Meta Pixel] Lead sent:",
         productId,
-        productName
+        productName,
+        leadType
       );
     }
   };
@@ -43,8 +48,8 @@ export default function MetaLeadLink({
   return (
     <a
       href={href}
-      target="_blank"
-      rel="noopener noreferrer"
+      target={target}
+      rel={target === "_blank" ? "noopener noreferrer" : undefined}
       onClick={handleClick}
       className={className}
     >

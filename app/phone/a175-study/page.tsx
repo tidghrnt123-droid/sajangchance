@@ -154,11 +154,12 @@ export default function A175StudyPage() {
                   100원 구매하기
                 </MetaCheckoutButton>
 
-                {/* Meta 문의 Lead */}
+                {/* 카카오톡 상담 + Meta Lead */}
                 <MetaLeadLink
                   href={kakaoUrl}
                   productId="a175-study"
                   productName="갤럭시 A175 공부폰"
+                  leadType="kakao_chat"
                   className="flex items-center justify-center rounded-2xl bg-yellow-400 px-6 py-4 text-base font-bold text-black transition hover:bg-yellow-500"
                 >
                   카카오톡 상담
@@ -215,11 +216,12 @@ export default function A175StudyPage() {
             상품과 개통 관련 내용은 카카오톡을 통해 상담받으실 수 있습니다.
           </p>
 
-          {/* 하단 카카오톡도 Meta Lead 추적 */}
+          {/* 하단 카카오톡 상담 + Meta Lead */}
           <MetaLeadLink
             href={kakaoUrl}
             productId="a175-study"
             productName="갤럭시 A175 공부폰"
+            leadType="kakao_chat"
             className="mx-auto mt-7 block max-w-sm rounded-2xl bg-yellow-400 px-6 py-4 font-bold text-black transition hover:bg-yellow-500"
           >
             카카오톡 상담
