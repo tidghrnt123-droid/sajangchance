@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PhoneActivationOptions from "@/components/PhoneActivationOptions";
 import ReviewSection from "@/components/ReviewSection";
 import ReviewSummary from "@/components/ReviewSummary";
-
+import MetaViewContent from "@/components/MetaViewContent";
+import MetaCheckoutButton from "@/components/MetaCheckoutButton";
 
 export const metadata: Metadata = {
   title: "갤럭시 A175 공부폰 | 사장님찬스",
@@ -15,7 +17,6 @@ export const metadata: Metadata = {
     canonical: "https://sajangchance.com/phone/a175-study",
   },
 };
-
 
 export default function A175StudyPage() {
   const detailImages = Array.from(
@@ -27,6 +28,13 @@ export default function A175StudyPage() {
   return (
     <main className="min-h-screen bg-white">
       <Header />
+
+      {/* Meta - 공부폰 상세페이지 조회 */}
+      <MetaViewContent
+        productId="a175-study"
+        productName="갤럭시 A175 공부폰"
+        value={100}
+      />
 
       {/* 상품 상단 영역 */}
       <section className="border-b bg-white">
@@ -57,12 +65,14 @@ export default function A175StudyPage() {
               공부에 필요한 기능은 남기고 불필요한 기능은 줄인
               학생용 스마트폰입니다.
             </p>
-<ReviewSummary
-  productCode="a175-study"
-  href="#reviews"
-  naverReviewCount={67}
-  naverReviewUrl="https://smartstore.naver.com/ho__/products/13331682072#REVIEW"
-/>
+
+            {/* 리뷰 요약 */}
+            <ReviewSummary
+              productCode="a175-study"
+              href="#reviews"
+              naverReviewCount={67}
+              naverReviewUrl="https://smartstore.naver.com/ho__/products/13331682072#REVIEW"
+            />
 
             {/* 판매가 */}
             <div className="mt-8 border-y border-gray-200 py-6">
@@ -132,12 +142,13 @@ export default function A175StudyPage() {
             >
               {/* 구매 / 상담 버튼 */}
               <div className="grid gap-3 sm:grid-cols-2">
-                <button
-                  type="submit"
-                  className="flex items-center justify-center rounded-2xl bg-blue-600 px-6 py-4 text-base font-bold text-white transition hover:bg-blue-700"
+                <MetaCheckoutButton
+                  productId="a175-study"
+                  productName="갤럭시 A175 공부폰"
+                  value={100}
                 >
                   100원 구매하기
-                </button>
+                </MetaCheckoutButton>
 
                 <a
                   href="https://pf.kakao.com/_xcxhFen/chat"
@@ -179,10 +190,10 @@ export default function A175StudyPage() {
       </section>
 
       {/* 구매 고객 리뷰 */}
-<ReviewSection
-  productCode="a175-study"
-  naverReviewUrl="https://smartstore.naver.com/ho__/products/13331682072#REVIEW"
-/>
+      <ReviewSection
+        productCode="a175-study"
+        naverReviewUrl="https://smartstore.naver.com/ho__/products/13331682072#REVIEW"
+      />
 
       {/* 하단 구매 영역 */}
       <section className="border-t bg-gray-50">
