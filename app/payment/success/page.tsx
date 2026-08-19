@@ -1,7 +1,12 @@
-import { Check, ChevronRight, MessageCircle } from "lucide-react";
+import {
+  Check,
+  ChevronRight,
+  MessageCircle,
+} from "lucide-react";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import MetaPurchase from "@/components/MetaPurchase";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export const dynamic = "force-dynamic";
@@ -63,15 +68,31 @@ export default async function SuccessPage({
     }
   }
 
+  const isPaid =
+    order &&
+    order.payment_status === "PAID";
+
   return (
     <main className="min-h-screen bg-gray-50">
       <Header />
+
+      {/* Meta Purchase */}
+      {isPaid && order && (
+        <MetaPurchase
+          orderNo={order.order_no}
+          productName={order.product_name}
+          value={order.amount}
+        />
+      )}
 
       <section className="mx-auto max-w-4xl px-5 py-14 md:px-6 md:py-20">
         <div className="overflow-hidden rounded-[32px] border border-gray-200 bg-white shadow-xl">
           <div className="bg-blue-600 px-6 py-12 text-center text-white md:px-10">
             <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-white text-blue-600 shadow-lg">
-              <Check size={44} strokeWidth={3} />
+              <Check
+                size={44}
+                strokeWidth={3}
+              />
             </div>
 
             <h1 className="mt-7 text-3xl font-bold md:text-4xl">
@@ -96,7 +117,9 @@ export default async function SuccessPage({
 
                   <OrderInfo
                     label="결제일시"
-                    value={formatDate(order.approved_at)}
+                    value={formatDate(
+                      order.approved_at
+                    )}
                   />
 
                   <OrderInfo
@@ -264,17 +287,23 @@ function ProgressItem({
     >
       <p
         className={`text-sm font-bold ${
-          active ? "text-blue-100" : "text-blue-600"
+          active
+            ? "text-blue-100"
+            : "text-blue-600"
         }`}
       >
         {number}
       </p>
 
-      <p className="mt-3 font-bold">{title}</p>
+      <p className="mt-3 font-bold">
+        {title}
+      </p>
 
       <p
         className={`mt-2 text-sm leading-6 ${
-          active ? "text-blue-100" : "text-gray-500"
+          active
+            ? "text-blue-100"
+            : "text-gray-500"
         }`}
       >
         {description}
