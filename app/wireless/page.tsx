@@ -41,12 +41,20 @@ export default function WirelessPage() {
           "월 통신료 11,000원",
           "푸드트럭 · 배달 · 행사장 추천",
         ]}
+        metaProductId="wireless"
+        metaProductName="무선 카드단말기"
+        metaValue={100}
       />
 
       {/* 상단 리뷰 요약 */}
       <section className="border-b bg-white">
         <div className="mx-auto max-w-7xl px-5 pb-5">
-          <ReviewSummary productCode="wireless" />
+          <ReviewSummary
+            productCode="wireless"
+            href="#reviews"
+            naverReviewCount={77}
+            naverReviewUrl="https://smartstore.naver.com/ho__/products/12940013683#REVIEW"
+          />
         </div>
       </section>
 
@@ -77,7 +85,10 @@ export default function WirelessPage() {
       </section>
 
       {/* 구매 고객 리뷰 */}
-      <ReviewSection productCode="wireless" />
+      <ReviewSection
+        productCode="wireless"
+        naverReviewUrl="https://smartstore.naver.com/ho__/products/12940013683#REVIEW"
+      />
 
       <Footer />
     </main>

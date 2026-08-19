@@ -44,12 +44,20 @@ export default function Front2Page() {
           "월 사용료 없음",
           "카페·음식점·매장 추천",
         ]}
+        metaProductId="front2"
+        metaProductName="토스 프론트2"
+        metaValue={100}
       />
 
       {/* 상단 리뷰 요약 */}
       <section className="border-b bg-white">
         <div className="mx-auto max-w-7xl px-5 pb-5">
-          <ReviewSummary productCode="front2" />
+          <ReviewSummary
+            productCode="front2"
+            href="#reviews"
+            naverReviewCount={98}
+            naverReviewUrl="https://smartstore.naver.com/ho__/products/12539725990#REVIEW"
+          />
         </div>
       </section>
 
@@ -83,7 +91,10 @@ export default function Front2Page() {
       </section>
 
       {/* 구매 고객 리뷰 */}
-      <ReviewSection productCode="front2" />
+      <ReviewSection
+        productCode="front2"
+        naverReviewUrl="https://smartstore.naver.com/ho__/products/12539725990#REVIEW"
+      />
 
       <Footer />
     </main>

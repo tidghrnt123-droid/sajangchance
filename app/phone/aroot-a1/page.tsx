@@ -6,6 +6,8 @@ import Footer from "@/components/Footer";
 import PhoneActivationOptions from "@/components/PhoneActivationOptions";
 import ReviewSummary from "@/components/ReviewSummary";
 import ReviewSection from "@/components/ReviewSection";
+import MetaViewContent from "@/components/MetaViewContent";
+import MetaCheckoutButton from "@/components/MetaCheckoutButton";
 
 export const metadata: Metadata = {
   title: "에이루트 에이원 AM-F2000N 폴더폰 | 사장님찬스",
@@ -27,6 +29,13 @@ export default function ArootA1Page() {
   return (
     <main className="min-h-screen bg-white">
       <Header />
+
+      {/* Meta 상품 상세 조회 */}
+      <MetaViewContent
+        productId="aroot-a1"
+        productName="에이루트 에이원 AM-F2000N"
+        value={100}
+      />
 
       {/* 상품 상단 영역 */}
       <section className="border-b bg-white">
@@ -132,12 +141,13 @@ export default function ArootA1Page() {
               className="mt-8"
             >
               <div className="grid gap-3 sm:grid-cols-2">
-                <button
-                  type="submit"
-                  className="flex items-center justify-center rounded-2xl bg-blue-600 px-6 py-4 text-base font-bold text-white transition hover:bg-blue-700"
+                <MetaCheckoutButton
+                  productId="aroot-a1"
+                  productName="에이루트 에이원 AM-F2000N"
+                  value={100}
                 >
                   100원 구매하기
-                </button>
+                </MetaCheckoutButton>
 
                 <a
                   href="https://pf.kakao.com/_xcxhFen/chat"

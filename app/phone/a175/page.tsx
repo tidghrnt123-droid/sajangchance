@@ -6,6 +6,8 @@ import Footer from "@/components/Footer";
 import PhoneActivationOptions from "@/components/PhoneActivationOptions";
 import ReviewSummary from "@/components/ReviewSummary";
 import ReviewSection from "@/components/ReviewSection";
+import MetaViewContent from "@/components/MetaViewContent";
+import MetaCheckoutButton from "@/components/MetaCheckoutButton";
 
 export const metadata: Metadata = {
   title: "갤럭시 A175 | 사장님찬스",
@@ -27,6 +29,13 @@ export default function A175Page() {
   return (
     <main className="min-h-screen bg-white">
       <Header />
+
+      {/* Meta 상품 상세 조회 */}
+      <MetaViewContent
+        productId="a175"
+        productName="갤럭시 A175"
+        value={100}
+      />
 
       {/* 상품 상단 영역 */}
       <section className="border-b bg-white">
@@ -59,12 +68,12 @@ export default function A175Page() {
             </p>
 
             {/* 상단 리뷰 요약 */}
-<ReviewSummary
-  productCode="a175"
-  href="#reviews"
-  naverReviewCount={11}
-  naverReviewUrl="https://smartstore.naver.com/ho__/products/12798775914#REVIEW"
-/>
+            <ReviewSummary
+              productCode="a175"
+              href="#reviews"
+              naverReviewCount={11}
+              naverReviewUrl="https://smartstore.naver.com/ho__/products/12798775914#REVIEW"
+            />
 
             {/* 판매가 */}
             <div className="mt-8 border-y border-gray-200 py-6">
@@ -133,12 +142,13 @@ export default function A175Page() {
               className="mt-8"
             >
               <div className="grid gap-3 sm:grid-cols-2">
-                <button
-                  type="submit"
-                  className="flex items-center justify-center rounded-2xl bg-blue-600 px-6 py-4 text-base font-bold text-white transition hover:bg-blue-700"
+                <MetaCheckoutButton
+                  productId="a175"
+                  productName="갤럭시 A175"
+                  value={100}
                 >
                   100원 구매하기
-                </button>
+                </MetaCheckoutButton>
 
                 <a
                   href="https://pf.kakao.com/_xcxhFen/chat"
@@ -179,7 +189,10 @@ export default function A175Page() {
       </section>
 
       {/* 구매 고객 리뷰 */}
-      <ReviewSection productCode="a175" />
+      <ReviewSection
+        productCode="a175"
+        naverReviewUrl="https://smartstore.naver.com/ho__/products/12798775914#REVIEW"
+      />
 
       {/* 하단 상담 영역 */}
       <section className="border-t bg-gray-50">

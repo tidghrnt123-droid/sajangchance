@@ -43,12 +43,20 @@ export default function Front2Terminal2Page() {
           "영수증 출력 지원",
           "월 사용료 없음",
         ]}
+        metaProductId="front2-terminal2"
+        metaProductName="토스 프론트2 + 토스 터미널2"
+        metaValue={139000}
       />
 
       {/* 상단 리뷰 요약 */}
       <section className="border-b bg-white">
         <div className="mx-auto max-w-7xl px-5 pb-5">
-          <ReviewSummary productCode="front2-terminal2" />
+          <ReviewSummary
+            productCode="front2-terminal2"
+            href="#reviews"
+            naverReviewCount={9}
+            naverReviewUrl="https://smartstore.naver.com/ho__/products/12553296407#REVIEW"
+          />
         </div>
       </section>
 
@@ -80,7 +88,10 @@ export default function Front2Terminal2Page() {
       </section>
 
       {/* 구매 고객 리뷰 */}
-      <ReviewSection productCode="front2-terminal2" />
+      <ReviewSection
+        productCode="front2-terminal2"
+        naverReviewUrl="https://smartstore.naver.com/ho__/products/12553296407#REVIEW"
+      />
 
       <Footer />
     </main>

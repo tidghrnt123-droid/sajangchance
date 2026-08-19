@@ -44,12 +44,20 @@ export default function Front2PrinterPage() {
           "카페·음식점·뷰티샵·병원 추천",
           "월 사용료 없음",
         ]}
+        metaProductId="front2-printer"
+        metaProductName="토스 프론트2 + 영수증 프린터"
+        metaValue={1000}
       />
 
       {/* 상단 리뷰 요약 */}
       <section className="border-b bg-white">
         <div className="mx-auto max-w-7xl px-5 pb-5">
-          <ReviewSummary productCode="front2-printer" />
+          <ReviewSummary
+            productCode="front2-printer"
+            href="#reviews"
+            naverReviewCount={9}
+            naverReviewUrl="https://smartstore.naver.com/ho__/products/12617688944#REVIEW"
+          />
         </div>
       </section>
 
@@ -83,7 +91,10 @@ export default function Front2PrinterPage() {
       </section>
 
       {/* 구매 고객 리뷰 */}
-      <ReviewSection productCode="front2-printer" />
+      <ReviewSection
+        productCode="front2-printer"
+        naverReviewUrl="https://smartstore.naver.com/ho__/products/12617688944#REVIEW"
+      />
 
       <Footer />
     </main>
