@@ -8,6 +8,7 @@ import ReviewSection from "@/components/ReviewSection";
 import ReviewSummary from "@/components/ReviewSummary";
 import MetaViewContent from "@/components/MetaViewContent";
 import MetaCheckoutButton from "@/components/MetaCheckoutButton";
+import MetaLeadLink from "@/components/MetaLeadLink";
 
 export const metadata: Metadata = {
   title: "갤럭시 A175 공부폰 | 사장님찬스",
@@ -24,6 +25,9 @@ export default function A175StudyPage() {
     (_, i) =>
       `/images/study-detail-${String(i + 1).padStart(2, "0")}.png`
   );
+
+  const kakaoUrl =
+    "https://pf.kakao.com/_xcxhFen/chat";
 
   return (
     <main className="min-h-screen bg-white">
@@ -140,8 +144,8 @@ export default function A175StudyPage() {
               method="get"
               className="mt-8"
             >
-              {/* 구매 / 상담 버튼 */}
               <div className="grid gap-3 sm:grid-cols-2">
+                {/* Meta 결제 시작 */}
                 <MetaCheckoutButton
                   productId="a175-study"
                   productName="갤럭시 A175 공부폰"
@@ -150,14 +154,15 @@ export default function A175StudyPage() {
                   100원 구매하기
                 </MetaCheckoutButton>
 
-                <a
-                  href="https://pf.kakao.com/_xcxhFen/chat"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                {/* Meta 문의 Lead */}
+                <MetaLeadLink
+                  href={kakaoUrl}
+                  productId="a175-study"
+                  productName="갤럭시 A175 공부폰"
                   className="flex items-center justify-center rounded-2xl bg-yellow-400 px-6 py-4 text-base font-bold text-black transition hover:bg-yellow-500"
                 >
                   카카오톡 상담
-                </a>
+                </MetaLeadLink>
               </div>
 
               {/* 가입 유형 */}
@@ -195,7 +200,7 @@ export default function A175StudyPage() {
         naverReviewUrl="https://smartstore.naver.com/ho__/products/13331682072#REVIEW"
       />
 
-      {/* 하단 구매 영역 */}
+      {/* 하단 상담 영역 */}
       <section className="border-t bg-gray-50">
         <div className="mx-auto max-w-5xl px-5 py-12 text-center md:py-16">
           <p className="text-sm font-bold text-blue-600">
@@ -210,14 +215,15 @@ export default function A175StudyPage() {
             상품과 개통 관련 내용은 카카오톡을 통해 상담받으실 수 있습니다.
           </p>
 
-          <a
-            href="https://pf.kakao.com/_xcxhFen/chat"
-            target="_blank"
-            rel="noopener noreferrer"
+          {/* 하단 카카오톡도 Meta Lead 추적 */}
+          <MetaLeadLink
+            href={kakaoUrl}
+            productId="a175-study"
+            productName="갤럭시 A175 공부폰"
             className="mx-auto mt-7 block max-w-sm rounded-2xl bg-yellow-400 px-6 py-4 font-bold text-black transition hover:bg-yellow-500"
           >
             카카오톡 상담
-          </a>
+          </MetaLeadLink>
         </div>
       </section>
 
