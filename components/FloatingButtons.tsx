@@ -5,13 +5,16 @@ import {
   PackageSearch,
   ShoppingCart,
   Phone,
+  MessagesSquare,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 const KAKAO_CHAT_URL = "https://pf.kakao.com/_xcxhFen/chat";
+const PHONE_NUMBER = "01079083099";
 
 /* =========================
    구매 가능한 상품
+   카드단말기 + 휴대폰
 ========================= */
 const productPages: Record<
   string,
@@ -20,20 +23,45 @@ const productPages: Record<
     price: string;
   }
 > = {
+  /* 카드단말기 */
   "/front2": {
     checkoutUrl: "/checkout/front2",
     price: "100원",
   },
+
   "/front2-printer": {
     checkoutUrl: "/checkout/front2-printer",
     price: "1,000원",
   },
+
   "/front2-terminal2": {
     checkoutUrl: "/checkout/front2-terminal2",
     price: "139,000원",
   },
+
   "/wireless": {
     checkoutUrl: "/checkout/wireless",
+    price: "100원",
+  },
+
+  /* 휴대폰 */
+  "/phone/a175": {
+    checkoutUrl: "/checkout/a175",
+    price: "100원",
+  },
+
+  "/phone/a175-study": {
+    checkoutUrl: "/checkout/a175-study",
+    price: "100원",
+  },
+
+  "/phone/m140": {
+    checkoutUrl: "/checkout/m140",
+    price: "100원",
+  },
+
+  "/phone/aroot-a1": {
+    checkoutUrl: "/checkout/aroot-a1",
     price: "100원",
   },
 };
@@ -71,9 +99,6 @@ export default function FloatingButtons() {
   const currentProduct = productPages[pathname];
   const isProductPage = !!currentProduct;
 
-  /* =========================
-     현재 페이지 이름
-  ========================= */
   const currentPageName =
     pageNames[pathname] || pathname || "알 수 없는 페이지";
 
@@ -95,16 +120,9 @@ export default function FloatingButtons() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
-
-        // 페이지가 카카오로 이동해도
-        // 요청이 최대한 유지되도록 설정
         keepalive: true,
-      }).catch(() => {
-        // 기록 실패하더라도 카카오 이동은 정상 진행
-      });
-    } catch {
-      // 기록 실패하더라도 카카오 이동은 정상 진행
-    }
+      }).catch(() => {});
+    } catch {}
   };
 
   return (
@@ -124,16 +142,16 @@ export default function FloatingButtons() {
           </a>
         )}
 
-        {/* 주문조회 */}
+        {/* 전화하기 */}
         <a
-          href="/order-check"
-          className="flex min-w-[190px] items-center justify-center gap-2 rounded-2xl bg-gray-900 px-5 py-4 font-bold text-white shadow-lg transition hover:-translate-y-1 hover:bg-black hover:shadow-xl"
+          href={`tel:${PHONE_NUMBER}`}
+          className="flex min-w-[190px] items-center justify-center gap-2 rounded-2xl bg-green-600 px-5 py-4 font-bold text-white shadow-lg transition hover:-translate-y-1 hover:bg-green-700 hover:shadow-xl"
         >
-          <PackageSearch size={21} />
-          주문·배송조회
+          <Phone size={21} />
+          전화하기
         </a>
 
-        {/* 카카오 */}
+        {/* 카카오톡 */}
         <a
           href={KAKAO_CHAT_URL}
           target="_blank"
@@ -151,8 +169,19 @@ export default function FloatingButtons() {
             href="/#contact"
             className="flex min-w-[190px] items-center justify-center gap-2 rounded-2xl bg-gray-100 px-5 py-4 font-bold text-gray-800 shadow-lg transition hover:-translate-y-1 hover:bg-gray-200 hover:shadow-xl"
           >
-            <Phone size={21} />
+            <MessagesSquare size={21} />
             상담 신청
+          </a>
+        )}
+
+        {/* 상품페이지가 아닐 때만 주문조회 */}
+        {!isProductPage && (
+          <a
+            href="/order-check"
+            className="flex min-w-[190px] items-center justify-center gap-2 rounded-2xl bg-gray-900 px-5 py-4 font-bold text-white shadow-lg transition hover:-translate-y-1 hover:bg-black hover:shadow-xl"
+          >
+            <PackageSearch size={21} />
+            주문·배송조회
           </a>
         )}
       </div>
@@ -162,9 +191,9 @@ export default function FloatingButtons() {
       ========================= */}
       <div className="fixed inset-x-0 bottom-0 z-[100] border-t border-gray-200 bg-white/95 p-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] backdrop-blur md:hidden">
         <div className="mx-auto grid max-w-lg grid-cols-2 gap-2">
-          {isProductPage && (
+          {isProductPage ? (
             <>
-              {/* 구매하기 */}
+              {/* 1. 구매하기 */}
               <a
                 href={currentProduct.checkoutUrl}
                 className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-3 py-3.5 text-sm font-bold text-white"
@@ -173,16 +202,16 @@ export default function FloatingButtons() {
                 구매하기
               </a>
 
-              {/* 주문조회 */}
+              {/* 2. 전화하기 */}
               <a
-                href="/order-check"
-                className="flex items-center justify-center gap-2 rounded-xl bg-gray-900 px-3 py-3.5 text-sm font-bold text-white"
+                href={`tel:${PHONE_NUMBER}`}
+                className="flex items-center justify-center gap-2 rounded-xl bg-green-600 px-3 py-3.5 text-sm font-bold text-white"
               >
-                <PackageSearch size={18} />
-                주문조회
+                <Phone size={18} />
+                전화하기
               </a>
 
-              {/* 카카오 */}
+              {/* 3. 카카오톡 */}
               <a
                 href={KAKAO_CHAT_URL}
                 target="_blank"
@@ -194,20 +223,18 @@ export default function FloatingButtons() {
                 카카오톡
               </a>
 
-              {/* 상담신청 */}
+              {/* 4. 상담신청 */}
               <a
                 href="/#contact"
                 className="flex items-center justify-center gap-2 rounded-xl bg-gray-100 px-3 py-3.5 text-sm font-bold text-gray-800"
               >
-                <Phone size={18} />
+                <MessagesSquare size={18} />
                 상담신청
               </a>
             </>
-          )}
-
-          {!isProductPage && (
+          ) : (
             <>
-              {/* 카카오 */}
+              {/* 일반 페이지 - 카카오 */}
               <a
                 href={KAKAO_CHAT_URL}
                 target="_blank"
@@ -219,7 +246,7 @@ export default function FloatingButtons() {
                 카카오톡
               </a>
 
-              {/* 주문조회 */}
+              {/* 일반 페이지 - 주문조회 */}
               <a
                 href="/order-check"
                 className="flex items-center justify-center gap-2 rounded-xl bg-gray-900 px-3 py-3.5 text-sm font-bold text-white"
