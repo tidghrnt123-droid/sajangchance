@@ -26,8 +26,7 @@ export default function A175StudyPage() {
       `/images/study-detail-${String(i + 1).padStart(2, "0")}.png`
   );
 
-  const kakaoUrl =
-    "https://pf.kakao.com/_xcxhFen/chat";
+  const kakaoUrl = "https://pf.kakao.com/_xcxhFen/chat";
 
   return (
     <main className="min-h-screen bg-white">
@@ -178,9 +177,24 @@ export default function A175StudyPage() {
         </div>
       </section>
 
-      {/* 상세페이지 01 ~ 17 */}
+      {/* 사전승낙서 + 상세페이지 */}
       <section className="bg-white">
         <div className="mx-auto max-w-5xl">
+
+          {/* 이동통신서비스 판매점 사전승낙서 */}
+          <div className="flex justify-center bg-white py-8 md:py-12">
+            <Image
+              src="/images/사전승낙서.png"
+              alt="이동통신서비스 판매점 사전승낙서"
+              width={636}
+              height={900}
+              sizes="(max-width: 768px) 100vw, 636px"
+              className="block h-auto w-full max-w-[636px]"
+              priority
+            />
+          </div>
+
+          {/* 상세페이지 01 ~ 17 */}
           {detailImages.map((src, index) => (
             <Image
               key={src}
