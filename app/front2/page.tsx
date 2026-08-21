@@ -16,13 +16,29 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Front2Page() {
+type Front2PageProps = {
+  searchParams: Promise<{
+    reviewPage?: string;
+  }>;
+};
+
+export default async function Front2Page({
+  searchParams,
+}: Front2PageProps) {
+  const params = await searchParams;
+
+  const reviewPage = Math.max(
+    1,
+    Number(params.reviewPage ?? "1") || 1
+  );
+
   const details = [
     "/images/01.gif",
     "/images/02.gif",
     ...Array.from(
       { length: 26 },
-      (_, i) => `/images/${String(i + 3).padStart(2, "0")}.png`
+      (_, i) =>
+        `/images/${String(i + 3).padStart(2, "0")}.png`
     ),
   ];
 
@@ -93,6 +109,7 @@ export default function Front2Page() {
       {/* 구매 고객 리뷰 */}
       <ReviewSection
         productCode="front2"
+        reviewPage={reviewPage}
         naverReviewUrl="https://smartstore.naver.com/ho__/products/12539725990#REVIEW"
       />
 

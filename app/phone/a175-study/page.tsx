@@ -19,7 +19,22 @@ export const metadata: Metadata = {
   },
 };
 
-export default function A175StudyPage() {
+type A175StudyPageProps = {
+  searchParams: Promise<{
+    reviewPage?: string;
+  }>;
+};
+
+export default async function A175StudyPage({
+  searchParams,
+}: A175StudyPageProps) {
+  const params = await searchParams;
+
+  const reviewPage = Math.max(
+    1,
+    Number(params.reviewPage ?? "1") || 1
+  );
+
   const detailImages = Array.from(
     { length: 17 },
     (_, i) =>
@@ -180,7 +195,6 @@ export default function A175StudyPage() {
       {/* 사전승낙서 + 상세페이지 */}
       <section className="bg-white">
         <div className="mx-auto max-w-5xl">
-
           {/* 이동통신서비스 판매점 사전승낙서 */}
           <div className="flex justify-center bg-white py-8 md:py-12">
             <Image
@@ -212,6 +226,7 @@ export default function A175StudyPage() {
       {/* 구매 고객 리뷰 */}
       <ReviewSection
         productCode="a175-study"
+        reviewPage={reviewPage}
         naverReviewUrl="https://smartstore.naver.com/ho__/products/13331682072#REVIEW"
       />
 
