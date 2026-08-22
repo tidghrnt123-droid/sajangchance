@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import {
   Check,
@@ -14,6 +14,26 @@ const KAKAO_CHAT_URL = "https://pf.kakao.com/_xcxhFen/chat";
 
 const GOOGLE_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbwPMLZtXEIMJ4k7VcaDhSPETBtaFaT_iGuKAgj38MzS3gbAGhbGAnjyjkCKq_LrzUcR/exec";
+
+type MetaPixel = (
+  action: "track",
+  eventName: string,
+  params?: Record<string, string | number | boolean>
+) => void;
+
+function trackMetaEvent(
+  eventName: string,
+  params?: Record<string, string | number | boolean>
+) {
+  if (typeof window === "undefined") return false;
+
+  const fbq = (window as Window & { fbq?: MetaPixel }).fbq;
+
+  if (typeof fbq !== "function") return false;
+
+  fbq("track", eventName, params);
+  return true;
+}
 
 export default function AllInOneLandingPage() {
   const [name, setName] = useState("");
@@ -31,6 +51,39 @@ export default function AllInOneLandingPage() {
 
   const [loading, setLoading] = useState(false);
   const [complete, setComplete] = useState(false);
+
+  // 메타 광고 전환 최적화를 위한 상세페이지 조회 이벤트
+  useEffect(() => {
+    let timer: number | undefined;
+    let tries = 0;
+
+    const sendViewContent = () => {
+      const sent = trackMetaEvent("ViewContent", {
+        content_name: "올인원 랜딩페이지",
+        content_category: "인터넷_CCTV_카드단말기",
+      });
+
+      if (sent) {
+        console.log("Meta Pixel ViewContent sent: all-in-one");
+        return;
+      }
+
+      tries += 1;
+
+      // 픽셀 스크립트가 늦게 로드되는 경우 최대 약 5초간 재시도
+      if (tries < 10) {
+        timer = window.setTimeout(sendViewContent, 500);
+      }
+    };
+
+    sendViewContent();
+
+    return () => {
+      if (timer !== undefined) {
+        window.clearTimeout(timer);
+      }
+    };
+  }, []);
 
   const scrollToForm = () => {
     document
@@ -106,6 +159,18 @@ export default function AllInOneLandingPage() {
       });
 
       setComplete(true);
+
+      // 실제 상담 신청 완료를 Meta 표준 Lead 이벤트로 전송
+      const leadSent = trackMetaEvent("Lead", {
+        content_name: "올인원 무료 상담 신청",
+        content_category: selectedProducts,
+      });
+
+      if (leadSent) {
+        console.log("Meta Pixel Lead sent: all-in-one");
+      } else {
+        console.warn("Meta Pixel Lead not sent: fbq is not ready");
+      }
 
       setName("");
       setPhone("");
