@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
+
 import FloatingButtons from "@/components/FloatingButtons";
+import VisitTracker from "@/components/VisitTracker";
+
 import "./globals.css";
 
 const geistSans = Geist({
@@ -98,6 +102,11 @@ export default function RootLayout({
         {children}
 
         <FloatingButtons />
+
+        {/* 자사몰 방문자 추적 */}
+        <Suspense fallback={null}>
+          <VisitTracker />
+        </Suspense>
 
         {/* Meta Pixel */}
         <Script id="meta-pixel" strategy="afterInteractive">
