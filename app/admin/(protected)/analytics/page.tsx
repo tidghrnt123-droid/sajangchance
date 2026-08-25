@@ -17,6 +17,18 @@ type VisitRow = {
   created_at: string;
 };
 
+type AnalyticsPageProps = {
+  searchParams: Promise<{
+    period?: string;
+  }>;
+};
+
+type PeriodType =
+  | "today"
+  | "yesterday"
+  | "7d"
+  | "30d";
+
 function getKoreaDateString(date: Date) {
   return new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Seoul",
@@ -27,31 +39,115 @@ function getKoreaDateString(date: Date) {
 }
 
 function getSourceName(visit: VisitRow) {
-  const utmSource = visit.utm_source?.toLowerCase();
+  const utmSource =
+    visit.utm_source?.toLowerCase();
 
   if (utmSource) {
-    if (utmSource.includes("meta")) return "Meta";
-    if (utmSource.includes("facebook")) return "Facebook";
-    if (utmSource.includes("instagram")) return "Instagram";
-    if (utmSource.includes("naver")) return "네이버";
-    if (utmSource.includes("daangn")) return "당근";
-    if (utmSource.includes("google")) return "Google";
+    if (
+      utmSource.includes("meta")
+    ) {
+      return "Meta";
+    }
 
-    return visit.utm_source ?? "기타";
+    if (
+      utmSource === "ig" ||
+      utmSource.includes("instagram")
+    ) {
+      return "Instagram";
+    }
+
+    if (
+      utmSource === "th" ||
+      utmSource.includes("threads")
+    ) {
+      return "Threads";
+    }
+
+    if (
+      utmSource.includes("facebook")
+    ) {
+      return "Facebook";
+    }
+
+    if (
+      utmSource.includes("naver")
+    ) {
+      return "네이버";
+    }
+
+    if (
+      utmSource.includes("daangn")
+    ) {
+      return "당근";
+    }
+
+    if (
+      utmSource.includes("google")
+    ) {
+      return "Google";
+    }
+
+    return (
+      visit.utm_source ?? "기타"
+    );
   }
 
-  const referrer = visit.referrer?.toLowerCase() ?? "";
+  const referrer =
+    visit.referrer?.toLowerCase() ??
+    "";
 
-  if (!referrer) return "직접 방문";
-
-  if (referrer.includes("instagram.com")) return "Instagram";
-  if (referrer.includes("facebook.com")) return "Facebook";
-  if (referrer.includes("naver.com")) return "네이버";
-  if (referrer.includes("google.")) return "Google";
-  if (referrer.includes("daangn.com")) return "당근";
+  if (!referrer) {
+    return "직접 방문";
+  }
 
   if (
-    referrer.includes("sajangchance.com")
+    referrer.includes(
+      "instagram.com"
+    )
+  ) {
+    return "Instagram";
+  }
+
+  if (
+    referrer.includes(
+      "threads.net"
+    )
+  ) {
+    return "Threads";
+  }
+
+  if (
+    referrer.includes(
+      "facebook.com"
+    )
+  ) {
+    return "Facebook";
+  }
+
+  if (
+    referrer.includes("naver.com")
+  ) {
+    return "네이버";
+  }
+
+  if (
+    referrer.includes("google.")
+  ) {
+    return "Google";
+  }
+
+  if (
+    referrer.includes(
+      "daangn.com"
+    )
+  ) {
+    return "당근";
+  }
+
+  if (
+    referrer.includes(
+      "sajangchance.com"
+    )
   ) {
     return "내부 이동";
   }
@@ -60,51 +156,178 @@ function getSourceName(visit: VisitRow) {
 }
 
 function getPageName(path: string) {
-  const pageNames: Record<string, string> = {
+  const pageNames: Record<
+    string,
+    string
+  > = {
     "/": "메인",
-    "/card-terminal": "카드단말기 목록",
-    "/front2": "토스 프론트2",
-    "/front2-printer": "프론트2 + 프린터",
-    "/front2-terminal2": "프론트2 + 터미널2",
-    "/wireless": "무선 카드단말기",
 
-    "/phone": "휴대폰 목록",
-    "/phone/a175": "갤럭시 A175",
-    "/phone/a175-study": "갤럭시 A175 공부폰",
-    "/phone/m140": "AT-M140 폴더폰",
-    "/phone/aroot-a1": "에이루트 A1",
+    "/card-terminal":
+      "카드단말기 목록",
 
-    "/all-in-one": "올인원 랜딩",
+    "/front2":
+      "토스 프론트2",
+
+    "/front2-printer":
+      "프론트2 + 프린터",
+
+    "/front2-terminal2":
+      "프론트2 + 터미널2",
+
+    "/wireless":
+      "무선 카드단말기",
+
+    "/phone":
+      "휴대폰 목록",
+
+    "/phone/a175":
+      "갤럭시 A175",
+
+    "/phone/a175-study":
+      "갤럭시 A175 공부폰",
+
+    "/phone/m140":
+      "AT-M140 폴더폰",
+
+    "/phone/aroot-a1":
+      "에이루트 A1",
+
+    "/all-in-one":
+      "올인원 랜딩",
   };
 
-  return pageNames[path] ?? path;
+  return (
+    pageNames[path] ?? path
+  );
 }
 
-export default async function AnalyticsPage() {
+function getDeviceName(
+  device: string
+) {
+  if (device === "mobile") {
+    return "Mobile";
+  }
+
+  if (device === "desktop") {
+    return "Desktop";
+  }
+
+  if (device === "tablet") {
+    return "Tablet";
+  }
+
+  return "Unknown";
+}
+
+function getCampaignName(
+  name: string
+) {
+  const campaignNames: Record<
+    string,
+    string
+  > = {
+    a175_study:
+      "공부폰 A175 · 구매",
+
+    a175_traffic:
+      "공부폰 A175 · 트래픽",
+
+    toss_terminal:
+      "토스 단말기 · 구매",
+
+    toss_traffic:
+      "토스 단말기 · 트래픽",
+
+    a175_purchase:
+      "공부폰 A175 · 구매",
+
+    toss_purchase:
+      "토스 단말기 · 구매",
+  };
+
+  return (
+    campaignNames[name] ?? name
+  );
+}
+
+export default async function AnalyticsPage({
+  searchParams,
+}: AnalyticsPageProps) {
+  const params =
+    await searchParams;
+
+  const requestedPeriod =
+    params.period;
+
+  const period: PeriodType =
+    requestedPeriod === "today" ||
+    requestedPeriod ===
+      "yesterday" ||
+    requestedPeriod === "30d"
+      ? requestedPeriod
+      : "7d";
+
+  /*
+   * ================================
+   * 날짜 계산
+   * ================================
+   */
+
   const now = new Date();
 
-  const today = getKoreaDateString(now);
+  const today =
+    getKoreaDateString(now);
 
-  const yesterdayDate = new Date(
-    now.getTime() - 24 * 60 * 60 * 1000
-  );
+  const yesterdayDate =
+    new Date(
+      now.getTime() -
+        24 *
+          60 *
+          60 *
+          1000
+    );
 
-  const sevenDaysAgoDate = new Date(
-    now.getTime() - 6 * 24 * 60 * 60 * 1000
-  );
+  const sevenDaysAgoDate =
+    new Date(
+      now.getTime() -
+        6 *
+          24 *
+          60 *
+          60 *
+          1000
+    );
 
-  const thirtyDaysAgoDate = new Date(
-    now.getTime() - 29 * 24 * 60 * 60 * 1000
-  );
+  const thirtyDaysAgoDate =
+    new Date(
+      now.getTime() -
+        29 *
+          24 *
+          60 *
+          60 *
+          1000
+    );
 
   const yesterday =
-    getKoreaDateString(yesterdayDate);
+    getKoreaDateString(
+      yesterdayDate
+    );
 
   const sevenDaysAgo =
-    getKoreaDateString(sevenDaysAgoDate);
+    getKoreaDateString(
+      sevenDaysAgoDate
+    );
 
   const thirtyDaysAgo =
-    getKoreaDateString(thirtyDaysAgoDate);
+    getKoreaDateString(
+      thirtyDaysAgoDate
+    );
+
+  /*
+   * ================================
+   * Supabase
+   * 최근 30일 데이터 조회
+   * ================================
+   */
 
   const {
     data,
@@ -149,139 +372,277 @@ export default async function AnalyticsPage() {
     visit: VisitRow
   ) =>
     getKoreaDateString(
-      new Date(visit.created_at)
+      new Date(
+        visit.created_at
+      )
     );
+
+  /*
+   * ================================
+   * 기간별 방문 데이터
+   * ================================
+   */
 
   const todayVisits =
     visits.filter(
       (visit) =>
-        getVisitDate(visit) === today
+        getVisitDate(visit) ===
+        today
     );
 
   const yesterdayVisits =
     visits.filter(
       (visit) =>
-        getVisitDate(visit) === yesterday
+        getVisitDate(visit) ===
+        yesterday
     );
 
   const sevenDayVisits =
     visits.filter(
       (visit) =>
-        getVisitDate(visit) >= sevenDaysAgo
+        getVisitDate(visit) >=
+        sevenDaysAgo
     );
 
-  const thirtyDayVisits = visits;
+  const thirtyDayVisits =
+    visits;
 
-  const uniqueVisitors = (
+  function uniqueVisitors(
     rows: VisitRow[]
-  ) =>
-    new Set(
+  ) {
+    return new Set(
       rows.map(
-        (visit) => visit.session_id
+        (visit) =>
+          visit.session_id
       )
     ).size;
+  }
 
   const todayVisitors =
-    uniqueVisitors(todayVisits);
+    uniqueVisitors(
+      todayVisits
+    );
 
   const yesterdayVisitors =
-    uniqueVisitors(yesterdayVisits);
+    uniqueVisitors(
+      yesterdayVisits
+    );
 
   const sevenDayVisitors =
-    uniqueVisitors(sevenDayVisits);
+    uniqueVisitors(
+      sevenDayVisits
+    );
 
   const thirtyDayVisitors =
-    uniqueVisitors(thirtyDayVisits);
+    uniqueVisitors(
+      thirtyDayVisits
+    );
 
   /*
-   * 인기 페이지
+   * ================================
+   * 선택한 기간
+   * ================================
    */
-  const pageMap =
-    new Map<string, number>();
 
-  for (const visit of sevenDayVisits) {
+  let selectedVisits:
+    VisitRow[] =
+    sevenDayVisits;
+
+  let selectedPeriodLabel =
+    "최근 7일";
+
+  if (period === "today") {
+    selectedVisits =
+      todayVisits;
+
+    selectedPeriodLabel =
+      "오늘";
+  }
+
+  if (
+    period === "yesterday"
+  ) {
+    selectedVisits =
+      yesterdayVisits;
+
+    selectedPeriodLabel =
+      "어제";
+  }
+
+  if (period === "30d") {
+    selectedVisits =
+      thirtyDayVisits;
+
+    selectedPeriodLabel =
+      "최근 30일";
+  }
+
+  const selectedVisitors =
+    uniqueVisitors(
+      selectedVisits
+    );
+
+  /*
+   * ================================
+   * 인기 페이지
+   * ================================
+   */
+
+  const pageMap =
+    new Map<
+      string,
+      number
+    >();
+
+  for (
+    const visit of
+    selectedVisits
+  ) {
     pageMap.set(
       visit.path,
-      (pageMap.get(visit.path) ?? 0) + 1
+      (
+        pageMap.get(
+          visit.path
+        ) ?? 0
+      ) + 1
     );
   }
 
-  const popularPages = Array.from(
-    pageMap.entries()
-  )
-    .map(([path, count]) => ({
-      path,
-      name: getPageName(path),
-      count,
-    }))
-    .sort(
-      (a, b) => b.count - a.count
+  const popularPages =
+    Array.from(
+      pageMap.entries()
     )
-    .slice(0, 10);
+      .map(
+        ([path, count]) => ({
+          path,
+
+          name:
+            getPageName(
+              path
+            ),
+
+          count,
+        })
+      )
+      .sort(
+        (a, b) =>
+          b.count -
+          a.count
+      )
+      .slice(0, 10);
 
   /*
+   * ================================
    * 유입 경로
+   * ================================
    */
-  const sourceMap =
-    new Map<string, number>();
 
-  for (const visit of sevenDayVisits) {
+  const sourceMap =
+    new Map<
+      string,
+      number
+    >();
+
+  for (
+    const visit of
+    selectedVisits
+  ) {
     const source =
-      getSourceName(visit);
+      getSourceName(
+        visit
+      );
 
     sourceMap.set(
       source,
-      (sourceMap.get(source) ?? 0) + 1
+      (
+        sourceMap.get(
+          source
+        ) ?? 0
+      ) + 1
     );
   }
 
-  const sources = Array.from(
-    sourceMap.entries()
-  )
-    .map(([name, count]) => ({
-      name,
-      count,
-    }))
-    .sort(
-      (a, b) => b.count - a.count
-    );
+  const sources =
+    Array.from(
+      sourceMap.entries()
+    )
+      .map(
+        ([name, count]) => ({
+          name,
+          count,
+        })
+      )
+      .sort(
+        (a, b) =>
+          b.count -
+          a.count
+      );
 
   /*
-   * 기기
+   * ================================
+   * 접속 기기
+   * ================================
    */
-  const deviceMap =
-    new Map<string, number>();
 
-  for (const visit of sevenDayVisits) {
+  const deviceMap =
+    new Map<
+      string,
+      number
+    >();
+
+  for (
+    const visit of
+    selectedVisits
+  ) {
     const device =
       visit.device_type ||
       "unknown";
 
     deviceMap.set(
       device,
-      (deviceMap.get(device) ?? 0) + 1
+      (
+        deviceMap.get(
+          device
+        ) ?? 0
+      ) + 1
     );
   }
 
-  const devices = Array.from(
-    deviceMap.entries()
-  )
-    .map(([name, count]) => ({
-      name,
-      count,
-    }))
-    .sort(
-      (a, b) => b.count - a.count
-    );
+  const devices =
+    Array.from(
+      deviceMap.entries()
+    )
+      .map(
+        ([name, count]) => ({
+          name,
+          count,
+        })
+      )
+      .sort(
+        (a, b) =>
+          b.count -
+          a.count
+      );
 
   /*
+   * ================================
    * UTM 캠페인
+   * ================================
    */
-  const campaignMap =
-    new Map<string, number>();
 
-  for (const visit of sevenDayVisits) {
-    if (!visit.utm_campaign) {
+  const campaignMap =
+    new Map<
+      string,
+      number
+    >();
+
+  for (
+    const visit of
+    selectedVisits
+  ) {
+    if (
+      !visit.utm_campaign
+    ) {
       continue;
     }
 
@@ -299,19 +660,36 @@ export default async function AnalyticsPage() {
     Array.from(
       campaignMap.entries()
     )
-      .map(([name, count]) => ({
-        name,
-        count,
-      }))
-      .sort(
-        (a, b) => b.count - a.count
+      .map(
+        ([name, count]) => ({
+          name,
+          displayName:
+            getCampaignName(
+              name
+            ),
+          count,
+        })
       )
-      .slice(0, 10);
+      .sort(
+        (a, b) =>
+          b.count -
+          a.count
+      )
+      .slice(0, 20);
+
+  /*
+   * ================================
+   * 페이지
+   * ================================
+   */
 
   return (
     <main className="min-h-screen bg-gray-100 px-5 py-8 md:px-10">
       <div className="mx-auto max-w-[1500px]">
-        {/* 상단 */}
+
+        {/* =========================
+            상단
+        ========================= */}
         <header className="mb-8 flex flex-col gap-5 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm md:flex-row md:items-center md:justify-between md:p-8">
           <div>
             <p className="font-semibold text-blue-600">
@@ -323,8 +701,11 @@ export default async function AnalyticsPage() {
             </h1>
 
             <p className="mt-3 text-sm leading-relaxed text-gray-500">
-              자사몰 방문자와 페이지 조회,
-              유입경로를 확인할 수 있습니다.
+              자사몰 방문자와
+              페이지 조회,
+              유입경로 및 광고
+              캠페인 유입을
+              확인할 수 있습니다.
             </p>
           </div>
 
@@ -336,10 +717,14 @@ export default async function AnalyticsPage() {
           </a>
         </header>
 
+        {/* =========================
+            오류
+        ========================= */}
         {error && (
           <section className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-5">
             <p className="font-semibold text-red-700">
-              방문자 통계를 불러오지 못했습니다.
+              방문자 통계를
+              불러오지 못했습니다.
             </p>
 
             <p className="mt-1 text-sm text-red-600">
@@ -348,71 +733,161 @@ export default async function AnalyticsPage() {
           </section>
         )}
 
-        {/* 핵심 숫자 */}
+        {/* =========================
+            핵심 숫자
+        ========================= */}
         <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+
+          {/* 오늘 */}
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-gray-500">
               오늘 방문자
             </p>
 
             <p className="mt-2 text-3xl font-bold text-blue-600">
-              {todayVisitors.toLocaleString()}명
+              {todayVisitors.toLocaleString()}
+              명
             </p>
 
             <p className="mt-2 text-xs text-gray-400">
               페이지 조회{" "}
-              {todayVisits.length.toLocaleString()}회
+              {todayVisits.length.toLocaleString()}
+              회
             </p>
           </div>
 
+          {/* 어제 */}
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-gray-500">
               어제 방문자
             </p>
 
             <p className="mt-2 text-3xl font-bold text-gray-900">
-              {yesterdayVisitors.toLocaleString()}명
+              {yesterdayVisitors.toLocaleString()}
+              명
             </p>
 
             <p className="mt-2 text-xs text-gray-400">
               페이지 조회{" "}
-              {yesterdayVisits.length.toLocaleString()}회
+              {yesterdayVisits.length.toLocaleString()}
+              회
             </p>
           </div>
 
+          {/* 최근 7일 */}
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-gray-500">
               최근 7일
             </p>
 
             <p className="mt-2 text-3xl font-bold text-green-600">
-              {sevenDayVisitors.toLocaleString()}명
+              {sevenDayVisitors.toLocaleString()}
+              명
             </p>
 
             <p className="mt-2 text-xs text-gray-400">
               페이지 조회{" "}
-              {sevenDayVisits.length.toLocaleString()}회
+              {sevenDayVisits.length.toLocaleString()}
+              회
             </p>
           </div>
 
+          {/* 최근 30일 */}
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-gray-500">
               최근 30일
             </p>
 
             <p className="mt-2 text-3xl font-bold text-purple-600">
-              {thirtyDayVisitors.toLocaleString()}명
+              {thirtyDayVisitors.toLocaleString()}
+              명
             </p>
 
             <p className="mt-2 text-xs text-gray-400">
               페이지 조회{" "}
-              {thirtyDayVisits.length.toLocaleString()}회
+              {thirtyDayVisits.length.toLocaleString()}
+              회
             </p>
           </div>
         </section>
 
-        {/* 인기 페이지 / 유입경로 */}
-        <section className="mt-8 grid gap-5 lg:grid-cols-2">
+        {/* =========================
+            기간 선택
+        ========================= */}
+        <section className="mt-6 rounded-3xl border border-gray-200 bg-white p-5 shadow-sm md:p-6">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="text-sm font-bold text-blue-600">
+                조회 기간
+              </p>
+
+              <h2 className="mt-1 text-xl font-bold text-gray-900">
+                {selectedPeriodLabel} 상세 통계
+              </h2>
+
+              <p className="mt-1 text-sm text-gray-500">
+                방문자{" "}
+                {selectedVisitors.toLocaleString()}
+                명 · 페이지 조회{" "}
+                {selectedVisits.length.toLocaleString()}
+                회
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <a
+                href="/admin/analytics?period=today"
+                className={`rounded-xl px-4 py-2.5 text-sm font-bold transition ${
+                  period === "today"
+                    ? "bg-blue-600 text-white"
+                    : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                오늘
+              </a>
+
+              <a
+                href="/admin/analytics?period=yesterday"
+                className={`rounded-xl px-4 py-2.5 text-sm font-bold transition ${
+                  period ===
+                  "yesterday"
+                    ? "bg-blue-600 text-white"
+                    : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                어제
+              </a>
+
+              <a
+                href="/admin/analytics?period=7d"
+                className={`rounded-xl px-4 py-2.5 text-sm font-bold transition ${
+                  period === "7d"
+                    ? "bg-blue-600 text-white"
+                    : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                최근 7일
+              </a>
+
+              <a
+                href="/admin/analytics?period=30d"
+                className={`rounded-xl px-4 py-2.5 text-sm font-bold transition ${
+                  period === "30d"
+                    ? "bg-blue-600 text-white"
+                    : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                최근 30일
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* =========================
+            인기 페이지 / 유입경로
+        ========================= */}
+        <section className="mt-6 grid gap-5 lg:grid-cols-2">
+
           {/* 인기 페이지 */}
           <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm md:p-8">
             <div>
@@ -425,46 +900,56 @@ export default async function AnalyticsPage() {
               </h2>
 
               <p className="mt-2 text-sm text-gray-500">
-                최근 7일 페이지 조회 기준입니다.
+                {selectedPeriodLabel} 페이지 조회 기준입니다.
               </p>
             </div>
 
             <div className="mt-6 divide-y divide-gray-100">
-              {popularPages.length > 0 ? (
+              {popularPages.length >
+              0 ? (
                 popularPages.map(
                   (
                     page,
                     index
                   ) => (
                     <div
-                      key={page.path}
+                      key={
+                        page.path
+                      }
                       className="flex items-center justify-between gap-4 py-4"
                     >
                       <div className="flex min-w-0 items-center gap-3">
                         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-50 text-sm font-bold text-blue-600">
-                          {index + 1}
+                          {index +
+                            1}
                         </span>
 
                         <div className="min-w-0">
                           <p className="truncate font-semibold text-gray-900">
-                            {page.name}
+                            {
+                              page.name
+                            }
                           </p>
 
                           <p className="truncate text-xs text-gray-400">
-                            {page.path}
+                            {
+                              page.path
+                            }
                           </p>
                         </div>
                       </div>
 
                       <p className="shrink-0 font-bold text-gray-900">
-                        {page.count.toLocaleString()}회
+                        {page.count.toLocaleString()}
+                        회
                       </p>
                     </div>
                   )
                 )
               ) : (
                 <p className="py-8 text-center text-sm text-gray-400">
-                  아직 방문 데이터가 없습니다.
+                  해당 기간의 방문
+                  데이터가 없습니다.
                 </p>
               )}
             </div>
@@ -481,7 +966,7 @@ export default async function AnalyticsPage() {
             </h2>
 
             <p className="mt-2 text-sm text-gray-500">
-              최근 7일 페이지 조회 기준입니다.
+              {selectedPeriodLabel} 페이지 조회 기준입니다.
             </p>
 
             <div className="mt-6 divide-y divide-gray-100">
@@ -489,31 +974,40 @@ export default async function AnalyticsPage() {
                 sources.map(
                   (source) => (
                     <div
-                      key={source.name}
+                      key={
+                        source.name
+                      }
                       className="flex items-center justify-between py-4"
                     >
                       <p className="font-semibold text-gray-700">
-                        {source.name}
+                        {
+                          source.name
+                        }
                       </p>
 
                       <p className="font-bold text-gray-900">
-                        {source.count.toLocaleString()}회
+                        {source.count.toLocaleString()}
+                        회
                       </p>
                     </div>
                   )
                 )
               ) : (
                 <p className="py-8 text-center text-sm text-gray-400">
-                  아직 유입 데이터가 없습니다.
+                  해당 기간의 유입
+                  데이터가 없습니다.
                 </p>
               )}
             </div>
           </div>
         </section>
 
-        {/* 기기 / UTM */}
+        {/* =========================
+            접속기기 / 광고캠페인
+        ========================= */}
         <section className="mt-5 grid gap-5 lg:grid-cols-2">
-          {/* 기기 */}
+
+          {/* 접속 기기 */}
           <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm md:p-8">
             <p className="text-sm font-bold text-purple-600">
               DEVICE
@@ -523,34 +1017,45 @@ export default async function AnalyticsPage() {
               접속 기기
             </h2>
 
+            <p className="mt-2 text-sm text-gray-500">
+              {selectedPeriodLabel} 페이지 조회 기준입니다.
+            </p>
+
             <div className="mt-6 space-y-3">
-              {devices.length > 0 ? (
+              {devices.length >
+              0 ? (
                 devices.map(
                   (device) => {
                     const total =
-                      sevenDayVisits.length ||
+                      selectedVisits.length ||
                       1;
 
                     const percent =
                       Math.round(
-                        (
-                          device.count /
-                          total
-                        ) * 100
+                        (device.count /
+                          total) *
+                          100
                       );
 
                     return (
                       <div
-                        key={device.name}
+                        key={
+                          device.name
+                        }
                         className="rounded-2xl bg-gray-50 p-4"
                       >
                         <div className="flex items-center justify-between">
-                          <p className="font-semibold capitalize text-gray-700">
-                            {device.name}
+                          <p className="font-semibold text-gray-700">
+                            {getDeviceName(
+                              device.name
+                            )}
                           </p>
 
                           <p className="font-bold text-gray-900">
-                            {percent}%
+                            {
+                              percent
+                            }
+                            %
                           </p>
                         </div>
 
@@ -564,7 +1069,8 @@ export default async function AnalyticsPage() {
                         </div>
 
                         <p className="mt-2 text-xs text-gray-400">
-                          {device.count.toLocaleString()}회
+                          {device.count.toLocaleString()}
+                          회
                         </p>
                       </div>
                     );
@@ -572,7 +1078,8 @@ export default async function AnalyticsPage() {
                 )
               ) : (
                 <p className="py-8 text-center text-sm text-gray-400">
-                  아직 기기 데이터가 없습니다.
+                  해당 기간의 기기
+                  데이터가 없습니다.
                 </p>
               )}
             </div>
@@ -589,11 +1096,12 @@ export default async function AnalyticsPage() {
             </h2>
 
             <p className="mt-2 text-sm text-gray-500">
-              UTM 캠페인이 설정된 방문만 표시합니다.
+              {selectedPeriodLabel} UTM 캠페인이 설정된 방문입니다.
             </p>
 
             <div className="mt-6 divide-y divide-gray-100">
-              {campaigns.length > 0 ? (
+              {campaigns.length >
+              0 ? (
                 campaigns.map(
                   (campaign) => (
                     <div
@@ -602,21 +1110,35 @@ export default async function AnalyticsPage() {
                       }
                       className="flex items-center justify-between gap-4 py-4"
                     >
-                      <p className="truncate font-semibold text-gray-700">
-                        {
-                          campaign.name
-                        }
-                      </p>
+                      <div className="min-w-0">
+                        <p className="truncate font-semibold text-gray-700">
+                          {
+                            campaign.displayName
+                          }
+                        </p>
+
+                        {campaign.displayName !==
+                          campaign.name && (
+                          <p className="mt-1 truncate text-xs text-gray-400">
+                            {
+                              campaign.name
+                            }
+                          </p>
+                        )}
+                      </div>
 
                       <p className="shrink-0 font-bold text-gray-900">
-                        {campaign.count.toLocaleString()}회
+                        {campaign.count.toLocaleString()}
+                        회
                       </p>
                     </div>
                   )
                 )
               ) : (
                 <p className="py-8 text-center text-sm text-gray-400">
-                  아직 UTM 캠페인 데이터가 없습니다.
+                  해당 기간의 광고
+                  캠페인 데이터가
+                  없습니다.
                 </p>
               )}
             </div>
