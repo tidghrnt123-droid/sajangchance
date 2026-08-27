@@ -17,7 +17,7 @@ export default function Header() {
             />
 
             <p className="ml-1 mt-1 text-xs text-gray-500">
-              카드단말기 · POS · PG 전문
+              카드단말기 · 인터넷 · 휴대폰 전문
             </p>
           </a>
 
