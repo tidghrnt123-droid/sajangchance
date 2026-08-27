@@ -3,7 +3,6 @@ import Image from "next/image";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import PhoneActivationOptions from "@/components/PhoneActivationOptions";
 import ReviewSummary from "@/components/ReviewSummary";
 import ReviewSection from "@/components/ReviewSection";
 import MetaViewContent from "@/components/MetaViewContent";
@@ -157,7 +156,6 @@ export default function M140Page() {
                 </a>
               </div>
 
-              <PhoneActivationOptions />
             </form>
 
             <p className="mt-4 text-sm leading-6 text-gray-400">

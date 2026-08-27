@@ -16,18 +16,7 @@ import type {
 
 export const runtime = "nodejs";
 
-type ActivationType =
-  | "NEW"
-  | "MNP";
-
-type PreviousCarrier =
-  | "KT"
-  | "LGU"
-  | "MVNO";
-
-function getString(
-  value: unknown
-): string {
+function getString(value: unknown): string {
   return typeof value === "string"
     ? value.trim()
     : "";
@@ -52,97 +41,55 @@ function isDeviceType(
   );
 }
 
-function isActivationType(
-  value: string
-): value is ActivationType {
-  return (
-    value === "NEW" ||
-    value === "MNP"
-  );
-}
-
-function isPreviousCarrier(
-  value: string
-): value is PreviousCarrier {
-  return (
-    value === "KT" ||
-    value === "LGU" ||
-    value === "MVNO"
-  );
-}
-
 export async function POST(
   request: NextRequest
 ) {
   try {
-    const body =
-      await request.json();
+    const body = await request.json();
 
-    const productCode =
-      getString(
-        body.productCode
-      ) as ProductCode;
+    const productCode = getString(
+      body.productCode
+    ) as ProductCode;
 
-    const buyerName =
-      getString(
-        body.buyerName
-      );
+    const buyerName = getString(
+      body.buyerName
+    );
 
-    const buyerPhone =
-      getString(
-        body.buyerPhone
-      );
+    const buyerPhone = getString(
+      body.buyerPhone
+    );
 
-    const buyerEmail =
-      getString(
-        body.buyerEmail
-      );
+    const buyerEmail = getString(
+      body.buyerEmail
+    );
 
-    const businessName =
-      getString(
-        body.businessName
-      );
+    const businessName = getString(
+      body.businessName
+    );
 
-    const requestNote =
-      getString(
-        body.requestNote
-      );
+    const requestNote = getString(
+      body.requestNote
+    );
 
     const requestedPaymentType =
-      getString(
-        body.paymentType
-      );
+      getString(body.paymentType);
 
     const requestedDeviceType =
-      getString(
-        body.deviceType
-      );
+      getString(body.deviceType);
 
-    const requestedActivationType =
-      getString(
-        body.activationType
-      );
+    const paymentType: InicisPaymentType =
+      isPaymentType(
+        requestedPaymentType
+      )
+        ? requestedPaymentType
+        : "CARD";
 
-    const requestedPreviousCarrier =
-      getString(
-        body.previousCarrier
-      );
-
-    const paymentType:
-      InicisPaymentType =
-        isPaymentType(
-          requestedPaymentType
-        )
-          ? requestedPaymentType
-          : "CARD";
-
-    const deviceType:
-      InicisDeviceType =
-        isDeviceType(
-          requestedDeviceType
-        )
-          ? requestedDeviceType
-          : "WEB";
+    const deviceType: InicisDeviceType =
+      isDeviceType(
+        requestedDeviceType
+      )
+        ? requestedDeviceType
+        : "WEB";
 
     const product =
       products[productCode];
@@ -161,71 +108,6 @@ export async function POST(
           status: 400,
         }
       );
-    }
-
-    const isPhone =
-      product.productType ===
-      "PHONE";
-
-    /*
-     * 휴대폰 가입정보
-     */
-    let activationType:
-      | ActivationType
-      | null = null;
-
-    let previousCarrier:
-      | PreviousCarrier
-      | null = null;
-
-    if (isPhone) {
-      if (
-        !isActivationType(
-          requestedActivationType
-        )
-      ) {
-        return NextResponse.json(
-          {
-            success: false,
-            message:
-              "가입 유형을 다시 선택해주세요.",
-          },
-          {
-            status: 400,
-          }
-        );
-      }
-
-      activationType =
-        requestedActivationType;
-
-      /*
-       * 번호이동은
-       * 기존 통신사 필수
-       */
-      if (
-        activationType === "MNP"
-      ) {
-        if (
-          !isPreviousCarrier(
-            requestedPreviousCarrier
-          )
-        ) {
-          return NextResponse.json(
-            {
-              success: false,
-              message:
-                "기존 통신사를 선택해주세요.",
-            },
-            {
-              status: 400,
-            }
-          );
-        }
-
-        previousCarrier =
-          requestedPreviousCarrier;
-      }
     }
 
     /*
@@ -268,67 +150,57 @@ export async function POST(
      * Supabase 주문 저장
      */
     const {
-      error:
-        orderInsertError,
-    } =
-      await supabaseAdmin
-        .from("orders")
-        .insert({
-          order_no:
-            orderId,
+      error: orderInsertError,
+    } = await supabaseAdmin
+      .from("orders")
+      .insert({
+        order_no: orderId,
 
-          buyer_name:
-            buyerName,
+        buyer_name: buyerName,
 
-          buyer_phone:
-            buyerPhone,
+        buyer_phone: buyerPhone,
 
-          buyer_email:
-            buyerEmail ||
-            null,
+        buyer_email:
+          buyerEmail || null,
 
-          business_name:
-            businessName ||
-            null,
+        business_name:
+          businessName || null,
 
-          delivery_address:
-            null,
+        delivery_address: null,
 
-          request_note:
-            requestNote ||
-            null,
+        request_note:
+          requestNote || null,
 
-          product_code:
-            productCode,
+        product_code:
+          productCode,
 
-          product_name:
-            product.name,
+        product_name:
+          product.name,
 
-          amount:
-            product.price,
+        amount:
+          product.price,
 
-          product_type:
-            product.productType,
+        product_type:
+          product.productType,
 
-          activation_type:
-            activationType,
+        /*
+         * 가입유형은 더 이상
+         * 결제 단계에서 받지 않음
+         */
+        activation_type: null,
+        previous_carrier: null,
 
-          previous_carrier:
-            previousCarrier,
+        payment_status:
+          "PENDING",
 
-          payment_status:
-            "PENDING",
+        payment_method:
+          paymentType,
 
-          payment_method:
-            paymentType,
+        is_escrow:
+          isEscrow,
+      });
 
-          is_escrow:
-            isEscrow,
-        });
-
-    if (
-      orderInsertError
-    ) {
+    if (orderInsertError) {
       console.error(
         "Supabase order insert error:",
         orderInsertError
@@ -384,21 +256,17 @@ export async function POST(
         productType:
           product.productType,
 
-        activationType,
-
-        previousCarrier,
-
         paymentType,
+
+        deviceType,
 
         isEscrow,
 
         P_PAY_TYPE:
-          payment.fields
-            .P_PAY_TYPE,
+          payment.fields.P_PAY_TYPE,
 
         P_RESERVED:
-          payment.fields
-            .P_RESERVED,
+          payment.fields.P_RESERVED,
       }
     );
 

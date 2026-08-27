@@ -3,7 +3,6 @@ import Image from "next/image";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import PhoneActivationOptions from "@/components/PhoneActivationOptions";
 import ReviewSection from "@/components/ReviewSection";
 import ReviewSummary from "@/components/ReviewSummary";
 import MetaViewContent from "@/components/MetaViewContent";
@@ -180,8 +179,7 @@ export default async function A175StudyPage({
                 </MetaLeadLink>
               </div>
 
-              {/* 가입 유형 */}
-              <PhoneActivationOptions />
+
             </form>
 
             <p className="mt-4 text-sm leading-6 text-gray-400">
