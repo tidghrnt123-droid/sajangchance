@@ -102,10 +102,10 @@ export default function CardTerminalPage() {
           </div>
 
           {/* 상담 카드 */}
-          <a
-            href="tel:01079083099"
-            className="hidden rounded-[28px] border-2 border-blue-600 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg lg:block"
-          >
+         <a
+  href="tel:01079083099"
+  className="block rounded-[28px] border-2 border-blue-600 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+>
             <div className="flex items-center gap-3">
               <span className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-white">
                 <Phone size={23} />
