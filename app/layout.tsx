@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://sajangchance.com"),
 
-  title: "사장님찬스 | 카드단말기 · POS · PG 전문",
+  title: "사장님찬스 | 인터넷 · CCTV · 카드단말기 · 휴대폰",
   description: "카드단말기, POS, PG 전문 상담",
 
   keywords: [
