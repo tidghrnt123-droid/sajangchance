@@ -45,7 +45,7 @@ export default function M140Page() {
           {/* 대표 이미지 */}
           <div className="relative aspect-square overflow-hidden rounded-3xl bg-gray-100">
             <Image
-              src="/images/phone-m140.png"
+              src="/images/phone-m141.png"
               alt="AT-M140 스타일 폴더폰2"
               fill
               priority
