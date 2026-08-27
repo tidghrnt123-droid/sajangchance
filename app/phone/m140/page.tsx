@@ -21,7 +21,7 @@ export default function M140Page() {
   const detailImages = [
     "/images/m140-detail-01.png",
     "/images/m140-detail-02.png",
-    "/images/m140-detail-03.png",
+    "/images/detail-07.png",
     "/images/m140-detail-04.jpg",
     "/images/m140-detail-05.jpg",
     "/images/m140-detail-06.jpg",
@@ -44,7 +44,7 @@ export default function M140Page() {
           {/* 대표 이미지 */}
           <div className="relative aspect-square overflow-hidden rounded-3xl bg-gray-100">
             <Image
-              src="/images/phone-m141.png"
+              src="/images/phone-m140.png"
               alt="AT-M140 스타일 폴더폰2"
               fill
               priority
