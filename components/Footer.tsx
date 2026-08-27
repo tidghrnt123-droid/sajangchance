@@ -36,7 +36,7 @@ export default function Footer() {
         <div className="space-y-2 text-sm leading-7 text-gray-300">
           <p>
             <span className="font-semibold text-white">사장님찬스</span>
-            {" "}| 카드단말기 · POS · PG 전문
+            {" "}| 인터넷 · CCTV · 카드단말기 · 휴대폰 · POS · PG 전문
           </p>
 
           <p>
