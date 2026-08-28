@@ -4,17 +4,20 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { createInicisOrderId } from "@/lib/inicis/hash";
 import { createInicisPayment } from "@/lib/inicis/payment";
 
-import {
-  products,
-  type ProductCode,
-} from "@/lib/products";
-
 import type {
   InicisDeviceType,
   InicisPaymentType,
 } from "@/lib/inicis/types";
 
 export const runtime = "nodejs";
+
+type DbProduct = {
+  product_code: string;
+  product_type: string;
+  name: string;
+  price: number;
+  is_visible: boolean;
+};
 
 function getString(value: unknown): string {
   return typeof value === "string"
@@ -49,7 +52,7 @@ export async function POST(
 
     const productCode = getString(
       body.productCode
-    ) as ProductCode;
+    );
 
     const buyerName = getString(
       body.buyerName
@@ -78,24 +81,82 @@ export async function POST(
       getString(body.deviceType);
 
     const paymentType: InicisPaymentType =
-      isPaymentType(
-        requestedPaymentType
-      )
+      isPaymentType(requestedPaymentType)
         ? requestedPaymentType
         : "CARD";
 
     const deviceType: InicisDeviceType =
-      isDeviceType(
-        requestedDeviceType
-      )
+      isDeviceType(requestedDeviceType)
         ? requestedDeviceType
         : "WEB";
 
-    const product =
-      products[productCode];
+    /*
+     * ================================
+     * 상품코드 검증
+     * ================================
+     */
+    if (!productCode) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "상품정보가 올바르지 않습니다.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
 
     /*
-     * 상품 검증
+     * ================================
+     * Supabase 상품 조회
+     * 관리자 상품관리의 가격을 사용
+     * ================================
+     */
+    const {
+      data: productData,
+      error: productError,
+    } = await supabaseAdmin
+      .from("products")
+      .select(
+        `
+          product_code,
+          product_type,
+          name,
+          price,
+          is_visible
+        `
+      )
+      .eq(
+        "product_code",
+        productCode
+      )
+      .maybeSingle();
+
+    if (productError) {
+      console.error(
+        "Supabase product load error:",
+        productError
+      );
+
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "상품정보를 불러오는 중 오류가 발생했습니다.",
+        },
+        {
+          status: 500,
+        }
+      );
+    }
+
+    const product =
+      productData as DbProduct | null;
+
+    /*
+     * 상품 존재 여부
      */
     if (!product) {
       return NextResponse.json(
@@ -111,7 +172,55 @@ export async function POST(
     }
 
     /*
+     * 판매중지 상품 결제 차단
+     */
+    if (!product.is_visible) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "현재 판매하지 않는 상품입니다.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    /*
+     * 가격 검증
+     */
+    const productPrice =
+      Number(product.price);
+
+    if (
+      !Number.isFinite(productPrice) ||
+      productPrice < 0
+    ) {
+      console.error(
+        "Invalid product price:",
+        {
+          productCode,
+          price: product.price,
+        }
+      );
+
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "상품 가격정보가 올바르지 않습니다.",
+        },
+        {
+          status: 500,
+        }
+      );
+    }
+
+    /*
+     * ================================
      * 구매자 검증
+     * ================================
      */
     if (!buyerName) {
       return NextResponse.json(
@@ -147,7 +256,9 @@ export async function POST(
       paymentType === "VBANK";
 
     /*
+     * ================================
      * Supabase 주문 저장
+     * ================================
      */
     const {
       error: orderInsertError,
@@ -172,22 +283,19 @@ export async function POST(
           requestNote || null,
 
         product_code:
-          productCode,
+          product.product_code,
 
         product_name:
           product.name,
 
         amount:
-          product.price,
+          productPrice,
 
         product_type:
-          product.productType,
+          product.product_type,
 
-        /*
-         * 가입유형은 더 이상
-         * 결제 단계에서 받지 않음
-         */
         activation_type: null,
+
         previous_carrier: null,
 
         payment_status:
@@ -219,14 +327,17 @@ export async function POST(
     }
 
     /*
+     * ================================
      * KG이니시스 결제 준비
+     * 반드시 DB 가격 사용
+     * ================================
      */
     const payment =
       createInicisPayment({
         orderId,
 
         amount:
-          product.price,
+          productPrice,
 
         goodsName:
           product.name,
@@ -244,17 +355,23 @@ export async function POST(
       });
 
     /*
-     * 확인용 로그
+     * 확인 로그
      */
     console.log(
       "INICIS PAYMENT CHECK:",
       {
         orderId,
 
-        productCode,
+        productCode:
+          product.product_code,
+
+        productName:
+          product.name,
 
         productType:
-          product.productType,
+          product.product_type,
+
+        productPrice,
 
         paymentType,
 

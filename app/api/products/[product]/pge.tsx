@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Image from "next/image";
 
 import Header from "@/components/Header";
@@ -11,18 +10,16 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "갤럭시 A175 | 사장님찬스",
-  description:
-    "법인폰·키즈폰·효도폰 등 다양한 용도로 활용하기 좋은 실용적인 갤럭시 A175 스마트폰을 확인하세요.",
-  alternates: {
-    canonical: "https://sajangchance.com/phone/a175",
-  },
+type PageProps = {
+  params: Promise<{
+    product: string;
+  }>;
 };
 
 type ProductRow = {
   product_code: string;
   product_type: string;
+  category: string;
   name: string;
   short_description: string | null;
   price: number;
@@ -33,32 +30,45 @@ type ProductRow = {
   is_visible: boolean;
 };
 
-export default async function A175Page() {
+type ProductImageRow = {
+  id: number;
+  image_url: string;
+  sort_order: number;
+};
+
+export default async function GenericProductPage({
+  params,
+}: PageProps) {
+  const { product: productCode } =
+    await params;
+
   const {
     data,
     error,
   } = await supabaseAdmin
     .from("products")
-    .select(
-      `
-        product_code,
-        product_type,
-        name,
-        short_description,
-        price,
-        thumbnail_url,
-        badge,
-        naver_review_count,
-        naver_review_url,
-        is_visible
-      `
+    .select(`
+      product_code,
+      product_type,
+      category,
+      name,
+      short_description,
+      price,
+      thumbnail_url,
+      badge,
+      naver_review_count,
+      naver_review_url,
+      is_visible
+    `)
+    .eq(
+      "product_code",
+      productCode
     )
-    .eq("product_code", "a175")
     .maybeSingle();
 
   if (error) {
     console.error(
-      "A175 product load error:",
+      "Generic product load error:",
       error
     );
   }
@@ -75,23 +85,19 @@ export default async function A175Page() {
         <Header />
 
         <section className="mx-auto max-w-3xl px-6 py-24 text-center">
-          <p className="font-semibold text-blue-600">
-            사장님찬스
-          </p>
-
-          <h1 className="mt-3 text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-gray-900">
             현재 판매하지 않는 상품입니다.
           </h1>
 
-          <p className="mt-4 text-gray-500">
-            다른 휴대폰 상품을 확인해주세요.
-          </p>
-
           <a
-            href="/phone"
+            href={
+              product?.product_type === "PHONE"
+                ? "/phone"
+                : "/card-terminal"
+            }
             className="mt-8 inline-flex rounded-xl bg-blue-600 px-6 py-3 font-bold text-white"
           >
-            휴대폰 보러가기
+            상품 목록으로
           </a>
         </section>
 
@@ -100,20 +106,38 @@ export default async function A175Page() {
     );
   }
 
-  const detailImages = [
-    "/images/a175-detail-01.png",
-    "/images/a175-detail-02.png",
-    "/images/a175-detail-03.png",
-    "/images/a175-detail-04.jpg",
-  ];
+  const {
+    data: imageData,
+    error: imageError,
+  } = await supabaseAdmin
+    .from("product_images")
+    .select(
+      "id,image_url,sort_order"
+    )
+    .eq(
+      "product_code",
+      product.product_code
+    )
+    .eq(
+      "image_type",
+      "detail"
+    )
+    .order(
+      "sort_order",
+      {
+        ascending: true,
+      }
+    );
 
-  const heroImage =
-    product.thumbnail_url ||
-    "/images/phone-a175.png";
+  if (imageError) {
+    console.error(
+      "Generic product image load error:",
+      imageError
+    );
+  }
 
-  const description =
-    product.short_description ||
-    "법인폰·키즈폰·효도폰 등 다양한 용도로 활용하기 좋은 실용적인 스마트폰입니다.";
+  const detailImages =
+    (imageData ?? []) as ProductImageRow[];
 
   const price =
     Number(product.price);
@@ -121,11 +145,14 @@ export default async function A175Page() {
   const priceText =
     `${price.toLocaleString()}원`;
 
+  const isPhone =
+    product.product_type ===
+    "PHONE";
+
   return (
     <main className="min-h-screen bg-white">
       <Header />
 
-      {/* Meta 상품 상세 조회 */}
       <MetaViewContent
         productId={
           product.product_code
@@ -136,26 +163,35 @@ export default async function A175Page() {
         value={price}
       />
 
-      {/* 상품 상단 영역 */}
       <section className="border-b bg-white">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 py-10 lg:grid-cols-2 lg:items-center lg:py-16">
-          {/* 대표 이미지 */}
           <div className="relative aspect-square overflow-hidden rounded-3xl bg-gray-100">
-            <Image
-              src={heroImage}
-              alt={product.name}
-              fill
-              priority
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover"
-            />
+            {product.thumbnail_url ? (
+              <Image
+                src={
+                  product.thumbnail_url
+                }
+                alt={
+                  product.name
+                }
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center text-gray-400">
+                대표 이미지 없음
+              </div>
+            )}
           </div>
 
-          {/* 상품 정보 */}
           <div>
             <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-sm font-bold text-blue-700">
               {product.badge ||
-                "스마트폰"}
+                (isPhone
+                  ? "휴대폰"
+                  : "카드단말기")}
             </span>
 
             <h1 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
@@ -163,10 +199,10 @@ export default async function A175Page() {
             </h1>
 
             <p className="mt-4 text-base leading-7 text-gray-600 md:text-lg">
-              {description}
+              {product.short_description ||
+                "상품 상세정보를 확인해보세요."}
             </p>
 
-            {/* 상단 리뷰 요약 */}
             <ReviewSummary
               productCode={
                 product.product_code
@@ -181,7 +217,6 @@ export default async function A175Page() {
               }
             />
 
-            {/* 판매가 */}
             <div className="mt-8 border-y border-gray-200 py-6">
               <p className="text-sm font-medium text-gray-500">
                 판매가
@@ -198,52 +233,8 @@ export default async function A175Page() {
               </div>
             </div>
 
-            {/* 상품 특징 */}
-            <div className="mt-7 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl bg-gray-50 p-4">
-                <p className="font-bold text-gray-900">
-                  다양한 활용
-                </p>
-
-                <p className="mt-1 text-sm leading-6 text-gray-500">
-                  법인폰·키즈폰·효도폰 등 다양한 용도로 활용
-                </p>
-              </div>
-
-              <div className="rounded-2xl bg-gray-50 p-4">
-                <p className="font-bold text-gray-900">
-                  갤럭시 A175
-                </p>
-
-                <p className="mt-1 text-sm leading-6 text-gray-500">
-                  일상 사용에 적합한 실용적인 삼성 스마트폰
-                </p>
-              </div>
-
-              <div className="rounded-2xl bg-gray-50 p-4">
-                <p className="font-bold text-gray-900">
-                  편리한 개통
-                </p>
-
-                <p className="mt-1 text-sm leading-6 text-gray-500">
-                  신규가입과 번호이동을 간편하게 신청
-                </p>
-              </div>
-
-              <div className="rounded-2xl bg-gray-50 p-4">
-                <p className="font-bold text-gray-900">
-                  전문 상담
-                </p>
-
-                <p className="mt-1 text-sm leading-6 text-gray-500">
-                  구매와 개통 관련 상담 가능
-                </p>
-              </div>
-            </div>
-
-            {/* 구매 영역 */}
             <form
-              action="/checkout/a175"
+              action={`/checkout/${product.product_code}`}
               method="get"
               className="mt-8"
             >
@@ -270,37 +261,39 @@ export default async function A175Page() {
                 </a>
               </div>
             </form>
-
-            <p className="mt-4 text-sm leading-6 text-gray-400">
-              상품 및 개통 관련 자세한 내용은 상세페이지 또는 상담을
-              통해 확인하실 수 있습니다.
-            </p>
           </div>
         </div>
       </section>
 
-      {/* 상세페이지 */}
-      <section className="bg-white">
-        <div className="mx-auto max-w-5xl">
-          {detailImages.map(
-            (src, index) => (
-              <Image
-                key={src}
-                src={src}
-                alt={`${product.name} 상세정보 ${
-                  index + 1
-                }`}
-                width={1000}
-                height={2000}
-                sizes="(max-width: 1024px) 100vw, 1000px"
-                className="block h-auto w-full"
-              />
-            )
-          )}
-        </div>
-      </section>
+      {detailImages.length > 0 && (
+        <section className="bg-white">
+          <div className="mx-auto max-w-5xl">
+            {detailImages.map(
+              (
+                detail,
+                index
+              ) => (
+                <Image
+                  key={
+                    detail.id
+                  }
+                  src={
+                    detail.image_url
+                  }
+                  alt={`${product.name} 상세정보 ${
+                    index + 1
+                  }`}
+                  width={1000}
+                  height={1600}
+                  sizes="(max-width: 1024px) 100vw, 1000px"
+                  className="block h-auto w-full"
+                />
+              )
+            )}
+          </div>
+        </section>
+      )}
 
-      {/* 구매 고객 리뷰 */}
       <ReviewSection
         productCode={
           product.product_code
@@ -311,7 +304,6 @@ export default async function A175Page() {
         }
       />
 
-      {/* 하단 상담 영역 */}
       <section className="border-t bg-gray-50">
         <div className="mx-auto max-w-5xl px-5 py-12 text-center md:py-16">
           <p className="text-sm font-bold text-blue-600">
@@ -321,10 +313,6 @@ export default async function A175Page() {
           <h2 className="mt-2 text-2xl font-bold text-gray-900 md:text-3xl">
             구매 전 궁금한 점이 있으신가요?
           </h2>
-
-          <p className="mt-3 text-sm leading-6 text-gray-500">
-            상품과 개통 관련 내용은 카카오톡을 통해 상담받으실 수 있습니다.
-          </p>
 
           <a
             href="https://pf.kakao.com/_xcxhFen/chat"

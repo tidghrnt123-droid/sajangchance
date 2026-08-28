@@ -717,29 +717,74 @@ export default async function AdminPage({
             </div>
 
             {/* =====================
-                상품관리
+                상품 수정
             ===================== */}
-            <div className="rounded-3xl border border-gray-200 bg-white p-7 opacity-75 shadow-sm">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-100 text-2xl">
-                💳
-              </div>
+            <a
+              href="/admin/products"
+              className="group rounded-3xl border border-purple-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:border-purple-500 hover:shadow-md"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-100 text-2xl">
+                    ✏️
+                  </div>
 
-              <h3 className="mt-5 text-xl font-bold text-gray-900">
-                상품관리
-              </h3>
+                  <h3 className="mt-5 text-xl font-bold text-gray-900">
+                    상품 수정
+                  </h3>
 
-              <p className="mt-2 text-sm leading-relaxed text-gray-500">
-                상품명, 결제금액과
-                상품 노출상태를
-                관리하는 메뉴입니다.
-              </p>
+                  <p className="mt-2 text-sm leading-relaxed text-gray-500">
+                    등록된 상품의 가격, 상품명,
+                    이미지와 노출상태를 수정합니다.
+                  </p>
+                </div>
 
-              <div className="mt-6">
-                <span className="rounded-full bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-500">
-                  준비중
+                <span className="text-xl text-gray-300 transition group-hover:translate-x-1 group-hover:text-purple-600">
+                  →
                 </span>
               </div>
-            </div>
+
+              <div className="mt-6">
+                <span className="rounded-full bg-purple-50 px-3 py-1.5 text-xs font-semibold text-purple-700">
+                  상품 수정·관리
+                </span>
+              </div>
+            </a>
+
+            {/* =====================
+                상품 등록
+            ===================== */}
+            <a
+              href="/admin/products/new"
+              className="group rounded-3xl border border-green-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:border-green-500 hover:shadow-md"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-100 text-2xl">
+                    ➕
+                  </div>
+
+                  <h3 className="mt-5 text-xl font-bold text-gray-900">
+                    상품 등록
+                  </h3>
+
+                  <p className="mt-2 text-sm leading-relaxed text-gray-500">
+                    새 상품과 대표이미지,
+                    상세이미지를 등록합니다.
+                  </p>
+                </div>
+
+                <span className="text-xl text-gray-300 transition group-hover:translate-x-1 group-hover:text-green-600">
+                  →
+                </span>
+              </div>
+
+              <div className="mt-6">
+                <span className="rounded-full bg-green-50 px-3 py-1.5 text-xs font-semibold text-green-700">
+                  새 상품 등록
+                </span>
+              </div>
+            </a>
 
             {/* =====================
                 매출통계

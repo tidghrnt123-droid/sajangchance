@@ -5,6 +5,9 @@ import { Check, Phone } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ReviewSummary from "@/components/ReviewSummary";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "휴대폰 | 사장님찬스",
@@ -15,60 +18,61 @@ export const metadata: Metadata = {
   },
 };
 
-const phones = [
-  {
-    productCode: "a175-study",
-    name: "갤럭시 A175 공부폰",
-    description:
-      "공부에 필요한 기능은 남기고 불필요한 기능은 줄인 학생용 휴대폰",
-    image: "/images/phone-a175-study.png",
-    href: "/phone/a175-study",
-    badge: "공부폰",
-    price: 100,
-    naverReviewCount: 67,
-    naverReviewUrl:
-      "https://smartstore.naver.com/ho__/products/13331682072#REVIEW",
-  },
-  {
-    productCode: "a175",
-    name: "갤럭시 A175",
-    description:
-      "법인폰·키즈폰·효도폰 등 다양한 용도로 활용하기 좋은 실용적인 스마트폰",
-    image: "/images/phone-a175.png",
-    href: "/phone/a175",
-    badge: "스마트폰",
-    price: 100,
-    naverReviewCount: 11,
-    naverReviewUrl:
-      "https://smartstore.naver.com/ho__/products/12798775914#REVIEW",
-  },
-  {
-    productCode: "m140",
-    name: "AT-M140",
-    description:
-      "큰 버튼과 간편한 조작으로 누구나 편리하게 사용할 수 있는 실용적인 폴더폰",
-    image: "/images/phone-m140.png",
-    href: "/phone/m140",
-    badge: "효도폰",
-    price: 100,
-    naverReviewCount: undefined,
-    naverReviewUrl: undefined,
-  },
-  {
-    productCode: "aroot-a1",
-    name: "에이루트 A1",
-    description:
-      "전화와 문자 등 기본 기능을 간편하게 사용할 수 있는 실용적인 폴더형 휴대폰",
-    image: "/images/phone-aroot-a1.png",
-    href: "/phone/aroot-a1",
-    badge: "효도폰",
-    price: 100,
-    naverReviewCount: undefined,
-    naverReviewUrl: undefined,
-  },
-];
+type PhoneProduct = {
+  product_code: string;
+  product_type: string;
+  category: string;
+  name: string;
+  short_description: string | null;
+  price: number;
+  thumbnail_url: string | null;
+  detail_path: string | null;
+  badge: string | null;
+  naver_review_count: number;
+  naver_review_url: string | null;
+  is_visible: boolean;
+  sort_order: number;
+};
 
-export default function PhonePage() {
+export default async function PhonePage() {
+  const {
+    data,
+    error,
+  } = await supabaseAdmin
+    .from("products")
+    .select(
+      `
+        product_code,
+        product_type,
+        category,
+        name,
+        short_description,
+        price,
+        thumbnail_url,
+        detail_path,
+        badge,
+        naver_review_count,
+        naver_review_url,
+        is_visible,
+        sort_order
+      `
+    )
+    .eq("category", "PHONE")
+    .eq("is_visible", true)
+    .order("sort_order", {
+      ascending: true,
+    });
+
+  if (error) {
+    console.error(
+      "Phone products load error:",
+      error
+    );
+  }
+
+  const phones =
+    (data ?? []) as PhoneProduct[];
+
   return (
     <main className="min-h-screen bg-gray-50">
       <Header />
@@ -76,7 +80,6 @@ export default function PhonePage() {
       {/* 상단 소개 */}
       <section className="border-b bg-white">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:py-20 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-center">
-          {/* 왼쪽 소개 */}
           <div>
             <p className="font-semibold text-blue-600">
               사장님찬스 휴대폰
@@ -94,7 +97,6 @@ export default function PhonePage() {
             </p>
           </div>
 
-          {/* 오른쪽 상담 카드 */}
           <div className="rounded-3xl border-2 border-blue-600 bg-white p-7 shadow-sm md:p-8">
             <div className="flex items-center gap-4">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white">
@@ -116,35 +118,24 @@ export default function PhonePage() {
             </div>
 
             <div className="mt-6 space-y-3">
-              <div className="flex items-center gap-3">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600">
-                  <Check size={15} strokeWidth={3} />
-                </span>
+              {[
+                "휴대폰 개통 전문 상담",
+                "가입유형·요금제 안내",
+                "빠른 개통 및 출고",
+              ].map((item) => (
+                <div
+                  key={item}
+                  className="flex items-center gap-3"
+                >
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+                    <Check size={15} strokeWidth={3} />
+                  </span>
 
-                <span className="text-sm font-semibold text-gray-700">
-                  휴대폰 개통 전문 상담
-                </span>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600">
-                  <Check size={15} strokeWidth={3} />
-                </span>
-
-                <span className="text-sm font-semibold text-gray-700">
-                  가입유형·요금제 안내
-                </span>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600">
-                  <Check size={15} strokeWidth={3} />
-                </span>
-
-                <span className="text-sm font-semibold text-gray-700">
-                  빠른 개통 및 출고
-                </span>
-              </div>
+                  <span className="text-sm font-semibold text-gray-700">
+                    {item}
+                  </span>
+                </div>
+              ))}
             </div>
 
             <p className="mt-6 text-sm leading-6 text-gray-500">
@@ -175,71 +166,108 @@ export default function PhonePage() {
           </p>
         </div>
 
+        {error && (
+          <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-5 text-sm font-semibold text-red-700">
+            휴대폰 상품정보를 불러오지 못했습니다.
+          </div>
+        )}
+
+        {!error && phones.length === 0 && (
+          <div className="rounded-3xl border border-gray-200 bg-white px-6 py-14 text-center text-gray-500 shadow-sm">
+            현재 판매 중인 휴대폰 상품이 없습니다.
+          </div>
+        )}
+
         <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-          {phones.map((phone) => (
-            <article
-              key={phone.href}
-              className="group overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg"
-            >
-              {/* 상품 이미지 */}
-              <a href={phone.href} className="block">
-                <div className="relative aspect-square overflow-hidden bg-gray-100">
-                  <Image
-                    src={phone.image}
-                    alt={phone.name}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
-                    className="object-cover transition duration-300 group-hover:scale-[1.03]"
-                  />
-                </div>
-              </a>
+          {phones.map((phone) => {
+            const href =
+              phone.detail_path ||
+              "/phone";
 
-              {/* 상품 정보 */}
-              <div className="p-5">
-                <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
-                  {phone.badge}
-                </span>
+            const image =
+              phone.thumbnail_url ||
+              "/images/phone-a175-study.png";
 
-                <a href={phone.href} className="block">
-                  <h2 className="mt-3 text-xl font-bold text-gray-900 transition hover:text-blue-600">
-                    {phone.name}
-                  </h2>
+            return (
+              <article
+                key={phone.product_code}
+                className="group overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg"
+              >
+                <a
+                  href={href}
+                  className="block"
+                >
+                  <div className="relative aspect-square overflow-hidden bg-gray-100">
+                    <Image
+                      src={image}
+                      alt={phone.name}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
+                      className="object-cover transition duration-300 group-hover:scale-[1.03]"
+                    />
+                  </div>
                 </a>
 
-                <p className="mt-2 min-h-[48px] text-sm leading-6 text-gray-500">
-                  {phone.description}
-                </p>
+                <div className="p-5">
+                  {phone.badge && (
+                    <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
+                      {phone.badge}
+                    </span>
+                  )}
 
-                {/* 자사몰 + 네이버 리뷰 */}
-                <ReviewSummary
-                  productCode={phone.productCode}
-                  href={`${phone.href}#reviews`}
-                  naverReviewCount={phone.naverReviewCount}
-                  naverReviewUrl={phone.naverReviewUrl}
-                />
+                  <a
+                    href={href}
+                    className="block"
+                  >
+                    <h2 className="mt-3 text-xl font-bold text-gray-900 transition hover:text-blue-600">
+                      {phone.name}
+                    </h2>
+                  </a>
 
-                {/* 판매가 */}
-                <div className="mt-4 border-t border-gray-100 pt-4">
-                  <p className="text-xs font-medium text-gray-400">
-                    판매가
+                  <p className="mt-2 min-h-[48px] text-sm leading-6 text-gray-500">
+                    {phone.short_description ||
+                      "상품 상세정보를 확인해보세요."}
                   </p>
 
-                  <div className="mt-1 flex items-end justify-between gap-3">
-                    <p className="text-2xl font-bold text-gray-900">
-                      {phone.price.toLocaleString()}원
+                  <ReviewSummary
+                    productCode={
+                      phone.product_code
+                    }
+                    href={`${href}#reviews`}
+                    naverReviewCount={
+                      phone.naver_review_count
+                    }
+                    naverReviewUrl={
+                      phone.naver_review_url ||
+                      undefined
+                    }
+                  />
+
+                  <div className="mt-4 border-t border-gray-100 pt-4">
+                    <p className="text-xs font-medium text-gray-400">
+                      판매가
                     </p>
 
-                    <a
-                      href={phone.href}
-                      className="shrink-0 text-sm font-bold text-blue-600 transition hover:translate-x-1"
-                    >
-                      자세히 보기 →
-                    </a>
+                    <div className="mt-1 flex items-end justify-between gap-3">
+                      <p className="text-2xl font-bold text-gray-900">
+                        {Number(
+                          phone.price
+                        ).toLocaleString()}
+                        원
+                      </p>
+
+                      <a
+                        href={href}
+                        className="shrink-0 text-sm font-bold text-blue-600 transition hover:translate-x-1"
+                      >
+                        자세히 보기 →
+                      </a>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
       </section>
 

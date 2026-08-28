@@ -3,18 +3,13 @@
 import Script from "next/script";
 import {
   FormEvent,
-  useMemo,
+  useEffect,
   useState,
 } from "react";
 import { useParams } from "next/navigation";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-
-import {
-  products,
-  type ProductCode,
-} from "@/lib/products";
 
 const INICIS_SCRIPT_URL =
   "https://paypro.inicis.com/std/payment/js/INIPayPro_v2.js";
@@ -23,6 +18,24 @@ type PaymentType =
   | "CARD"
   | "BANK"
   | "VBANK";
+
+type CheckoutProduct = {
+  product_code: string;
+  product_type: string;
+  category: string;
+  name: string;
+  short_description: string | null;
+  price: number;
+  thumbnail_url: string | null;
+  badge: string | null;
+  is_visible: boolean;
+};
+
+type ProductResponse = {
+  success: boolean;
+  message?: string;
+  product?: CheckoutProduct;
+};
 
 type PaymentReadyResponse = {
   success: boolean;
@@ -43,19 +56,30 @@ declare global {
 
 export default function CheckoutProductPage() {
   const params =
-    useParams<{ product: string }>();
+    useParams<{
+      product: string;
+    }>();
 
   const productCode =
-    params.product as ProductCode;
+    params.product;
 
-  const selectedProduct = useMemo(
-    () => products[productCode],
-    [productCode]
-  );
+  const [
+    selectedProduct,
+    setSelectedProduct,
+  ] =
+    useState<CheckoutProduct | null>(
+      null
+    );
 
-  const isPhone =
-    selectedProduct?.productType ===
-    "PHONE";
+  const [
+    productLoading,
+    setProductLoading,
+  ] = useState(true);
+
+  const [
+    productError,
+    setProductError,
+  ] = useState("");
 
   const [buyerName, setBuyerName] =
     useState("");
@@ -94,6 +118,74 @@ export default function CheckoutProductPage() {
   const [message, setMessage] =
     useState("");
 
+  useEffect(() => {
+    if (!productCode) {
+      return;
+    }
+
+    let cancelled = false;
+
+    async function loadProduct() {
+      try {
+        setProductLoading(true);
+        setProductError("");
+
+        const response =
+          await fetch(
+            `/api/products/${encodeURIComponent(
+              productCode
+            )}`,
+            {
+              method: "GET",
+              cache: "no-store",
+            }
+          );
+
+        const data =
+          (await response.json()) as ProductResponse;
+
+        if (
+          !response.ok ||
+          !data.success ||
+          !data.product
+        ) {
+          throw new Error(
+            data.message ||
+              "상품정보를 불러오지 못했습니다."
+          );
+        }
+
+        if (!cancelled) {
+          setSelectedProduct(
+            data.product
+          );
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setProductError(
+            error instanceof Error
+              ? error.message
+              : "상품정보를 불러오지 못했습니다."
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setProductLoading(false);
+        }
+      }
+    }
+
+    loadProduct();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [productCode]);
+
+  const isPhone =
+    selectedProduct?.product_type ===
+    "PHONE";
+
   async function handleSubmit(
     event: FormEvent<HTMLFormElement>
   ) {
@@ -101,20 +193,14 @@ export default function CheckoutProductPage() {
 
     setMessage("");
 
-    /*
-     * 상품 확인
-     */
     if (!selectedProduct) {
       setMessage(
-        "존재하지 않는 상품입니다."
+        "상품정보를 다시 확인해주세요."
       );
 
       return;
     }
 
-    /*
-     * 구매자명
-     */
     if (!buyerName.trim()) {
       setMessage(
         "구매자명을 입력해주세요."
@@ -123,9 +209,6 @@ export default function CheckoutProductPage() {
       return;
     }
 
-    /*
-     * 연락처
-     */
     if (!buyerPhone.trim()) {
       setMessage(
         "연락처를 입력해주세요."
@@ -134,9 +217,6 @@ export default function CheckoutProductPage() {
       return;
     }
 
-    /*
-     * 개인정보 동의
-     */
     if (!agreed) {
       setMessage(
         "개인정보 수집 및 이용에 동의해주세요."
@@ -145,9 +225,6 @@ export default function CheckoutProductPage() {
       return;
     }
 
-    /*
-     * KG이니시스 SDK
-     */
     if (
       !sdkReady ||
       !window.INIPayPro
@@ -162,9 +239,6 @@ export default function CheckoutProductPage() {
     try {
       setLoading(true);
 
-      /*
-       * 모바일 / PC 구분
-       */
       const deviceType =
         window.matchMedia(
           "(max-width: 767px)"
@@ -172,9 +246,6 @@ export default function CheckoutProductPage() {
           ? "MOBILE"
           : "WEB";
 
-      /*
-       * 결제 준비 요청
-       */
       const response = await fetch(
         "/api/payment/inicis",
         {
@@ -186,7 +257,8 @@ export default function CheckoutProductPage() {
           },
 
           body: JSON.stringify({
-            productCode,
+            productCode:
+              selectedProduct.product_code,
 
             buyerName,
             buyerPhone,
@@ -237,21 +309,46 @@ export default function CheckoutProductPage() {
     }
   }
 
-  /*
-   * 존재하지 않는 상품
-   */
-  if (!selectedProduct) {
+  if (productLoading) {
+    return (
+      <main className="min-h-screen bg-gray-50">
+        <Header />
+
+        <section className="mx-auto max-w-3xl px-6 py-20 text-center">
+          <p className="font-semibold text-blue-600">
+            사장님찬스
+          </p>
+
+          <h1 className="mt-3 text-2xl font-bold text-gray-900">
+            상품정보를 불러오는 중입니다.
+          </h1>
+
+          <p className="mt-3 text-sm text-gray-500">
+            잠시만 기다려주세요.
+          </p>
+        </section>
+
+        <Footer />
+      </main>
+    );
+  }
+
+  if (
+    productError ||
+    !selectedProduct
+  ) {
     return (
       <main className="min-h-screen bg-gray-50">
         <Header />
 
         <section className="mx-auto max-w-3xl px-6 py-20 text-center">
           <h1 className="text-3xl font-bold text-gray-900">
-            존재하지 않는 상품입니다.
+            상품을 확인할 수 없습니다.
           </h1>
 
           <p className="mt-4 text-gray-600">
-            상품 주소를 다시 확인해주세요.
+            {productError ||
+              "상품 주소를 다시 확인해주세요."}
           </p>
 
           <a
@@ -269,7 +366,6 @@ export default function CheckoutProductPage() {
 
   return (
     <>
-      {/* KG이니시스 결제 SDK */}
       <Script
         src={INICIS_SCRIPT_URL}
         strategy="afterInteractive"
@@ -292,7 +388,6 @@ export default function CheckoutProductPage() {
         <Header />
 
         <section className="mx-auto max-w-4xl px-6 py-12 md:py-20">
-          {/* 상단 */}
           <div className="mb-10">
             <a
               href={
@@ -317,8 +412,9 @@ export default function CheckoutProductPage() {
             </h1>
 
             <p className="mt-4 text-gray-600">
-              주문정보 확인 후 KG이니시스
-              안전결제 시스템으로 이동합니다.
+              주문정보 확인 후
+              KG이니시스 안전결제
+              시스템으로 이동합니다.
             </p>
           </div>
 
@@ -327,9 +423,6 @@ export default function CheckoutProductPage() {
             className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm md:p-10"
           >
             <div className="space-y-8">
-              {/* =========================
-                  상품 정보
-              ========================= */}
               <div className="rounded-2xl border border-blue-100 bg-blue-50 p-6">
                 <p className="text-sm text-gray-500">
                   결제 상품
@@ -340,7 +433,9 @@ export default function CheckoutProductPage() {
                 </p>
 
                 <p className="mt-3 text-2xl font-bold text-blue-600">
-                  {selectedProduct.price.toLocaleString()}
+                  {Number(
+                    selectedProduct.price
+                  ).toLocaleString()}
                   원
                 </p>
 
@@ -357,11 +452,7 @@ export default function CheckoutProductPage() {
                 </span>
               </div>
 
-              {/* =========================
-                  고객 정보
-              ========================= */}
               <div className="grid gap-6 md:grid-cols-2">
-                {/* 구매자명 */}
                 <div>
                   <label
                     htmlFor="buyerName"
@@ -388,7 +479,6 @@ export default function CheckoutProductPage() {
                   />
                 </div>
 
-                {/* 연락처 */}
                 <div>
                   <label
                     htmlFor="buyerPhone"
@@ -415,7 +505,6 @@ export default function CheckoutProductPage() {
                   />
                 </div>
 
-                {/* 이메일 */}
                 <div>
                   <label
                     htmlFor="buyerEmail"
@@ -439,7 +528,6 @@ export default function CheckoutProductPage() {
                   />
                 </div>
 
-                {/* 상호명 */}
                 <div>
                   <label
                     htmlFor="businessName"
@@ -469,9 +557,6 @@ export default function CheckoutProductPage() {
                 </div>
               </div>
 
-              {/* =========================
-                  결제수단
-              ========================= */}
               <div>
                 <p className="mb-3 font-semibold text-gray-900">
                   결제수단
@@ -520,9 +605,6 @@ export default function CheckoutProductPage() {
                 </div>
               </div>
 
-              {/* =========================
-                  요청사항
-              ========================= */}
               <div>
                 <label
                   htmlFor="requestNote"
@@ -549,9 +631,6 @@ export default function CheckoutProductPage() {
                 />
               </div>
 
-              {/* =========================
-                  개인정보
-              ========================= */}
               <label className="flex cursor-pointer items-start gap-3 rounded-2xl bg-gray-50 p-4">
                 <input
                   type="checkbox"
@@ -574,16 +653,12 @@ export default function CheckoutProductPage() {
                 </span>
               </label>
 
-              {/* 안내 메시지 */}
               {message && (
                 <div className="rounded-xl bg-gray-100 px-4 py-3 text-sm text-gray-700">
                   {message}
                 </div>
               )}
 
-              {/* =========================
-                  결제하기
-              ========================= */}
               <button
                 type="submit"
                 disabled={
@@ -596,7 +671,9 @@ export default function CheckoutProductPage() {
                   ? "결제 모듈 불러오는 중..."
                   : loading
                     ? "결제 준비 중..."
-                    : `${selectedProduct.price.toLocaleString()}원 결제하기`}
+                    : `${Number(
+                        selectedProduct.price
+                      ).toLocaleString()}원 결제하기`}
               </button>
 
               <p className="text-center text-xs text-gray-500">

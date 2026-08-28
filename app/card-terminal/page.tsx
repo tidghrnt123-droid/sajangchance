@@ -5,6 +5,9 @@ import ReviewSummary from "@/components/ReviewSummary";
 
 import type { Metadata } from "next";
 import { Check, Phone } from "lucide-react";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "카드단말기 비교 | 사장님찬스",
@@ -15,66 +18,61 @@ export const metadata: Metadata = {
   },
 };
 
-const products = [
-  {
-    code: "front2",
-    badge: "카드단말기",
-    name: "토스 프론트2",
-    description:
-      "POS와 연동하여 사용하는 매장용 카드결제 단말기",
-    image: "/images/front2.png",
-    alt: "토스 프론트2",
-    href: "/front2",
-    price: "100원",
-    naverReviewCount: 98,
-    naverReviewUrl:
-      "https://smartstore.naver.com/ho__/products/12539725990#REVIEW",
-  },
-  {
-    code: "front2-printer",
-    badge: "카드단말기",
-    name: "토스 프론트2 + 영수증 프린터",
-    description:
-      "카페·병원·뷰티샵 등 영수증 출력이 필요한 매장 추천",
-    image: "/images/front2-printer.png",
-    alt: "토스 프론트2 + 영수증 프린터",
-    href: "/front2-printer",
-    price: "1,000원",
-    naverReviewCount: 9,
-    naverReviewUrl:
-      "https://smartstore.naver.com/ho__/products/12617688944#REVIEW",
-  },
-  {
-    code: "front2-terminal2",
-    badge: "카드단말기",
-    name: "토스 프론트2 + 토스 터미널2",
-    description:
-      "영수증 출력과 금액 입력 결제가 가능한 토스 프리미엄 구성",
-    image: "/images/front2-terminal2.png",
-    alt: "토스 프론트2 + 토스 터미널2",
-    href: "/front2-terminal2",
-    price: "49,000원",
-    naverReviewCount: 9,
-    naverReviewUrl:
-      "https://smartstore.naver.com/ho__/products/12553296407#REVIEW",
-  },
-  {
-    code: "wireless",
-    badge: "무선단말기",
-    name: "무선 카드단말기",
-    description:
-      "KT·SK LTE 통신으로 전국 어디서나 사용할 수 있는 무선 단말기",
-    image: "/images/wireless.png",
-    alt: "무선 카드단말기",
-    href: "/wireless",
-    price: "100원",
-    naverReviewCount: 77,
-    naverReviewUrl:
-      "https://smartstore.naver.com/ho__/products/12940013683#REVIEW",
-  },
-];
+type ProductRow = {
+  product_code: string;
+  product_type: string;
+  category: string;
+  name: string;
+  short_description: string | null;
+  price: number;
+  thumbnail_url: string | null;
+  detail_path: string | null;
+  badge: string | null;
+  naver_review_count: number;
+  naver_review_url: string | null;
+  is_visible: boolean;
+  sort_order: number;
+};
 
-export default function CardTerminalPage() {
+export default async function CardTerminalPage() {
+  const {
+    data,
+    error,
+  } = await supabaseAdmin
+    .from("products")
+    .select(
+      `
+        product_code,
+        product_type,
+        category,
+        name,
+        short_description,
+        price,
+        thumbnail_url,
+        detail_path,
+        badge,
+        naver_review_count,
+        naver_review_url,
+        is_visible,
+        sort_order
+      `
+    )
+    .eq("category", "CARD_TERMINAL")
+    .eq("is_visible", true)
+    .order("sort_order", {
+      ascending: true,
+    });
+
+  if (error) {
+    console.error(
+      "Card terminal products load error:",
+      error
+    );
+  }
+
+  const products =
+    (data ?? []) as ProductRow[];
+
   return (
     <main className="min-h-screen bg-gray-50">
       <Header />
@@ -102,10 +100,10 @@ export default function CardTerminalPage() {
           </div>
 
           {/* 상담 카드 */}
-         <a
-  href="tel:01079083099"
-  className="block rounded-[28px] border-2 border-blue-600 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
->
+          <a
+            href="tel:01079083099"
+            className="block rounded-[28px] border-2 border-blue-600 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+          >
             <div className="flex items-center gap-3">
               <span className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-white">
                 <Phone size={23} />
@@ -169,89 +167,120 @@ export default function CardTerminalPage() {
           </p>
         </div>
 
+        {error && (
+          <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-5 text-sm font-semibold text-red-700">
+            상품정보를 불러오지 못했습니다.
+          </div>
+        )}
+
+        {!error && products.length === 0 && (
+          <div className="rounded-3xl border border-gray-200 bg-white px-6 py-14 text-center text-gray-500 shadow-sm">
+            현재 판매 중인 카드단말기가 없습니다.
+          </div>
+        )}
+
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-          {products.map((product, index) => (
-            <article
-              key={product.code}
-              className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-            >
-              {/* 대표 이미지 */}
-              <a
-                href={product.href}
-                className="block"
+          {products.map((product, index) => {
+            const href =
+              product.detail_path ||
+              "/card-terminal";
+
+            const image =
+              product.thumbnail_url ||
+              "/images/front2.png";
+
+            return (
+              <article
+                key={product.product_code}
+                className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
               >
-                <div className="relative aspect-square overflow-hidden bg-gray-100">
-                  <Image
-                    src={product.image}
-                    alt={product.alt}
-                    fill
-                    priority={index === 0}
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                    className="object-cover transition duration-300 hover:scale-[1.02]"
-                  />
-                </div>
-              </a>
-
-              {/* 상품 정보 */}
-              <div className="flex flex-col p-6">
-                {/* 뱃지 */}
-                <div>
-                  <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
-                    {product.badge}
-                  </span>
-                </div>
-
-                {/* 상품명 */}
+                {/* 대표 이미지 */}
                 <a
-                  href={product.href}
-                  className="mt-4 block"
+                  href={href}
+                  className="block"
                 >
-                  <h3 className="text-xl font-bold leading-snug text-gray-900">
-                    {product.name}
-                  </h3>
+                  <div className="relative aspect-square overflow-hidden bg-gray-100">
+                    <Image
+                      src={image}
+                      alt={product.name}
+                      fill
+                      priority={index === 0}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      className="object-cover transition duration-300 hover:scale-[1.02]"
+                    />
+                  </div>
                 </a>
 
-                {/* 설명 */}
-                <p className="mt-3 min-h-[52px] text-sm leading-6 text-gray-500">
-                  {product.description}
-                </p>
+                {/* 상품 정보 */}
+                <div className="flex flex-col p-6">
+                  {/* 뱃지 */}
+                  {product.badge && (
+                    <div>
+                      <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
+                        {product.badge}
+                      </span>
+                    </div>
+                  )}
 
-                {/* 리뷰 */}
-                <div className="mt-4">
-                  <ReviewSummary
-                    productCode={product.code}
-                    href={`${product.href}#reviews`}
-                    naverReviewCount={
-                      product.naverReviewCount
-                    }
-                    naverReviewUrl={
-                      product.naverReviewUrl
-                    }
-                  />
-                </div>
+                  {/* 상품명 */}
+                  <a
+                    href={href}
+                    className="mt-4 block"
+                  >
+                    <h3 className="text-xl font-bold leading-snug text-gray-900">
+                      {product.name}
+                    </h3>
+                  </a>
 
-                {/* 가격 */}
-                <div className="mt-5 flex items-end justify-between gap-4 border-t border-gray-100 pt-5">
-                  <div>
-                    <p className="text-xs text-gray-400">
-                      판매가
-                    </p>
+                  {/* 설명 */}
+                  <p className="mt-3 min-h-[52px] text-sm leading-6 text-gray-500">
+                    {product.short_description ||
+                      "상품 상세정보를 확인해보세요."}
+                  </p>
 
-                    <p className="mt-1 text-2xl font-bold text-gray-900">
-                      {product.price}
-                    </p>
+                  {/* 리뷰 */}
+                  <div className="mt-4">
+                    <ReviewSummary
+                      productCode={
+                        product.product_code
+                      }
+                      href={`${href}#reviews`}
+                      naverReviewCount={
+                        product.naver_review_count
+                      }
+                      naverReviewUrl={
+                        product.naver_review_url ||
+                        undefined
+                      }
+                    />
                   </div>
 
-                  <a
-                    href={product.href}
-                    className="shrink-0 text-sm font-bold text-blue-600 transition hover:text-blue-700"
-                  >
-                    자세히 보기 →
-                  </a>
+                  {/* 가격 */}
+                  <div className="mt-5 flex items-end justify-between gap-4 border-t border-gray-100 pt-5">
+                    <div>
+                      <p className="text-xs text-gray-400">
+                        판매가
+                      </p>
+
+                      <p className="mt-1 text-2xl font-bold text-gray-900">
+                        {Number(
+                          product.price
+                        ).toLocaleString()}
+                        원
+                      </p>
+                    </div>
+
+                    <a
+                      href={href}
+                      className="shrink-0 text-sm font-bold text-blue-600 transition hover:text-blue-700"
+                    >
+                      자세히 보기 →
+                    </a>
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
       </section>
 

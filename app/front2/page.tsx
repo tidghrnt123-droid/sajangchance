@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
+import Image from "next/image";
+
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ProductHero from "@/components/ProductHero";
-import Image from "next/image";
 import ContactBanner from "@/components/ContactBanner";
 import ReviewSummary from "@/components/ReviewSummary";
 import ReviewSection from "@/components/ReviewSection";
+
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "토스 프론트2 카드단말기 | 사장님찬스",
@@ -22,6 +27,18 @@ type Front2PageProps = {
   }>;
 };
 
+type ProductRow = {
+  product_code: string;
+  product_type: string;
+  name: string;
+  short_description: string | null;
+  price: number;
+  thumbnail_url: string | null;
+  naver_review_count: number;
+  naver_review_url: string | null;
+  is_visible: boolean;
+};
+
 export default async function Front2Page({
   searchParams,
 }: Front2PageProps) {
@@ -32,27 +49,135 @@ export default async function Front2Page({
     Number(params.reviewPage ?? "1") || 1
   );
 
+  /*
+   * ================================
+   * 상품정보
+   * Supabase products 기준
+   * ================================
+   */
+  const {
+    data,
+    error,
+  } = await supabaseAdmin
+    .from("products")
+    .select(
+      `
+        product_code,
+        product_type,
+        name,
+        short_description,
+        price,
+        thumbnail_url,
+        naver_review_count,
+        naver_review_url,
+        is_visible
+      `
+    )
+    .eq(
+      "product_code",
+      "front2"
+    )
+    .maybeSingle();
+
+  if (error) {
+    console.error(
+      "Front2 product load error:",
+      error
+    );
+  }
+
+  const product =
+    data as ProductRow | null;
+
+  /*
+   * 상품이 없거나 판매중지가 된 경우
+   */
+  if (
+    !product ||
+    !product.is_visible
+  ) {
+    return (
+      <main className="min-h-screen bg-gray-50">
+        <Header />
+
+        <section className="mx-auto max-w-3xl px-6 py-24 text-center">
+          <p className="font-semibold text-blue-600">
+            사장님찬스
+          </p>
+
+          <h1 className="mt-3 text-3xl font-bold text-gray-900">
+            현재 판매하지 않는 상품입니다.
+          </h1>
+
+          <p className="mt-4 text-gray-500">
+            다른 카드단말기 상품을 확인해주세요.
+          </p>
+
+          <a
+            href="/card-terminal"
+            className="mt-8 inline-flex rounded-xl bg-blue-600 px-6 py-3 font-bold text-white"
+          >
+            카드단말기 보러가기
+          </a>
+        </section>
+
+        <Footer />
+      </main>
+    );
+  }
+
+  /*
+   * ================================
+   * 기존 상세 이미지
+   * ================================
+   */
   const details = [
     "/images/01.gif",
     "/images/02.gif",
+
     ...Array.from(
       { length: 26 },
       (_, i) =>
-        `/images/${String(i + 3).padStart(2, "0")}.png`
+        `/images/${String(
+          i + 3
+        ).padStart(
+          2,
+          "0"
+        )}.png`
     ),
   ];
+
+  /*
+   * DB 대표이미지가 없을 경우
+   * 기존 이미지 사용
+   */
+  const heroImage =
+    product.thumbnail_url ||
+    "/images/front2.png";
+
+  /*
+   * DB 설명이 없을 경우
+   * 기존 설명 사용
+   */
+  const description =
+    product.short_description ||
+    "POS와 연동하여 사용하는 매장용 카드결제 단말기입니다.";
 
   return (
     <main className="bg-white">
       <Header />
 
-      {/* 상품 이미지 + 상품 정보 */}
+      {/* =========================
+          상품 이미지 + 상품 정보
+      ========================= */}
       <ProductHero
-        title="토스 프론트2"
-        description="POS와 연동하여 사용하는 매장용 카드결제 단말기입니다."
-        image="/images/front2.png"
-        imageAlt="토스 프론트2 카드단말기"
-        price="100원"
+        title={product.name}
+        description={description}
+        image={heroImage}
+        imageAlt={`${product.name} 카드단말기`}
+        price={`${Number(
+          product.price
+        ).toLocaleString()}원`}
         checkoutUrl="/checkout/front2"
         features={[
           "토스 프론트2 무료 제공",
@@ -60,30 +185,49 @@ export default async function Front2Page({
           "월 사용료 없음",
           "카페·음식점·매장 추천",
         ]}
-        metaProductId="front2"
-        metaProductName="토스 프론트2"
-        metaValue={100}
+        metaProductId={
+          product.product_code
+        }
+        metaProductName={
+          product.name
+        }
+        metaValue={
+          Number(
+            product.price
+          )
+        }
       />
 
-      {/* 상단 리뷰 요약 */}
+      {/* =========================
+          상단 리뷰 요약
+      ========================= */}
       <section className="border-b bg-white">
         <div className="mx-auto max-w-7xl px-5 pb-5">
           <ReviewSummary
-            productCode="front2"
+            productCode={
+              product.product_code
+            }
             href="#reviews"
-            naverReviewCount={98}
-            naverReviewUrl="https://smartstore.naver.com/ho__/products/12539725990#REVIEW"
+            naverReviewCount={
+              product.naver_review_count
+            }
+            naverReviewUrl={
+              product.naver_review_url ||
+              undefined
+            }
           />
         </div>
       </section>
 
       <ContactBanner />
 
-      {/* 상세페이지 상단 이미지 */}
+      {/* =========================
+          상세페이지 상단 이미지
+      ========================= */}
       <section className="mx-auto max-w-5xl">
         <Image
           src="/images/SCTOP.png"
-          alt="토스 프론트2 상품 안내"
+          alt={`${product.name} 상품 안내`}
           width={1200}
           height={1200}
           className="h-auto w-full"
@@ -91,26 +235,45 @@ export default async function Front2Page({
         />
       </section>
 
-      {/* 상품 상세 이미지 01 ~ 28 */}
+      {/* =========================
+          상품 상세 이미지
+      ========================= */}
       <section className="mx-auto max-w-5xl pb-24">
-        {details.map((src, index) => (
-          <Image
-            key={src}
-            src={src}
-            alt={`토스 프론트2 상세 ${index + 1}`}
-            width={1200}
-            height={2000}
-            className="h-auto w-full"
-            unoptimized={src.endsWith(".gif")}
-          />
-        ))}
+        {details.map(
+          (src, index) => (
+            <Image
+              key={src}
+              src={src}
+              alt={`${product.name} 상세 ${
+                index + 1
+              }`}
+              width={1200}
+              height={2000}
+              className="h-auto w-full"
+              unoptimized={
+                src.endsWith(
+                  ".gif"
+                )
+              }
+            />
+          )
+        )}
       </section>
 
-      {/* 구매 고객 리뷰 */}
+      {/* =========================
+          구매 고객 리뷰
+      ========================= */}
       <ReviewSection
-        productCode="front2"
-        reviewPage={reviewPage}
-        naverReviewUrl="https://smartstore.naver.com/ho__/products/12539725990#REVIEW"
+        productCode={
+          product.product_code
+        }
+        reviewPage={
+          reviewPage
+        }
+        naverReviewUrl={
+          product.naver_review_url ||
+          undefined
+        }
       />
 
       <Footer />
