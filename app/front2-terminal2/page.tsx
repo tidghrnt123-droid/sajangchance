@@ -35,7 +35,7 @@ export default function Front2Terminal2Page() {
         description="영수증 출력과 금액 입력 결제가 가능한 토스 프론트2와 터미널2 세트 상품입니다."
         image="/images/front2-terminal2.png"
         imageAlt="토스 프론트2 + 토스 터미널2"
-        price="139,000원"
+        price="49,000원"
         checkoutUrl="/checkout/front2-terminal2"
         features={[
           "토스 프론트2 + 토스 터미널2 세트",
@@ -45,7 +45,7 @@ export default function Front2Terminal2Page() {
         ]}
         metaProductId="front2-terminal2"
         metaProductName="토스 프론트2 + 토스 터미널2"
-        metaValue={139000}
+        metaValue={49000}
       />
 
       {/* 상단 리뷰 요약 */}

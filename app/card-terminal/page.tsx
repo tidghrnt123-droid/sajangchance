@@ -53,7 +53,7 @@ const products = [
     image: "/images/front2-terminal2.png",
     alt: "토스 프론트2 + 토스 터미널2",
     href: "/front2-terminal2",
-    price: "139,000원",
+    price: "49,000원",
     naverReviewCount: 9,
     naverReviewUrl:
       "https://smartstore.naver.com/ho__/products/12553296407#REVIEW",

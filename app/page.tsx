@@ -23,7 +23,7 @@ export default function Home() {
     {
       title: "프론트2 + 토스 터미널2",
       desc: "영수증 출력 · 금액 입력 가능",
-      price: "139,000원",
+      price: "49,000원",
       image: "/images/front2-terminal2.png",
       href: "/front2-terminal2",
     },

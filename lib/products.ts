@@ -15,7 +15,7 @@ export const products = {
 
   "front2-terminal2": {
     name: "프론트2 + 토스 터미널2",
-    price: 139000,
+    price: 49000,
     itemCode: "f2terminal",
     productType: "TERMINAL",
   },

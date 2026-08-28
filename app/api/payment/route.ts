@@ -17,7 +17,7 @@ const products = {
   },
   "front2-terminal2": {
     name: "프론트2 토스 터미널2",
-    amount: 139000,
+    amount: 49000,
     itemCode: "f2terminal",
   },
   wireless: {

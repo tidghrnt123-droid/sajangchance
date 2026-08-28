@@ -36,7 +36,7 @@ const productPages: Record<
 
   "/front2-terminal2": {
     checkoutUrl: "/checkout/front2-terminal2",
-    price: "139,000원",
+    price: "49,000원",
   },
 
   "/wireless": {

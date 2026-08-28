@@ -37,7 +37,7 @@ const products: EpProduct[] = [
   {
     id: "front2-terminal2",
     title: "토스프론트2 토스터미널2 토스 단말기 세트 영수증출력가능",
-    price: 139000,
+    price: 49000,
     link: `${SITE_URL}/front2-terminal2`,
     imageLink: `${SITE_URL}/images/front2-terminal2SJ.png`,
     categoryName1: "카드단말기",
