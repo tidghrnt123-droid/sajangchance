@@ -17,6 +17,23 @@ type VisitRow = {
   created_at: string;
 };
 
+type ConversionRow = {
+  id: number;
+  session_id: string;
+  event_type: "phone_click" | "kakao_click" | "contact_submit";
+  path: string | null;
+  page_title: string | null;
+  product_code: string | null;
+  referrer: string | null;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  utm_content: string | null;
+  utm_term: string | null;
+  device_type: string | null;
+  created_at: string;
+};
+
 type AnalyticsPageProps = {
   searchParams: Promise<{
     period?: string;
@@ -368,6 +385,18 @@ export default async function AnalyticsPage({
   const visits =
     (data ?? []) as VisitRow[];
 
+  const {
+    data: conversionData,
+    error: conversionError,
+  } = await supabaseServer
+    .from("conversion_events")
+    .select("*")
+    .gte("created_at", `${thirtyDaysAgo}T00:00:00+09:00`)
+    .order("created_at", { ascending: false });
+
+  const conversions =
+    (conversionData ?? []) as ConversionRow[];
+
   const getVisitDate = (
     visit: VisitRow
   ) =>
@@ -677,6 +706,125 @@ export default async function AnalyticsPage({
       )
       .slice(0, 20);
 
+  const getConversionDate = (row: ConversionRow) =>
+    getKoreaDateString(new Date(row.created_at));
+
+  let selectedConversions = conversions.filter(
+    (row) => getConversionDate(row) >= sevenDaysAgo
+  );
+
+  if (period === "today") {
+    selectedConversions = conversions.filter(
+      (row) => getConversionDate(row) === today
+    );
+  }
+
+  if (period === "yesterday") {
+    selectedConversions = conversions.filter(
+      (row) => getConversionDate(row) === yesterday
+    );
+  }
+
+  if (period === "30d") {
+    selectedConversions = conversions;
+  }
+
+  const phoneClicks = selectedConversions.filter(
+    (row) => row.event_type === "phone_click"
+  ).length;
+
+  const kakaoClicks = selectedConversions.filter(
+    (row) => row.event_type === "kakao_click"
+  ).length;
+
+  const contactSubmits = selectedConversions.filter(
+    (row) => row.event_type === "contact_submit"
+  ).length;
+
+  const totalConversions = selectedConversions.length;
+
+  const conversionRate =
+    selectedVisitors > 0
+      ? ((totalConversions / selectedVisitors) * 100).toFixed(1)
+      : "0.0";
+
+  type CampaignStat = {
+    source: string;
+    campaign: string;
+    visitors: Set<string>;
+    phone: number;
+    kakao: number;
+    form: number;
+    total: number;
+  };
+
+  const campaignStats = new Map<string, CampaignStat>();
+
+  function statKey(source: string, campaign: string) {
+    return `${source}::${campaign}`;
+  }
+
+  for (const visit of selectedVisits) {
+    const source = visit.utm_source || getSourceName(visit);
+    const campaign = visit.utm_campaign || "-";
+    const key = statKey(source, campaign);
+    const row = campaignStats.get(key) || {
+      source,
+      campaign,
+      visitors: new Set<string>(),
+      phone: 0,
+      kakao: 0,
+      form: 0,
+      total: 0,
+    };
+
+    row.visitors.add(visit.session_id);
+    campaignStats.set(key, row);
+  }
+
+  for (const event of selectedConversions) {
+    const source = event.utm_source || "직접/기타";
+    const campaign = event.utm_campaign || "-";
+    const key = statKey(source, campaign);
+    const row = campaignStats.get(key) || {
+      source,
+      campaign,
+      visitors: new Set<string>(),
+      phone: 0,
+      kakao: 0,
+      form: 0,
+      total: 0,
+    };
+
+    row.visitors.add(event.session_id);
+
+    if (event.event_type === "phone_click") row.phone += 1;
+    if (event.event_type === "kakao_click") row.kakao += 1;
+    if (event.event_type === "contact_submit") row.form += 1;
+
+    row.total += 1;
+    campaignStats.set(key, row);
+  }
+
+  const campaignConversions = Array.from(campaignStats.values())
+    .filter((row) => row.total > 0 || row.campaign !== "-")
+    .map((row) => ({
+      source: row.source,
+      campaign: row.campaign,
+      campaignName:
+        row.campaign === "-" ? "-" : getCampaignName(row.campaign),
+      visitors: row.visitors.size,
+      phone: row.phone,
+      kakao: row.kakao,
+      form: row.form,
+      total: row.total,
+      rate:
+        row.visitors.size > 0
+          ? ((row.total / row.visitors.size) * 100).toFixed(1)
+          : "0.0",
+    }))
+    .sort((a, b) => b.total - a.total || b.visitors - a.visitors);
+
   /*
    * ================================
    * 페이지
@@ -729,6 +877,17 @@ export default async function AnalyticsPage({
 
             <p className="mt-1 text-sm text-red-600">
               {error.message}
+            </p>
+          </section>
+        )}
+
+        {conversionError && (
+          <section className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-5">
+            <p className="font-semibold text-red-700">
+              문의 전환 통계를 불러오지 못했습니다.
+            </p>
+            <p className="mt-1 text-sm text-red-600">
+              {conversionError.message}
             </p>
           </section>
         )}
@@ -879,6 +1038,96 @@ export default async function AnalyticsPage({
               >
                 최근 30일
               </a>
+            </div>
+          </div>
+        </section>
+
+        {/* =========================
+            문의 전환
+        ========================= */}
+        <section className="mt-6">
+          <div className="mb-5">
+            <p className="text-sm font-bold text-rose-600">CONVERSION</p>
+            <h2 className="mt-1 text-2xl font-bold text-gray-900">문의 전환</h2>
+            <p className="mt-2 text-sm text-gray-500">
+              {selectedPeriodLabel} 전화·카카오·상담폼 클릭/제출 기준입니다.
+            </p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+            {[
+              ["전화 클릭", phoneClicks, "text-blue-600"],
+              ["카카오 클릭", kakaoClicks, "text-yellow-600"],
+              ["상담폼 제출", contactSubmits, "text-green-600"],
+              ["총 문의 행동", totalConversions, "text-gray-900"],
+            ].map(([label, value, color]) => (
+              <div key={String(label)} className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                <p className="text-sm text-gray-500">{label}</p>
+                <p className={`mt-2 text-3xl font-bold ${color}`}>
+                  {Number(value).toLocaleString()}건
+                </p>
+              </div>
+            ))}
+
+            <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+              <p className="text-sm text-gray-500">문의 행동률</p>
+              <p className="mt-2 text-3xl font-bold text-purple-600">
+                {conversionRate}%
+              </p>
+              <p className="mt-2 text-xs text-gray-400">총 문의 행동 ÷ 방문자</p>
+            </div>
+          </div>
+
+          <div className="mt-5 overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
+            <div className="border-b border-gray-100 p-6 md:p-8">
+              <h3 className="text-xl font-bold text-gray-900">캠페인별 문의 전환</h3>
+              <p className="mt-2 text-sm text-gray-500">
+                UTM 유입 기준으로 방문자와 문의 행동을 비교합니다.
+              </p>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[900px] text-left">
+                <thead className="bg-gray-50 text-xs font-bold text-gray-500">
+                  <tr>
+                    <th className="px-5 py-4">유입</th>
+                    <th className="px-5 py-4">캠페인</th>
+                    <th className="px-5 py-4 text-right">방문자</th>
+                    <th className="px-5 py-4 text-right">전화</th>
+                    <th className="px-5 py-4 text-right">카카오</th>
+                    <th className="px-5 py-4 text-right">상담폼</th>
+                    <th className="px-5 py-4 text-right">총 문의</th>
+                    <th className="px-5 py-4 text-right">문의율</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {campaignConversions.length > 0 ? (
+                    campaignConversions.map((row) => (
+                      <tr key={`${row.source}-${row.campaign}`} className="text-sm">
+                        <td className="px-5 py-4 font-semibold text-gray-700">{row.source}</td>
+                        <td className="px-5 py-4">
+                          <p className="font-semibold text-gray-900">{row.campaignName}</p>
+                          {row.campaign !== "-" && row.campaignName !== row.campaign && (
+                            <p className="mt-1 text-xs text-gray-400">{row.campaign}</p>
+                          )}
+                        </td>
+                        <td className="px-5 py-4 text-right font-semibold">{row.visitors.toLocaleString()}</td>
+                        <td className="px-5 py-4 text-right">{row.phone.toLocaleString()}</td>
+                        <td className="px-5 py-4 text-right">{row.kakao.toLocaleString()}</td>
+                        <td className="px-5 py-4 text-right">{row.form.toLocaleString()}</td>
+                        <td className="px-5 py-4 text-right font-bold text-blue-600">{row.total.toLocaleString()}</td>
+                        <td className="px-5 py-4 text-right font-bold text-purple-600">{row.rate}%</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={8} className="px-5 py-12 text-center text-sm text-gray-400">
+                        해당 기간의 문의 전환 데이터가 없습니다.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         </section>
