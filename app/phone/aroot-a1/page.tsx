@@ -12,7 +12,7 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "에이루트 에이원 AM-F2000N 폴더폰 | 사장님찬스",
+  title: "전화 문자만 가능한 공부폰 폴더폰 | 에이루트 에이원 AM-F2000N 키즈폰,학생폰,어르신폴더폰",
   description:
     "전화와 문자 중심으로 간편하게 사용할 수 있어 어르신용·효도폰으로 활용하기 좋은 에이루트 에이원 AM-F2000N 폴더폰입니다.",
   alternates: {
