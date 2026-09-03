@@ -160,6 +160,11 @@ export default function AllInOneLandingPage() {
 
       setComplete(true);
 
+      // 자사몰 관리자 통계에 상담폼 제출 전환 기록
+      window.dispatchEvent(
+        new Event("sajangchance:contact_submit")
+      );
+
       // 실제 상담 신청 완료를 Meta 표준 Lead 이벤트로 전송
       const leadSent = trackMetaEvent("Lead", {
         content_name: "올인원 무료 상담 신청",

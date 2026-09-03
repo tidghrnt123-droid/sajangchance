@@ -9,6 +9,9 @@ const SESSION_KEY =
 const ATTRIBUTION_KEY =
   "sajangchance_attribution";
 
+const CONTACT_SUBMIT_EVENT =
+  "sajangchance:contact_submit";
+
 type AttributionData = {
   utmSource: string | null;
   utmMedium: string | null;
@@ -17,6 +20,11 @@ type AttributionData = {
   utmTerm: string | null;
   referrer: string | null;
 };
+
+type ConversionEventType =
+  | "phone_click"
+  | "kakao_click"
+  | "contact_submit";
 
 function getSessionId() {
   let id =
@@ -140,59 +148,9 @@ export default function ConversionTracker() {
     usePathname();
 
   useEffect(() => {
-    function handleClick(
-      event: MouseEvent
+    function sendConversion(
+      eventType: ConversionEventType
     ) {
-      const target =
-        event.target as HTMLElement;
-
-      const link =
-        target.closest(
-          "a"
-        ) as HTMLAnchorElement | null;
-
-      if (!link) {
-        return;
-      }
-
-      const href =
-        link.getAttribute(
-          "href"
-        ) || "";
-
-      let eventType:
-        | "phone_click"
-        | "kakao_click"
-        | null = null;
-
-      /*
-       * 전화 클릭
-       */
-      if (
-        href.startsWith(
-          "tel:"
-        )
-      ) {
-        eventType =
-          "phone_click";
-      }
-
-      /*
-       * 카카오 상담 클릭
-       */
-      if (
-        href.includes(
-          "pf.kakao.com"
-        )
-      ) {
-        eventType =
-          "kakao_click";
-      }
-
-      if (!eventType) {
-        return;
-      }
-
       const attribution =
         getAttribution();
 
@@ -262,10 +220,67 @@ export default function ConversionTracker() {
       ).catch(() => {
         /*
          * 추적 실패 때문에
-         * 전화/카카오 이동을
-         * 막으면 안 됨
+         * 사용자 동작을 막지 않음
          */
       });
+    }
+
+    function handleClick(
+      event: MouseEvent
+    ) {
+      const target =
+        event.target as HTMLElement;
+
+      const link =
+        target.closest(
+          "a"
+        ) as HTMLAnchorElement | null;
+
+      if (!link) {
+        return;
+      }
+
+      const href =
+        link.getAttribute(
+          "href"
+        ) || "";
+
+      /*
+       * 전화 클릭
+       */
+      if (
+        href.startsWith(
+          "tel:"
+        )
+      ) {
+        sendConversion(
+          "phone_click"
+        );
+
+        return;
+      }
+
+      /*
+       * 카카오 상담 클릭
+       */
+      if (
+        href.includes(
+          "pf.kakao.com"
+        )
+      ) {
+        sendConversion(
+          "kakao_click"
+        );
+      }
+    }
+
+    /*
+     * 상담폼 제출 성공 이벤트
+     */
+    function handleContactSubmit() {
+      sendConversion(
+        "contact_submit"
+      );
     }
 
     document.addEventListener(
@@ -273,10 +288,20 @@ export default function ConversionTracker() {
       handleClick
     );
 
+    window.addEventListener(
+      CONTACT_SUBMIT_EVENT,
+      handleContactSubmit
+    );
+
     return () => {
       document.removeEventListener(
         "click",
         handleClick
+      );
+
+      window.removeEventListener(
+        CONTACT_SUBMIT_EVENT,
+        handleContactSubmit
       );
     };
   }, [pathname]);
