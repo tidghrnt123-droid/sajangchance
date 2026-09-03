@@ -13,14 +13,12 @@ import ConversionTracker from "@/components/ConversionTracker";
 import "./globals.css";
 
 const geistSans = Geist({
-  variable:
-    "--font-geist-sans",
+  variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-  variable:
-    "--font-geist-mono",
+  variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
@@ -63,11 +61,8 @@ export const metadata: Metadata = {
       },
     ],
 
-    shortcut:
-      "/icon.png",
-
-    apple:
-      "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
   },
 
   openGraph: {
@@ -77,38 +72,26 @@ export const metadata: Metadata = {
     description:
       "토스 프론트2, 무선 카드단말기, POS, PG 전문 상담",
 
-    url:
-      "https://sajangchance.com",
+    url: "https://sajangchance.com",
 
-    siteName:
-      "사장님찬스",
+    siteName: "사장님찬스",
 
-    locale:
-      "ko_KR",
+    locale: "ko_KR",
 
-    type:
-      "website",
+    type: "website",
 
     images: [
       {
-        url:
-          "/images/og-image1.png",
-
-        width:
-          1200,
-
-        height:
-          630,
-
-        alt:
-          "사장님찬스",
+        url: "/images/og-image1.png",
+        width: 1200,
+        height: 630,
+        alt: "사장님찬스",
       },
     ],
   },
 
   twitter: {
-    card:
-      "summary_large_image",
+    card: "summary_large_image",
 
     title:
       "사장님찬스 | 카드단말기 · POS · PG 전문",
@@ -125,8 +108,7 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children:
-    React.ReactNode;
+  children: React.ReactNode;
 }>) {
   return (
     <html
@@ -140,8 +122,7 @@ export default function RootLayout({
             height="1"
             width="1"
             style={{
-              display:
-                "none",
+              display: "none",
             }}
             src="https://www.facebook.com/tr?id=28514603764813743&ev=PageView&noscript=1"
             alt=""
@@ -157,11 +138,8 @@ export default function RootLayout({
         {/* =========================
             자사몰 방문자 + 문의 전환 추적
         ========================= */}
-        <Suspense
-          fallback={null}
-        >
+        <Suspense fallback={null}>
           <VisitTracker />
-
           <ConversionTracker />
         </Suspense>
 
@@ -313,6 +291,37 @@ export default function RootLayout({
               }
 
             })();
+          `}
+        </Script>
+
+        {/* =========================
+            네이버 검색광고 전환추적
+        ========================= */}
+        <Script
+          src="https://wcs.naver.net/wcslog.js"
+          strategy="afterInteractive"
+        />
+
+        <Script
+          id="naver-wcs"
+          strategy="afterInteractive"
+        >
+          {`
+            if (!window.wcs_add) {
+              window.wcs_add = {};
+            }
+
+            window.wcs_add["wa"] =
+              "s_2ae89fa200da";
+
+            if (!window._nasa) {
+              window._nasa = {};
+            }
+
+            if (window.wcs) {
+              window.wcs.inflow();
+              window.wcs_do();
+            }
           `}
         </Script>
       </body>
