@@ -28,10 +28,10 @@ export const metadata: Metadata = {
   ),
 
   title:
-    "사장님찬스 | 인터넷 · CCTV · 카드단말기 · 휴대폰",
+    "사장님찬스 · 인터넷 · CCTV · 카드단말기  올인원 비교",
 
   description:
-    "카드단말기, POS, PG 전문 상담",
+    "매장 인터넷, CCTV, 카드단말기를 한 번에 비교하고 상담받아보세요. 최대 100만원 현금사은폼으로 신규 사업장 설치부터 카드단말기까지 사장님찬스에서 한 번에 안내해드립니다.",
 
   keywords: [
     "사장님찬스",
@@ -67,10 +67,10 @@ export const metadata: Metadata = {
 
   openGraph: {
     title:
-      "사장님찬스 | 카드단말기 · POS · PG 전문",
+      "사장님찬스 · 인터넷 · CCTV · 카드단말기 올인원 비교",
 
     description:
-      "토스 프론트2, 무선 카드단말기, POS, PG 전문 상담",
+      "매장 인터넷, CCTV, 카드단말기를 한 번에 비교하고 상담받아보세요. 최대 100만원 현금사은폼으로 신규 사업장 설치부터 카드단말기까지 사장님찬스에서 한 번에 안내해드립니다.",
 
     url: "https://sajangchance.com",
 
@@ -94,10 +94,10 @@ export const metadata: Metadata = {
     card: "summary_large_image",
 
     title:
-      "사장님찬스 | 카드단말기 · POS · PG 전문",
+      "사장님찬스 · 인터넷 · CCTV · 카드단말기 올인원 비교",
 
     description:
-      "토스 프론트2, 무선 카드단말기, POS, PG 전문 상담",
+      "매장 인터넷, CCTV, 카드단말기를 한 번에 비교하고 상담받아보세요. 최대 100만원 현금사은폼으로 신규 사업장 설치부터 카드단말기까지 사장님찬스에서 한 번에 안내해드립니다.",
 
     images: [
       "/images/og-image1.png",
