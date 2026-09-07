@@ -24,26 +24,34 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    "https://sajangchance.com"
+    "https://www.sajangchance.com"
   ),
 
   title:
-    "사장님찬스 · 인터넷 · CCTV · 카드단말기  올인원 비교",
+    "매장 인터넷·CCTV·카드단말기 한번에 | 사장님찬스",
 
   description:
-    "매장 인터넷, CCTV, 카드단말기를 한 번에 비교하고 상담받아보세요. 최대 100만원 현금사은폼으로 신규 사업장 설치부터 카드단말기까지 사장님찬스에서 한 번에 안내해드립니다.",
+    "매장 오픈에 필요한 인터넷, CCTV, 카드단말기, 인터넷전화까지 한 번에 비교·설치. SK·KT·LG 맞춤 상담과 가입 혜택을 사장님찬스에서 확인하세요.",
 
   keywords: [
     "사장님찬스",
+    "매장 인터넷",
+    "사업장 인터넷",
+    "매장 CCTV",
+    "사업장 CCTV",
     "카드단말기",
-    "무선 카드단말기",
-    "토스 프론트2",
-    "토스 터미널2",
-    "영수증 프린터",
-    "POS",
-    "PG",
-    "카드결제",
-    "결제 단말기",
+    "매장 카드단말기",
+    "인터넷 CCTV 카드단말기",
+    "신규 매장 인터넷",
+    "신규 사업장 인터넷",
+    "인터넷 CCTV",
+    "인터넷 카드단말기",
+    "사업장 인터넷 CCTV",
+    "인터넷전화",
+    "매장 인터넷전화",
+    "SK 인터넷",
+    "KT 인터넷",
+    "LG 인터넷",
   ],
 
   verification: {
@@ -67,12 +75,12 @@ export const metadata: Metadata = {
 
   openGraph: {
     title:
-      "사장님찬스 · 인터넷 · CCTV · 카드단말기 올인원 비교",
+      "매장 인터넷·CCTV·카드단말기 한번에 | 사장님찬스",
 
     description:
-      "매장 인터넷, CCTV, 카드단말기를 한 번에 비교하고 상담받아보세요. 최대 100만원 현금사은폼으로 신규 사업장 설치부터 카드단말기까지 사장님찬스에서 한 번에 안내해드립니다.",
+      "매장 인터넷, CCTV, 카드단말기, 인터넷전화까지 한 번에 비교하고 설치하세요. SK·KT·LG 맞춤 상담과 가입 혜택을 확인하세요.",
 
-    url: "https://sajangchance.com",
+    url: "https://www.sajangchance.com/",
 
     siteName: "사장님찬스",
 
@@ -85,7 +93,7 @@ export const metadata: Metadata = {
         url: "/images/og-image1.png",
         width: 1200,
         height: 630,
-        alt: "사장님찬스",
+        alt: "사장님찬스 매장 인터넷 CCTV 카드단말기 올인원",
       },
     ],
   },
@@ -94,10 +102,10 @@ export const metadata: Metadata = {
     card: "summary_large_image",
 
     title:
-      "사장님찬스 · 인터넷 · CCTV · 카드단말기 올인원 비교",
+      "매장 인터넷·CCTV·카드단말기 한번에 | 사장님찬스",
 
     description:
-      "매장 인터넷, CCTV, 카드단말기를 한 번에 비교하고 상담받아보세요. 최대 100만원 현금사은폼으로 신규 사업장 설치부터 카드단말기까지 사장님찬스에서 한 번에 안내해드립니다.",
+      "매장 인터넷, CCTV, 카드단말기, 인터넷전화까지 한 번에 비교하고 설치하세요.",
 
     images: [
       "/images/og-image1.png",
