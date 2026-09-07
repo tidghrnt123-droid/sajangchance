@@ -1,9 +1,9 @@
 import {
   Phone,
   FileText,
-  PackageSearch,
   CreditCard,
   Smartphone,
+  Building2,
 } from "lucide-react";
 
 import Image from "next/image";
@@ -33,8 +33,9 @@ export default function Header() {
           </a>
 
           {/* PC 메뉴 */}
-          <nav className="hidden items-center gap-2 font-medium text-gray-700 md:flex">
+          <nav className="hidden items-center gap-2 font-medium md:flex">
 
+            {/* 카드단말기 */}
             <a
               href="/card-terminal"
               className="inline-flex items-center gap-1.5 rounded-xl border border-blue-600 bg-white px-4 py-2 font-semibold text-blue-600 transition hover:bg-blue-50"
@@ -47,6 +48,20 @@ export default function Header() {
               카드단말기
             </a>
 
+            {/* 법인폰 */}
+            <a
+              href="/corporate-phone"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-blue-600 bg-white px-4 py-2 font-semibold text-blue-600 transition hover:bg-blue-50"
+            >
+              <Building2
+                size={17}
+                strokeWidth={2.4}
+              />
+
+              법인폰
+            </a>
+
+            {/* 휴대폰 */}
             <a
               href="/phone"
               className="inline-flex items-center gap-1.5 rounded-xl border border-blue-600 bg-white px-4 py-2 font-semibold text-blue-600 transition hover:bg-blue-50"
@@ -58,23 +73,12 @@ export default function Header() {
 
               휴대폰
             </a>
-
-            <a
-              href="/order-check"
-              className="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-4 py-2 font-semibold text-gray-700 transition hover:border-blue-600 hover:text-blue-600"
-            >
-              <PackageSearch
-                size={18}
-                strokeWidth={2.4}
-              />
-
-              주문·배송조회
-            </a>
           </nav>
 
           {/* 우측 버튼 */}
           <div className="flex shrink-0 items-center gap-2 md:gap-3">
 
+            {/* 전화 */}
             <a
               href="tel:01079083099"
               aria-label="전화하기"
@@ -90,6 +94,7 @@ export default function Header() {
               </span>
             </a>
 
+            {/* 카카오톡 */}
             <a
               href="https://pf.kakao.com/_xcxhFen/chat"
               target="_blank"
@@ -110,6 +115,7 @@ export default function Header() {
               </span>
             </a>
 
+            {/* 문의하기 */}
             <a
               href="/#consult"
               aria-label="문의하기"
@@ -132,6 +138,7 @@ export default function Header() {
       <div className="sticky top-20 z-40 border-b bg-white md:hidden">
         <div className="grid grid-cols-3 gap-2 px-3 py-2.5">
 
+          {/* 카드단말기 */}
           <a
             href="/card-terminal"
             className="flex items-center justify-center gap-1.5 rounded-xl border border-blue-600 bg-white py-3 text-sm font-semibold text-blue-600"
@@ -144,6 +151,20 @@ export default function Header() {
             카드단말기
           </a>
 
+          {/* 법인폰 */}
+          <a
+            href="/corporate-phone"
+            className="flex items-center justify-center gap-1.5 rounded-xl border border-blue-600 bg-white py-3 text-sm font-semibold text-blue-600"
+          >
+            <Building2
+              size={16}
+              strokeWidth={2.4}
+            />
+
+            법인폰
+          </a>
+
+          {/* 휴대폰 */}
           <a
             href="/phone"
             className="flex items-center justify-center gap-1.5 rounded-xl border border-blue-600 bg-white py-3 text-sm font-semibold text-blue-600"
@@ -154,18 +175,6 @@ export default function Header() {
             />
 
             휴대폰
-          </a>
-
-          <a
-            href="/order-check"
-            className="flex items-center justify-center gap-1 rounded-xl border border-gray-300 bg-white py-3 text-xs font-semibold text-gray-700"
-          >
-            <PackageSearch
-              size={15}
-              strokeWidth={2.4}
-            />
-
-            주문·배송조회
           </a>
         </div>
       </div>
