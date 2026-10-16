@@ -1,4 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import {
+  NextRequest,
+  NextResponse,
+} from "next/server";
 
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { createInicisOrderId } from "@/lib/inicis/hash";
@@ -19,7 +22,35 @@ type DbProduct = {
   is_visible: boolean;
 };
 
-function getString(value: unknown): string {
+/*
+ * Supabase에 등록하지 않고
+ * VS Code에서 직접 관리하는 상품
+ */
+const localProducts: Record<
+  string,
+  DbProduct
+> = {
+  "kids-watch-phone": {
+    product_code:
+      "kids-watch-phone",
+
+    product_type:
+      "PHONE",
+
+    name:
+      "우들 워치 키즈폰",
+
+    price:
+      100,
+
+    is_visible:
+      true,
+  },
+};
+
+function getString(
+  value: unknown
+): string {
   return typeof value === "string"
     ? value.trim()
     : "";
@@ -48,54 +79,77 @@ export async function POST(
   request: NextRequest
 ) {
   try {
-    const body = await request.json();
+    const body =
+      await request.json();
 
-    const productCode = getString(
-      body.productCode
-    );
+    const productCode =
+      getString(
+        body.productCode
+      );
 
-    const buyerName = getString(
-      body.buyerName
-    );
+    const normalizedProductCode =
+      productCode
+        .toLowerCase();
 
-    const buyerPhone = getString(
-      body.buyerPhone
-    );
+    const buyerName =
+      getString(
+        body.buyerName
+      );
 
-    const buyerEmail = getString(
-      body.buyerEmail
-    );
+    const buyerPhone =
+      getString(
+        body.buyerPhone
+      );
 
-    const businessName = getString(
-      body.businessName
-    );
+    const buyerEmail =
+      getString(
+        body.buyerEmail
+      );
 
-    const requestNote = getString(
-      body.requestNote
-    );
+    const businessName =
+      getString(
+        body.businessName
+      );
+
+    const requestNote =
+      getString(
+        body.requestNote
+      );
 
     const requestedPaymentType =
-      getString(body.paymentType);
+      getString(
+        body.paymentType
+      );
 
     const requestedDeviceType =
-      getString(body.deviceType);
+      getString(
+        body.deviceType
+      );
 
-    const paymentType: InicisPaymentType =
-      isPaymentType(requestedPaymentType)
-        ? requestedPaymentType
-        : "CARD";
+    const paymentType:
+      InicisPaymentType =
+        isPaymentType(
+          requestedPaymentType
+        )
+          ? requestedPaymentType
+          : "CARD";
 
-    const deviceType: InicisDeviceType =
-      isDeviceType(requestedDeviceType)
-        ? requestedDeviceType
-        : "WEB";
+    const deviceType:
+      InicisDeviceType =
+        isDeviceType(
+          requestedDeviceType
+        )
+          ? requestedDeviceType
+          : "WEB";
 
     /*
      * ================================
      * 상품코드 검증
      * ================================
      */
-    if (!productCode) {
+    if (
+      !normalizedProductCode
+    ) {
       return NextResponse.json(
         {
           success: false,
@@ -111,7 +165,7 @@ export async function POST(
     /*
      * ================================
      * Supabase 상품 조회
-     * 관리자 상품관리의 가격을 사용
+     * 기존 상품은 관리자 상품관리 가격 사용
      * ================================
      */
     const {
@@ -130,7 +184,7 @@ export async function POST(
       )
       .eq(
         "product_code",
-        productCode
+        normalizedProductCode
       )
       .maybeSingle();
 
@@ -152,8 +206,20 @@ export async function POST(
       );
     }
 
+    /*
+     * Supabase 상품을 우선 사용하고,
+     * 없을 경우 VS Code 직접 등록 상품 확인
+     */
     const product =
-      productData as DbProduct | null;
+      (
+        productData as
+          | DbProduct
+          | null
+      ) ??
+      localProducts[
+        normalizedProductCode
+      ] ??
+      null;
 
     /*
      * 상품 존재 여부
@@ -191,17 +257,24 @@ export async function POST(
      * 가격 검증
      */
     const productPrice =
-      Number(product.price);
+      Number(
+        product.price
+      );
 
     if (
-      !Number.isFinite(productPrice) ||
+      !Number.isFinite(
+        productPrice
+      ) ||
       productPrice < 0
     ) {
       console.error(
         "Invalid product price:",
         {
-          productCode,
-          price: product.price,
+          productCode:
+            normalizedProductCode,
+
+          price:
+            product.price,
         }
       );
 
@@ -261,26 +334,34 @@ export async function POST(
      * ================================
      */
     const {
-      error: orderInsertError,
+      error:
+        orderInsertError,
     } = await supabaseAdmin
       .from("orders")
       .insert({
-        order_no: orderId,
+        order_no:
+          orderId,
 
-        buyer_name: buyerName,
+        buyer_name:
+          buyerName,
 
-        buyer_phone: buyerPhone,
+        buyer_phone:
+          buyerPhone,
 
         buyer_email:
-          buyerEmail || null,
+          buyerEmail ||
+          null,
 
         business_name:
-          businessName || null,
+          businessName ||
+          null,
 
-        delivery_address: null,
+        delivery_address:
+          null,
 
         request_note:
-          requestNote || null,
+          requestNote ||
+          null,
 
         product_code:
           product.product_code,
@@ -294,9 +375,11 @@ export async function POST(
         product_type:
           product.product_type,
 
-        activation_type: null,
+        activation_type:
+          null,
 
-        previous_carrier: null,
+        previous_carrier:
+          null,
 
         payment_status:
           "PENDING",
@@ -308,7 +391,9 @@ export async function POST(
           isEscrow,
       });
 
-    if (orderInsertError) {
+    if (
+      orderInsertError
+    ) {
       console.error(
         "Supabase order insert error:",
         orderInsertError
@@ -329,7 +414,7 @@ export async function POST(
     /*
      * ================================
      * KG이니시스 결제 준비
-     * 반드시 DB 가격 사용
+     * 반드시 서버에서 확인한 가격 사용
      * ================================
      */
     const payment =
@@ -380,10 +465,12 @@ export async function POST(
         isEscrow,
 
         P_PAY_TYPE:
-          payment.fields.P_PAY_TYPE,
+          payment.fields
+            .P_PAY_TYPE,
 
         P_RESERVED:
-          payment.fields.P_RESERVED,
+          payment.fields
+            .P_RESERVED,
       }
     );
 

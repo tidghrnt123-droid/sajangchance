@@ -13,8 +13,57 @@ type RouteProps = {
   }>;
 };
 
+/*
+  VS Code에서 직접 관리하는 상품
+*/
+const localProducts = {
+  "kids-watch-phone": {
+    product_code:
+      "kids-watch-phone",
+
+    product_type:
+      "PHONE",
+
+    category:
+      "PHONE",
+
+    name:
+      "우들 워치 키즈폰",
+
+    short_description:
+      "스마트폰은 너무 이르다고 생각하시는 부모님들에게 딱 좋은 우들 워치 키즈폰. 위치추적, 통화 가능!",
+
+    price:
+      100,
+
+    thumbnail_url:
+      "/images/kids-watch-phone.png",
+
+    detail_path:
+      "/phone/kids-watch-phone",
+
+    badge:
+      "키즈워치폰",
+
+    naver_review_count:
+      0,
+
+    naver_review_url:
+      null,
+
+    is_visible:
+      true,
+
+    is_featured:
+      false,
+
+    sort_order:
+      999,
+  },
+};
+
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: RouteProps
 ) {
   try {
@@ -35,6 +84,32 @@ export async function GET(
       );
     }
 
+    const normalizedProductCode =
+      productCode
+        .trim()
+        .toLowerCase();
+
+    /*
+      먼저 VS Code 상품 확인
+    */
+    const localProduct =
+      localProducts[
+        normalizedProductCode as keyof typeof localProducts
+      ];
+
+    if (
+      localProduct &&
+      localProduct.is_visible
+    ) {
+      return NextResponse.json({
+        success: true,
+        product: localProduct,
+      });
+    }
+
+    /*
+      나머지 기존 상품은 Supabase에서 조회
+    */
     const {
       data,
       error,
@@ -60,7 +135,7 @@ export async function GET(
       )
       .eq(
         "product_code",
-        productCode
+        normalizedProductCode
       )
       .maybeSingle();
 
