@@ -11,8 +11,10 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "휴대폰 | 사장님찬스",
+
   description:
     "공부폰, 키즈폰, 효도폰, 법인폰 등 다양한 용도의 휴대폰 상품을 사장님찬스에서 확인하세요.",
+
   alternates: {
     canonical: "https://sajangchance.com/phone",
   },
@@ -35,10 +37,7 @@ type PhoneProduct = {
 };
 
 export default async function PhonePage() {
-  const {
-    data,
-    error,
-  } = await supabaseAdmin
+  const { data, error } = await supabaseAdmin
     .from("products")
     .select(
       `
@@ -70,8 +69,71 @@ export default async function PhonePage() {
     );
   }
 
-  const phones =
+  /*
+    Supabase에서 불러오는 기존 휴대폰 상품
+  */
+  const dbPhones =
     (data ?? []) as PhoneProduct[];
+
+  /*
+    VS Code에서 직접 관리하는 우들 워치 키즈폰
+  */
+  const kidsWatchPhone: PhoneProduct = {
+    product_code:
+      "kids-watch-phone",
+
+    product_type:
+      "PHONE",
+
+    category:
+      "PHONE",
+
+    name:
+      "우들 워치 키즈폰",
+
+    short_description:
+      "스마트폰은 너무 이르다고 생각하시는 부모님들에게 딱 좋은 우들 워치 키즈폰. 위치추적, 통화 가능!",
+
+    price:
+      100,
+
+    thumbnail_url:
+      "/images/kids-watch-phone.png",
+
+    detail_path:
+      "/phone/kids-watch-phone",
+
+    badge:
+      "키즈워치폰",
+
+    naver_review_count:
+      0,
+
+    naver_review_url:
+      null,
+
+    is_visible:
+      true,
+
+    sort_order:
+      999,
+  };
+
+  /*
+    나중에 Supabase에 같은 상품을 등록하더라도
+    상품이 두 번 표시되지 않도록 중복 확인
+  */
+  const phones =
+    dbPhones.some(
+      (phone) =>
+        phone.product_code ===
+        kidsWatchPhone.product_code
+    )
+      ? dbPhones
+      : [
+          ...dbPhones,
+          kidsWatchPhone,
+        ];
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -92,15 +154,18 @@ export default async function PhonePage() {
             </h1>
 
             <p className="mt-5 max-w-2xl text-base leading-7 text-gray-600 md:text-lg">
-              공부폰부터 스마트폰, 효도폰까지 필요한 휴대폰을
-              확인하고 구매 또는 상담을 진행할 수 있습니다.
+              공부폰부터 스마트폰, 효도폰, 키즈 워치폰까지 필요한
+              휴대폰을 확인하고 구매 또는 상담을 진행할 수 있습니다.
             </p>
           </div>
 
           <div className="rounded-3xl border-2 border-blue-600 bg-white p-7 shadow-sm md:p-8">
             <div className="flex items-center gap-4">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white">
-                <Phone size={24} strokeWidth={2.4} />
+                <Phone
+                  size={24}
+                  strokeWidth={2.4}
+                />
               </div>
 
               <div>
@@ -128,7 +193,10 @@ export default async function PhonePage() {
                   className="flex items-center gap-3"
                 >
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600">
-                    <Check size={15} strokeWidth={3} />
+                    <Check
+                      size={15}
+                      strokeWidth={3}
+                    />
                   </span>
 
                   <span className="text-sm font-semibold text-gray-700">
@@ -147,7 +215,11 @@ export default async function PhonePage() {
               href="tel:01081413099"
               className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 px-5 py-4 font-bold text-white transition hover:bg-blue-700"
             >
-              <Phone size={18} strokeWidth={2.5} />
+              <Phone
+                size={18}
+                strokeWidth={2.5}
+              />
+
               전화 상담하기
             </a>
           </div>
@@ -168,11 +240,11 @@ export default async function PhonePage() {
 
         {error && (
           <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-5 text-sm font-semibold text-red-700">
-            휴대폰 상품정보를 불러오지 못했습니다.
+            일부 휴대폰 상품정보를 불러오지 못했습니다.
           </div>
         )}
 
-        {!error && phones.length === 0 && (
+        {phones.length === 0 && (
           <div className="rounded-3xl border border-gray-200 bg-white px-6 py-14 text-center text-gray-500 shadow-sm">
             현재 판매 중인 휴대폰 상품이 없습니다.
           </div>
@@ -188,6 +260,10 @@ export default async function PhonePage() {
               phone.thumbnail_url ||
               "/images/phone-a175-study.png";
 
+            const isKidsWatchPhone =
+              phone.product_code ===
+              "kids-watch-phone";
+
             return (
               <article
                 key={phone.product_code}
@@ -197,13 +273,23 @@ export default async function PhonePage() {
                   href={href}
                   className="block"
                 >
-                  <div className="relative aspect-square overflow-hidden bg-gray-100">
+                  <div
+                    className={
+                      isKidsWatchPhone
+                        ? "relative aspect-square overflow-hidden bg-white"
+                        : "relative aspect-square overflow-hidden bg-gray-100"
+                    }
+                  >
                     <Image
                       src={image}
                       alt={phone.name}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
-                      className="object-cover transition duration-300 group-hover:scale-[1.03]"
+                      className={
+                        isKidsWatchPhone
+                          ? "object-contain p-5 transition duration-300 group-hover:scale-[1.03]"
+                          : "object-cover transition duration-300 group-hover:scale-[1.03]"
+                      }
                     />
                   </div>
                 </a>

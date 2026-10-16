@@ -7,9 +7,6 @@ import ReviewSummary from "@/components/ReviewSummary";
 import ReviewSection from "@/components/ReviewSection";
 import MetaViewContent from "@/components/MetaViewContent";
 import MetaCheckoutButton from "@/components/MetaCheckoutButton";
-import { supabaseAdmin } from "@/lib/supabaseAdmin";
-
-export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "우들 워치 키즈폰 | 사장님찬스",
@@ -26,7 +23,7 @@ export const metadata: Metadata = {
     title: "우들 워치 키즈폰 | 사장님찬스",
 
     description:
-      "스마트폰은 아직 이르다고 생각하시는 부모님들을 위한 우들 워치 키즈폰. 위치추적과 통화가 가능합니다.",
+      "스마트폰은 아직 이르다고 생각하시는 부모님을 위한 우들 워치 키즈폰. 위치추적과 통화가 가능합니다.",
 
     url:
       "https://sajangchance.com/phone/kids-watch-phone",
@@ -48,102 +45,46 @@ export const metadata: Metadata = {
   },
 };
 
-type ProductRow = {
-  product_code: string;
-  product_type: string;
-  name: string;
-  short_description: string | null;
-  price: number;
-  thumbnail_url: string | null;
-  badge: string | null;
-  naver_review_count: number;
-  naver_review_url: string | null;
-  is_visible: boolean;
+/*
+  VS Code에서 직접 관리하는 상품 정보
+  판매가를 바꾸려면 price 숫자만 수정하면 됩니다.
+*/
+const product = {
+  product_code: "kids-watch-phone",
+  product_type: "PHONE",
+  name: "우들 워치 키즈폰",
+
+  short_description:
+    "스마트폰은 너무 이르다고 생각하시는 부모님들에게 딱 좋은 우들 워치 키즈폰. 위치추적, 통화 가능!",
+
+  price: 100,
+
+  thumbnail_url:
+    "/images/kids-watch-phone.png",
+
+  badge: "키즈워치폰",
+
+  naver_review_count: 0,
+
+  naver_review_url:
+    null as string | null,
 };
 
-export default async function KidsWatchPhonePage() {
-  const { data, error } = await supabaseAdmin
-    .from("products")
-    .select(
-      `
-        product_code,
-        product_type,
-        name,
-        short_description,
-        price,
-        thumbnail_url,
-        badge,
-        naver_review_count,
-        naver_review_url,
-        is_visible
-      `
-    )
-    .eq(
-      "product_code",
-      "kids-watch-phone"
-    )
-    .maybeSingle();
+const detailImages = [
+  "/images/kids-watch-phone00.png",
+  "/images/kids-watch-phone01.png",
+  "/images/kids-watch-phone02.png",
+  "/images/kids-watch-phone03.png",
+  "/images/kids-watch-phone04.png",
+  "/images/kids-watch-phone05.png",
+];
 
-  if (error) {
-    console.error(
-      "Kids watch phone product load error:",
-      error
-    );
-  }
-
-  const product =
-    data as ProductRow | null;
-
-  if (
-    !product ||
-    !product.is_visible
-  ) {
-    return (
-      <main className="min-h-screen bg-gray-50">
-        <Header />
-
-        <section className="mx-auto max-w-3xl px-6 py-24 text-center">
-          <p className="font-semibold text-blue-600">
-            사장님찬스
-          </p>
-
-          <h1 className="mt-3 text-3xl font-bold text-gray-900">
-            현재 판매하지 않는 상품입니다.
-          </h1>
-
-          <p className="mt-4 text-gray-500">
-            다른 휴대폰 상품을 확인해주세요.
-          </p>
-
-          <a
-            href="/phone"
-            className="mt-8 inline-flex rounded-xl bg-blue-600 px-6 py-3 font-bold text-white"
-          >
-            휴대폰 보러가기
-          </a>
-        </section>
-
-        <Footer />
-      </main>
-    );
-  }
-
-  const detailImages = [
-    "/images/kids-watch-phone00.png",
-    "/images/kids-watch-phone01.png",
-    "/images/kids-watch-phone02.png",
-    "/images/kids-watch-phone03.png",
-    "/images/kids-watch-phone04.png",
-    "/images/kids-watch-phone05.png",
-  ];
-
+export default function KidsWatchPhonePage() {
   const heroImage =
-    product.thumbnail_url ||
-    "/images/kids-watch-phone.png";
+    product.thumbnail_url;
 
   const description =
-    product.short_description ||
-    "스마트폰은 너무 이르다고 생각하시는 부모님들에게 딱 좋은 우들 워치 키즈폰. 위치추적, 통화 가능!";
+    product.short_description;
 
   const price =
     Number(product.price);
@@ -184,8 +125,7 @@ export default async function KidsWatchPhonePage() {
           {/* 상품 정보 */}
           <div>
             <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-sm font-bold text-blue-700">
-              {product.badge ||
-                "키즈워치폰"}
+              {product.badge}
             </span>
 
             <h1 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
@@ -242,7 +182,7 @@ export default async function KidsWatchPhonePage() {
 
               <div className="rounded-2xl bg-gray-50 p-4">
                 <p className="font-bold text-gray-900">
-                  위치 확인
+                  위치추적 가능
                 </p>
 
                 <p className="mt-1 text-sm leading-6 text-gray-500">
@@ -262,11 +202,11 @@ export default async function KidsWatchPhonePage() {
 
               <div className="rounded-2xl bg-gray-50 p-4">
                 <p className="font-bold text-gray-900">
-                  간편한 손목 착용
+                  편리한 손목 착용
                 </p>
 
                 <p className="mt-1 text-sm leading-6 text-gray-500">
-                  아이가 손목에 편리하게 착용하고 사용할 수 있는 디자인
+                  분실 걱정을 줄이고 손목에 편리하게 착용
                 </p>
               </div>
             </div>
@@ -303,8 +243,8 @@ export default async function KidsWatchPhonePage() {
 
             <p className="mt-4 text-sm leading-6 text-gray-400">
               가입 조건, 요금제, 위치추적 및 통화 기능에 대한
-              자세한 내용은 상세페이지 또는 상담을 통해 확인하실 수
-              있습니다.
+              자세한 내용은 상세페이지 또는 상담을 통해
+              확인하실 수 있습니다.
             </p>
           </div>
         </div>
@@ -318,9 +258,7 @@ export default async function KidsWatchPhonePage() {
               <Image
                 key={src}
                 src={src}
-                alt={`${
-                  product.name
-                } 상세정보 ${
+                alt={`${product.name} 상세정보 ${
                   index + 1
                 }`}
                 width={1000}
