@@ -71,12 +71,13 @@ const product = {
 };
 
 const detailImages = [
-  "/images/kids-watch-phone00.png",
-  "/images/kids-watch-phone01.png",
-  "/images/kids-watch-phone02.png",
-  "/images/kids-watch-phone03.png",
-  "/images/kids-watch-phone04.png",
-  "/images/kids-watch-phone05.png",
+  "/images/kids-phone01.png",
+  "/images/kids-phone02.png",
+  "/images/kids-phone03.png",
+  "/images/kids-phone04.png",
+  "/images/kids-phone05.png",
+  "/images/kids-phone06.png",
+  "/images/kids-phone07.png",
 ];
 
 export default function KidsWatchPhonePage() {
