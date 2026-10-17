@@ -78,6 +78,7 @@ const detailImages = [
   "/images/kids-phone05.png",
   "/images/kids-phone06.png",
   "/images/kids-phone07.png",
+   "/images/kids-phone08.png"
 ];
 
 export default function KidsWatchPhonePage() {
