@@ -106,11 +106,14 @@ export default async function PhonePage() {
     badge:
       "키즈워치폰",
 
+    /*
+      네이버 스마트스토어 리뷰
+    */
     naver_review_count:
-      0,
+      3,
 
     naver_review_url:
-      null,
+      "https://smartstore.naver.com/ho__/products/13792407790",
 
     is_visible:
       true,

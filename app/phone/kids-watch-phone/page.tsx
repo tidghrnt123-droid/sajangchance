@@ -47,27 +47,37 @@ export const metadata: Metadata = {
 
 /*
   VS Code에서 직접 관리하는 상품 정보
-  판매가를 바꾸려면 price 숫자만 수정하면 됩니다.
 */
 const product = {
-  product_code: "kids-watch-phone",
-  product_type: "PHONE",
-  name: "우들 워치 키즈폰",
+  product_code:
+    "kids-watch-phone",
+
+  product_type:
+    "PHONE",
+
+  name:
+    "우들 워치 키즈폰",
 
   short_description:
     "스마트폰은 너무 이르다고 생각하시는 부모님들에게 딱 좋은 우들 워치 키즈폰. 위치추적, 통화 가능!",
 
-  price: 100,
+  price:
+    100,
 
   thumbnail_url:
     "/images/kids-watch-phone.png",
 
-  badge: "키즈워치폰",
+  badge:
+    "키즈워치폰",
 
-  naver_review_count: 0,
+  /*
+    네이버 스마트스토어 리뷰
+  */
+  naver_review_count:
+    3,
 
   naver_review_url:
-    null as string | null,
+    "https://smartstore.naver.com/ho__/products/13792407790",
 };
 
 const detailImages = [
@@ -78,7 +88,7 @@ const detailImages = [
   "/images/kids-phone05.png",
   "/images/kids-phone06.png",
   "/images/kids-phone07.png",
-   "/images/kids-phone08.png"
+  "/images/kids-phone08.png",
 ];
 
 export default function KidsWatchPhonePage() {
@@ -112,6 +122,7 @@ export default function KidsWatchPhonePage() {
       {/* 상품 상단 영역 */}
       <section className="border-b bg-white">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 py-10 lg:grid-cols-2 lg:items-center lg:py-16">
+
           {/* 대표 이미지 */}
           <div className="relative aspect-square overflow-hidden rounded-3xl bg-gray-50">
             <Image
@@ -138,7 +149,7 @@ export default function KidsWatchPhonePage() {
               {description}
             </p>
 
-            {/* 상단 리뷰 요약 */}
+            {/* 리뷰 요약 */}
             <ReviewSummary
               productCode={
                 product.product_code
@@ -148,8 +159,7 @@ export default function KidsWatchPhonePage() {
                 product.naver_review_count
               }
               naverReviewUrl={
-                product.naver_review_url ||
-                undefined
+                product.naver_review_url
               }
             />
 
@@ -172,6 +182,7 @@ export default function KidsWatchPhonePage() {
 
             {/* 상품 특징 */}
             <div className="mt-7 grid gap-3 sm:grid-cols-2">
+
               <div className="rounded-2xl bg-gray-50 p-4">
                 <p className="font-bold text-gray-900">
                   스마트폰 대신 워치폰
@@ -220,6 +231,7 @@ export default function KidsWatchPhonePage() {
               className="mt-8"
             >
               <div className="grid gap-3 sm:grid-cols-2">
+
                 <MetaCheckoutButton
                   productId={
                     product.product_code
@@ -279,14 +291,14 @@ export default function KidsWatchPhonePage() {
           product.product_code
         }
         naverReviewUrl={
-          product.naver_review_url ||
-          undefined
+          product.naver_review_url
         }
       />
 
       {/* 하단 상담 영역 */}
       <section className="border-t bg-gray-50">
         <div className="mx-auto max-w-5xl px-5 py-12 text-center md:py-16">
+
           <p className="text-sm font-bold text-blue-600">
             {product.name}
           </p>
