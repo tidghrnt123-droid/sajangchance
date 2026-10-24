@@ -69,74 +69,114 @@ export default async function PhonePage() {
     );
   }
 
-  /*
-    Supabase에서 불러오는 기존 휴대폰 상품
-  */
   const dbPhones =
     (data ?? []) as PhoneProduct[];
 
   /*
-    VS Code에서 직접 관리하는 우들 워치 키즈폰
+    VS Code에서 직접 관리하는 상품
   */
-  const kidsWatchPhone: PhoneProduct = {
-    product_code:
-      "kids-watch-phone",
+  const localPhones: PhoneProduct[] = [
+    {
+      product_code:
+        "kids-watch-phone",
 
-    product_type:
-      "PHONE",
+      product_type:
+        "PHONE",
 
-    category:
-      "PHONE",
+      category:
+        "PHONE",
 
-    name:
-      "우들 워치 키즈폰",
+      name:
+        "우들 워치 키즈폰",
 
-    short_description:
-      "스마트폰은 너무 이르다고 생각하시는 부모님들에게 딱 좋은 우들 워치 키즈폰. 위치추적, 통화 가능!",
+      short_description:
+        "스마트폰은 너무 이르다고 생각하시는 부모님들에게 딱 좋은 우들 워치 키즈폰. 위치추적, 통화 가능!",
 
-    price:
-      100,
+      price:
+        100,
 
-    thumbnail_url:
-      "/images/kids-watch-phone.png",
+      thumbnail_url:
+        "/images/kids-watch-phone.png",
 
-    detail_path:
-      "/phone/kids-watch-phone",
+      detail_path:
+        "/phone/kids-watch-phone",
 
-    badge:
-      "키즈워치폰",
+      badge:
+        "키즈워치폰",
 
-    /*
-      네이버 스마트스토어 리뷰
-    */
-    naver_review_count:
-      3,
+      naver_review_count:
+        3,
 
-    naver_review_url:
-      "https://smartstore.naver.com/ho__/products/13792407790",
+      naver_review_url:
+        "https://smartstore.naver.com/ho__/products/13792407790",
 
-    is_visible:
-      true,
+      is_visible:
+        true,
 
-    sort_order:
-      999,
-  };
+      sort_order:
+        998,
+    },
+
+    {
+      product_code:
+        "ikko",
+
+      product_type:
+        "PHONE",
+
+      category:
+        "PHONE",
+
+      name:
+        "iKKO MindOne K Pro",
+
+      short_description:
+        "작지만 충분한 세컨폰. SKT 신규가입·번호이동으로 이용할 수 있는 iKKO MindOne K Pro.",
+
+      price:
+        298000,
+
+      thumbnail_url:
+        "/images/ikko.png",
+
+      detail_path:
+        "/phone/ikko",
+
+      badge:
+        "세컨폰",
+
+      naver_review_count:
+        0,
+
+      naver_review_url:
+        null,
+
+      is_visible:
+        true,
+
+      sort_order:
+        999,
+    },
+  ];
 
   /*
-    나중에 Supabase에 같은 상품을 등록하더라도
-    상품이 두 번 표시되지 않도록 중복 확인
+    Supabase에 같은 상품이 등록되어 있어도
+    중복 노출되지 않도록 처리
   */
-  const phones =
-    dbPhones.some(
-      (phone) =>
-        phone.product_code ===
-        kidsWatchPhone.product_code
-    )
-      ? dbPhones
-      : [
-          ...dbPhones,
-          kidsWatchPhone,
-        ];
+  const localOnlyPhones =
+    localPhones.filter(
+      (localPhone) =>
+        !dbPhones.some(
+          (dbPhone) =>
+            dbPhone.product_code ===
+            localPhone.product_code
+        )
+    );
+
+  const phones = [
+    ...dbPhones,
+    ...localOnlyPhones,
+  ];
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -145,6 +185,7 @@ export default async function PhonePage() {
       {/* 상단 소개 */}
       <section className="border-b bg-white">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:py-20 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-center">
+
           <div>
             <p className="font-semibold text-blue-600">
               사장님찬스 휴대폰
@@ -157,13 +198,16 @@ export default async function PhonePage() {
             </h1>
 
             <p className="mt-5 max-w-2xl text-base leading-7 text-gray-600 md:text-lg">
-              공부폰부터 스마트폰, 효도폰, 키즈 워치폰까지 필요한
-              휴대폰을 확인하고 구매 또는 상담을 진행할 수 있습니다.
+              공부폰부터 스마트폰, 효도폰, 키즈 워치폰,
+              세컨폰까지 필요한 휴대폰을 확인하고 구매 또는
+              상담을 진행할 수 있습니다.
             </p>
           </div>
 
           <div className="rounded-3xl border-2 border-blue-600 bg-white p-7 shadow-sm md:p-8">
+
             <div className="flex items-center gap-4">
+
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white">
                 <Phone
                   size={24}
@@ -231,6 +275,7 @@ export default async function PhonePage() {
 
       {/* 상품 목록 */}
       <section className="mx-auto max-w-7xl px-5 py-12 md:py-16">
+
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900">
             휴대폰 상품
@@ -254,6 +299,7 @@ export default async function PhonePage() {
         )}
 
         <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+
           {phones.map((phone) => {
             const href =
               phone.detail_path ||
@@ -263,22 +309,25 @@ export default async function PhonePage() {
               phone.thumbnail_url ||
               "/images/phone-a175-study.png";
 
-            const isKidsWatchPhone =
+            const useContainImage =
               phone.product_code ===
-              "kids-watch-phone";
+                "kids-watch-phone" ||
+              phone.product_code ===
+                "ikko";
 
             return (
               <article
                 key={phone.product_code}
                 className="group overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg"
               >
+
                 <a
                   href={href}
                   className="block"
                 >
                   <div
                     className={
-                      isKidsWatchPhone
+                      useContainImage
                         ? "relative aspect-square overflow-hidden bg-white"
                         : "relative aspect-square overflow-hidden bg-gray-100"
                     }
@@ -289,7 +338,7 @@ export default async function PhonePage() {
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
                       className={
-                        isKidsWatchPhone
+                        useContainImage
                           ? "object-contain p-5 transition duration-300 group-hover:scale-[1.03]"
                           : "object-cover transition duration-300 group-hover:scale-[1.03]"
                       }
@@ -298,6 +347,7 @@ export default async function PhonePage() {
                 </a>
 
                 <div className="p-5">
+
                   {phone.badge && (
                     <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
                       {phone.badge}
@@ -333,11 +383,13 @@ export default async function PhonePage() {
                   />
 
                   <div className="mt-4 border-t border-gray-100 pt-4">
+
                     <p className="text-xs font-medium text-gray-400">
                       판매가
                     </p>
 
                     <div className="mt-1 flex items-end justify-between gap-3">
+
                       <p className="text-2xl font-bold text-gray-900">
                         {Number(
                           phone.price

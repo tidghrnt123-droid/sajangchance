@@ -198,6 +198,30 @@ const products: EpProduct[] = [
 
     shipping: 0,
   },
+
+  /*
+   * iKKO MindOne K Pro
+   * 네이버 쇼핑 일반 유입용
+   */
+  {
+    id: "ikko",
+
+    title:
+      "아이코 마인드원 iKKO MindOne K Pro 세컨폰 SKT 신규가입 번호이동 1년약정",
+
+    price: 298000,
+
+    link:
+      `${SITE_URL}/phone/ikko?utm_source=naver&utm_medium=shopping&utm_campaign=ikko_shopping`,
+
+    imageLink:
+      `${SITE_URL}/images/ikko.png`,
+
+    categoryName1:
+      "휴대폰",
+
+    shipping: 0,
+  },
 ];
 
 function cleanField(

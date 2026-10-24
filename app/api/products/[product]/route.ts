@@ -17,6 +17,9 @@ type RouteProps = {
   VS Code에서 직접 관리하는 상품
 */
 const localProducts = {
+  /*
+    우들 워치 키즈폰
+  */
   "kids-watch-phone": {
     product_code:
       "kids-watch-phone",
@@ -44,6 +47,53 @@ const localProducts = {
 
     badge:
       "키즈워치폰",
+
+    naver_review_count:
+      3,
+
+    naver_review_url:
+      "https://smartstore.naver.com/ho__/products/13792407790",
+
+    is_visible:
+      true,
+
+    is_featured:
+      false,
+
+    sort_order:
+      998,
+  },
+
+  /*
+    iKKO MindOne K Pro
+  */
+  ikko: {
+    product_code:
+      "ikko",
+
+    product_type:
+      "PHONE",
+
+    category:
+      "PHONE",
+
+    name:
+      "iKKO MindOne K Pro",
+
+    short_description:
+      "작지만 충분한 세컨폰. SKT 신규가입·번호이동으로 이용할 수 있는 iKKO MindOne K Pro.",
+
+    price:
+      298000,
+
+    thumbnail_url:
+      "/images/ikko.png",
+
+    detail_path:
+      "/phone/ikko",
+
+    badge:
+      "세컨폰",
 
     naver_review_count:
       0,

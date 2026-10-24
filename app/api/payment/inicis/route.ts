@@ -30,6 +30,9 @@ const localProducts: Record<
   string,
   DbProduct
 > = {
+  /*
+   * 우들 워치 키즈폰
+   */
   "kids-watch-phone": {
     product_code:
       "kids-watch-phone",
@@ -42,6 +45,26 @@ const localProducts: Record<
 
     price:
       100,
+
+    is_visible:
+      true,
+  },
+
+  /*
+   * iKKO MindOne K Pro
+   */
+  ikko: {
+    product_code:
+      "ikko",
+
+    product_type:
+      "PHONE",
+
+    name:
+      "iKKO MindOne K Pro",
+
+    price:
+      298000,
 
     is_visible:
       true,
