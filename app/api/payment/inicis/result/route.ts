@@ -350,6 +350,12 @@ export async function POST(request: NextRequest) {
      * 현재는 확실히 존재하는 주문정보만 보냅니다.
      * 메일 전송 실패가 결제 성공을 막지 않도록 별도 처리합니다.
      */
+    console.log("ORDER NOTIFY START:", {
+  orderId,
+  hasWebhook: !!process.env.ORDER_NOTIFY_WEBHOOK_URL,
+  hasToken: !!process.env.ORDER_NOTIFY_TOKEN,
+});
+
     try {
       await sendOrderPaidNotification({
         orderId,
