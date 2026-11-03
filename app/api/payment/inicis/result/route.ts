@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { getInicisConfig } from "@/lib/inicis/config";
 import { approveInicisPayment } from "@/lib/inicis/approve";
+import { sendOrderPaidNotification } from "@/lib/orderNotification";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -68,9 +69,6 @@ export async function POST(request: NextRequest) {
   const siteUrl = config.siteUrl;
 
   try {
-    /*
-     * KG이니시스 결제창에서 전달된 인증 결과
-     */
     const formData = await request.formData();
 
     const status = getFormValue(formData, "P_STATUS");
@@ -84,18 +82,15 @@ export async function POST(request: NextRequest) {
     const idcName = getFormValue(formData, "P_IDCNAME");
 
     console.log(
-  "INICIS AUTH RESULT:",
-  Object.fromEntries(formData.entries())
-);
-    /*
-     * 이니시스 결제 요청 때 P_OID와 P_NOTI에 주문번호를 넣었으므로
-     * 둘 중 전달된 값을 주문번호로 사용합니다.
-     */
-const orderId =
-  getFormValue(formData, "P_OID") ||
-  getFormValue(formData, "P_NOTI") ||
-  request.nextUrl.searchParams.get("order")?.trim() ||
-  "";
+      "INICIS AUTH RESULT:",
+      Object.fromEntries(formData.entries())
+    );
+
+    const orderId =
+      getFormValue(formData, "P_OID") ||
+      getFormValue(formData, "P_NOTI") ||
+      request.nextUrl.searchParams.get("order")?.trim() ||
+      "";
 
     if (!orderId) {
       return NextResponse.redirect(
@@ -110,10 +105,6 @@ const orderId =
       );
     }
 
-    /*
-     * 사용자가 결제창에서 취소했거나 인증에 실패한 경우
-     * 승인 API를 호출하지 않습니다.
-     */
     if (status !== "00") {
       await updateFailedOrder({
         orderId,
@@ -185,8 +176,7 @@ const orderId =
     }
 
     /*
-     * 서버에 저장된 주문정보 조회
-     * 브라우저에서 전달된 금액을 그대로 신뢰하면 안 됩니다.
+     * 기존 코드에서 이미 사용하던 컬럼만 조회
      */
     const { data: order, error: orderFindError } =
       await supabaseAdmin
@@ -331,10 +321,6 @@ const orderId =
         .eq("order_no", orderId);
 
     if (paidUpdateError) {
-      /*
-       * 이 시점에는 이니시스 승인이 성공했을 수 있으므로
-       * 단순한 결제 실패로 간주하면 안 됩니다.
-       */
       console.error(
         "CRITICAL: INICIS payment approved but DB update failed:",
         {
@@ -356,6 +342,30 @@ const orderId =
           }
         ),
         303
+      );
+    }
+
+    /*
+     * 결제 성공 후 관리자 이메일 알림.
+     * 현재는 확실히 존재하는 주문정보만 보냅니다.
+     * 메일 전송 실패가 결제 성공을 막지 않도록 별도 처리합니다.
+     */
+    try {
+      await sendOrderPaidNotification({
+        orderId,
+        productName: order.product_name || "상품명 없음",
+        amount: Number(order.amount) || 0,
+        buyerName: "",
+        buyerPhone: "",
+        buyerEmail: null,
+        businessName: null,
+        paymentMethod: null,
+        tid: approvalTid,
+      });
+    } catch (notificationError) {
+      console.error(
+        "ORDER PAID notification error:",
+        notificationError
       );
     }
 
@@ -394,10 +404,6 @@ const orderId =
   }
 }
 
-/*
- * 주소창에서 직접 열었을 때 API 용도임을 표시합니다.
- * 실제 결제 결과는 KG이니시스가 POST로 전달합니다.
- */
 export async function GET() {
   return NextResponse.json(
     {
