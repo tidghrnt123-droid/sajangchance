@@ -182,7 +182,7 @@ export async function POST(request: NextRequest) {
       await supabaseAdmin
         .from("orders")
         .select(
-          "order_no, amount, payment_status, product_name"
+          "order_no, amount, payment_status, product_name, buyer_name, buyer_phone, buyer_email, business_name"
         )
         .eq("order_no", orderId)
         .maybeSingle();
@@ -357,16 +357,16 @@ export async function POST(request: NextRequest) {
 });
 
     try {
-      await sendOrderPaidNotification({
-        orderId,
-        productName: order.product_name || "상품명 없음",
-        amount: Number(order.amount) || 0,
-        buyerName: "",
-        buyerPhone: "",
-        buyerEmail: null,
-        businessName: null,
-        paymentMethod: null,
-        tid: approvalTid,
+await sendOrderPaidNotification({
+  orderId,
+  productName: order.product_name || "상품명 없음",
+  amount: Number(order.amount) || 0,
+  buyerName: order.buyer_name || "",
+  buyerPhone: order.buyer_phone || "",
+  buyerEmail: order.buyer_email || null,
+  businessName: order.business_name || null,
+  paymentMethod: null,
+  tid: approvalTid,
       });
     } catch (notificationError) {
       console.error(

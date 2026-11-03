@@ -13,14 +13,22 @@ type OrderPaidNotification = {
 export async function sendOrderPaidNotification(
   order: OrderPaidNotification
 ) {
-  const webhookUrl = process.env.ORDER_NOTIFY_WEBHOOK_URL;
-  const notifyToken = process.env.ORDER_NOTIFY_TOKEN;
+  const webhookUrl =
+    process.env.ORDER_NOTIFY_WEBHOOK_URL;
+
+  const notifyToken =
+    process.env.ORDER_NOTIFY_TOKEN;
 
   if (!webhookUrl) {
-    console.warn(
-      "ORDER_NOTIFY_WEBHOOK_URL이 없어 주문 이메일 알림을 건너뜁니다."
+    throw new Error(
+      "ORDER_NOTIFY_WEBHOOK_URL이 설정되지 않았습니다."
     );
-    return;
+  }
+
+  if (!notifyToken) {
+    throw new Error(
+      "ORDER_NOTIFY_TOKEN이 설정되지 않았습니다."
+    );
   }
 
   const response = await fetch(webhookUrl, {
@@ -29,16 +37,44 @@ export async function sendOrderPaidNotification(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      token: notifyToken || "",
+      token: notifyToken,
       ...order,
       paidAt: new Date().toISOString(),
     }),
     cache: "no-store",
   });
 
+  const text = await response.text();
+
   if (!response.ok) {
     throw new Error(
-      `주문 이메일 알림 전송 실패: ${response.status}`
+      `주문 이메일 알림 HTTP 오류: ${response.status} ${text}`
     );
   }
+
+  let result: {
+    ok?: boolean;
+    message?: string;
+  } = {};
+
+  try {
+    result = JSON.parse(text);
+  } catch {
+    throw new Error(
+      `Apps Script 응답 해석 실패: ${text}`
+    );
+  }
+
+  if (result.ok !== true) {
+    throw new Error(
+      `Apps Script 주문 알림 실패: ${
+        result.message || "알 수 없는 오류"
+      }`
+    );
+  }
+
+  console.log(
+    "ORDER EMAIL SENT:",
+    order.orderId
+  );
 }
